@@ -47,13 +47,16 @@
       </section>
 
       <aside id="side-panel">
-        <div id="telegram">
-          <div class="telegram-head">Telegram van Dr. Snow</div>
+        <div id="menu-block" class="menu-open">
+          <button id="menu-toggle" type="button" aria-expanded="true" aria-controls="menu">
+            <span class="telegram-head">Telegram van Dr. Snow</span>
+            <span class="chevron" aria-hidden="true">▾</span>
+          </button>
           <div class="telegram-body" id="menu-prompt">
             Wat heb je nu nodig, assistent?
           </div>
+          <div id="menu" role="list"></div>
         </div>
-        <div id="menu" role="list"></div>
         <div id="tabs" role="tablist"></div>
         <div id="viz" class="viz-panel hidden"></div>
       </aside>

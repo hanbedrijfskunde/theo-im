@@ -32,8 +32,19 @@ const state = {
   currentStageIdx: 0,
   chosenOptions: [],       // volgorde van keuzes = volgorde van tabbladen
   activeTabId: null,       // id van momenteel geopend tabblad
+  menuOpen: true,          // true = menu uitgeklapt, false = ingeklapt
   endChoice: null,
 };
+
+function setMenuOpen(open) {
+  state.menuOpen = open;
+  const block = $("menu-block");
+  if (!block) return;
+  block.classList.toggle("menu-open", open);
+  block.classList.toggle("menu-collapsed", !open);
+  const toggle = $("menu-toggle");
+  if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+}
 
 // Subset van sterfgevallen die tot NU toe zijn gevallen. snow-deaths.json
 // is gesorteerd op datum, dus slice(0, state.deaths) geeft de correcte
@@ -675,6 +686,9 @@ function handleChoice(option) {
   state.chosenOptions.push(option.id);
   state.activeTabId = option.id;
 
+  // Menu inklappen zodat viz de volle hoogte krijgt
+  setMenuOpen(false);
+
   const handlers = vizHandlers();
 
   // Eindkeuze — direct naar slot, geen dag-advance
@@ -689,7 +703,11 @@ function handleChoice(option) {
   state.deaths += newDeaths;
   // renderDeaths leest state.deaths automatisch via deathsSoFar()
 
-  if (option.advancesStage) state.currentStageIdx += 1;
+  if (option.advancesStage) {
+    state.currentStageIdx += 1;
+    // Nieuwe stage → menu weer uitklappen zodat student nieuwe opties ziet
+    setMenuOpen(true);
+  }
 
   const viz = handlers[option.viz];
   if (viz) viz();
@@ -722,6 +740,8 @@ async function init() {
   renderStreets();
   state.unlockedLayers.add("streets");
   render();
+  setMenuOpen(true);
+  $("menu-toggle").addEventListener("click", () => setMenuOpen(!state.menuOpen));
   $("start-btn").addEventListener("click", () => {
     $("intro-overlay").classList.add("hidden");
   });

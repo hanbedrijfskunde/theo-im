@@ -118,15 +118,35 @@ h1, .dash-title, .overlay-card h1 {
 #side-panel {
   padding: 1rem 1.25rem;
   display: grid;
-  grid-template-rows: auto auto auto 1fr;
-  gap: 1rem;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.8rem;
   min-height: 0;
 }
 
-#telegram {
+/* Collapsible menu-block (telegram + menu) */
+#menu-block {
   border: 1px solid var(--rule);
-  padding: 0.75rem 1rem;
   background: var(--paper-dark);
+  overflow: hidden;
+}
+
+#menu-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  font-family: inherit;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+}
+
+#menu-block.menu-open #menu-toggle {
+  border-bottom-color: var(--rule);
 }
 
 .telegram-head {
@@ -134,18 +154,34 @@ h1, .dash-title, .overlay-card h1 {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-soft);
-  margin-bottom: 0.4rem;
+}
+
+.chevron {
+  font-size: 1rem;
+  color: var(--ink-soft);
+  transition: transform 0.2s;
+}
+
+#menu-block.menu-collapsed .chevron {
+  transform: rotate(-90deg);
 }
 
 .telegram-body {
   font-style: italic;
-  font-size: 1.05rem;
+  font-size: 1rem;
+  padding: 0.6rem 1rem 0.4rem;
 }
 
 #menu {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  padding: 0.2rem 1rem 0.8rem;
+}
+
+#menu-block.menu-collapsed .telegram-body,
+#menu-block.menu-collapsed #menu {
+  display: none;
 }
 
 .menu-btn {
@@ -224,13 +260,24 @@ h1, .dash-title, .overlay-card h1 {
   font-style: italic;
 }
 
-/* Tabs — dossier van genomen waarnemingen */
+/* Tabs — horizontaal scrollbaar */
 #tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.3rem;
-  padding-top: 0.3rem;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.3rem 0 0;
   border-top: 1px dashed var(--rule);
+  scrollbar-width: thin;
+}
+
+#tabs::-webkit-scrollbar {
+  height: 6px;
+}
+#tabs::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 3px;
 }
 
 #tabs:empty {
@@ -238,6 +285,7 @@ h1, .dash-title, .overlay-card h1 {
 }
 
 .tab {
+  flex: 0 0 auto;
   border: 1px solid var(--rule);
   border-bottom: none;
   padding: 0.35rem 0.6rem 0.3rem;
