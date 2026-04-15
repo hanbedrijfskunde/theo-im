@@ -1,0 +1,1417 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)https://businessdatasolutions.github.io/ontology-case-example/ -->
+<html lang="nl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Platte Data naar Ontologie</title>
+    <script src="./Van Platte Data naar Ontologie_files/saved_resource"></script>
+    <script src="./Van Platte Data naar Ontologie_files/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Scrollytelling Layout */
+        #scrolly {
+            position: relative;
+            display: flex;
+            padding: 1rem;
+        }
+
+        article {
+            position: relative;
+            padding: 0 1rem;
+            width: 35%;
+            max-width: 30rem;
+            margin-top: 20vh;
+            margin-bottom: 50vh;
+            z-index: 10;
+        }
+
+        .step {
+            margin: 0 auto 80vh auto;
+            padding: 2rem;
+            background-color: rgba(30, 41, 59, 0.9);
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease-in-out;
+            opacity: 0.3;
+        }
+
+        .step.is-active {
+            opacity: 1;
+            transform: scale(1.02);
+            border-color: #3b82f6;
+        }
+
+        figure {
+            position: sticky;
+            top: 0;
+            width: 65%;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Tabel Styling */
+        #data-table-container {
+            position: absolute;
+            width: 90%;
+            max-height: 80vh;
+            overflow: auto;
+            background: #1e293b;
+            border-radius: 0.5rem;
+            border: 1px solid #334155;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #334155; }
+        th { background-color: #0f172a; color: #94a3b8; position: sticky; top: 0; z-index: 2; }
+        tr:hover { background-color: #334155; }
+
+        /* SVG D3 Canvas */
+        #d3-canvas {
+            width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0;
+            transition: opacity 0.8s ease;
+            opacity: 0;
+        }
+
+        .node circle { stroke: #fff; stroke-width: 2px; transition: all 0.4s; }
+        .node:hover circle { stroke-width: 4px; filter: brightness(1.2); }
+        .node text { font-family: 'Inter', sans-serif; pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+        .link { stroke: #64748b; stroke-opacity: 0.6; transition: all 0.4s; }
+        .link-label {
+            font-family: 'Inter', sans-serif; font-size: 10px; fill: #94a3b8;
+            pointer-events: none; text-shadow: 0 0 5px #0f172a, 0 0 5px #0f172a, 0 0 5px #0f172a;
+        }
+
+        /* DIKW fase-badges */
+        .dikw-badge {
+            display: inline-block; padding: 2px 12px; border-radius: 999px;
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+            text-transform: uppercase; margin-bottom: 0.75rem;
+        }
+        .dikw-data { background: #334155; color: #94a3b8; }
+        .dikw-informatie { background: #1e3a5f; color: #93c5fd; }
+        .dikw-kennis { background: #064e3b; color: #6ee7b7; }
+        .dikw-inzicht { background: #78350f; color: #fcd34d; }
+        .dikw-impact { background: #4c0519; color: #fda4af; }
+        .dikw-netwerk { background: #312e81; color: #c4b5fd; }
+
+        /* Scenario knoppen */
+        .scenario-btn {
+            display: inline-block; margin-top: 1rem; padding: 0.6rem 1.2rem;
+            border: none; border-radius: 0.5rem; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .scenario-btn:hover { transform: scale(1.03); filter: brightness(1.1); }
+        .scenario-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; filter: none; }
+        .btn-success { background: #059669; color: white; }
+        .btn-danger { background: #dc2626; color: white; }
+
+        /* Scenario floating labels */
+        .floating-label {
+            font-family: 'Inter', sans-serif;
+            pointer-events: none;
+            text-shadow: 0 0 8px #0f172a, 0 0 8px #0f172a;
+        }
+
+        /* Puls-animatie voor scenario */
+        @keyframes pulse-green {
+            0%, 100% { stroke: #22c55e; stroke-width: 4px; }
+            50% { stroke: #86efac; stroke-width: 8px; }
+        }
+        @keyframes pulse-red {
+            0%, 100% { stroke: #ef4444; stroke-width: 4px; }
+            50% { stroke: #fca5a5; stroke-width: 8px; }
+        }
+        .node-pulse-green circle { animation: pulse-green 0.8s ease-in-out 2; stroke: #22c55e; stroke-width: 4px; }
+        .node-pulse-red circle { animation: pulse-red 0.6s ease-in-out 3; stroke: #ef4444; stroke-width: 4px; }
+
+        /* DIKW Visual (stap 7) */
+        #dikw-visual {
+            position: absolute; width: 90%; height: 80%;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+            opacity: 0; pointer-events: none;
+        }
+        #dikw-visual.visible { opacity: 1; pointer-events: auto; }
+
+        /* AI Chat ballonnen */
+        #ai-chat {
+            position: absolute; bottom: 20px; left: 20px; width: 280px;
+            max-height: 45vh; overflow-y: auto; z-index: 20;
+            display: flex; flex-direction: column; gap: 6px;
+            pointer-events: auto;
+            scrollbar-width: thin; scrollbar-color: #475569 transparent;
+        }
+        #ai-chat::-webkit-scrollbar { width: 5px; }
+        #ai-chat::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        .ai-bubble {
+            background: rgba(30, 41, 59, 0.92); border: 1px solid #334155;
+            border-radius: 12px; padding: 8px 12px; font-size: 0.78rem;
+            color: #e2e8f0; line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            opacity: 0; transform: translateY(8px);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .ai-bubble.visible { opacity: 1; transform: translateY(0); }
+        .ai-bubble .ai-icon { color: #facc15; font-weight: 700; margin-right: 4px; }
+        .ai-bubble.success { border-color: #22c55e; }
+        .ai-bubble.fail { border-color: #ef4444; }
+        .ai-bubble.rollback { border-color: #facc15; }
+
+        /* Footnotes */
+        .footnote-ref {
+            font-size: 0.7em; vertical-align: super;
+            color: #60a5fa; text-decoration: none; cursor: help;
+        }
+        .footnotes {
+            max-width: 60rem; margin: 0 auto; padding: 3rem 2rem;
+            border-top: 1px solid #334155;
+        }
+        .footnotes ol { padding-left: 1.5rem; }
+        .footnotes li { color: #94a3b8; font-size: 0.8rem; margin-bottom: 0.5rem; line-height: 1.5; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 767px) {
+            #scrolly {
+                flex-direction: column;
+                padding: 0;
+            }
+            article {
+                width: 100%;
+                max-width: 100%;
+                padding: 0 0.75rem;
+                margin-top: 0;
+                margin-bottom: 2rem;
+                order: 2;
+            }
+            .step {
+                margin: 0 0 60vh 0;
+                padding: 1rem;
+                overflow-wrap: break-word;
+            }
+            .step.is-active {
+                transform: none;
+            }
+            figure {
+                width: 100%;
+                height: 42vh;
+                min-height: 250px;
+                order: 1;
+                position: sticky;
+                top: 0;
+                z-index: 5;
+            }
+            #data-table-container {
+                width: 96%;
+                max-height: 38vh;
+                -webkit-overflow-scrolling: touch;
+            }
+            table { font-size: 0.7rem; }
+            th, td { padding: 0.4rem 0.5rem; }
+            #ai-chat {
+                width: min(200px, 55vw);
+                bottom: 8px;
+                left: 8px;
+                max-height: 25vh;
+            }
+            .ai-bubble { font-size: 0.7rem; padding: 6px 8px; }
+            #dikw-visual { width: 98%; height: 95%; }
+            .footnotes { padding: 2rem 1rem; }
+            .scenario-btn { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
+        }
+
+        @media (max-width: 479px) {
+            .step { padding: 0.75rem; font-size: 0.9rem; }
+            .step h2 { font-size: 1.3rem; }
+            figure { height: 38vh; min-height: 220px; }
+            table { font-size: 0.6rem; }
+            th, td { padding: 0.25rem 0.35rem; }
+            #ai-chat { width: min(170px, 50vw); max-height: 22vh; }
+            .ai-bubble { font-size: 0.65rem; padding: 5px 7px; }
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.visible{visibility:visible}.mx-auto{margin-left:auto;margin-right:auto}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-8{margin-bottom:2rem}.mt-16{margin-top:4rem}.inline-block{display:inline-block}.flex{display:flex}.h-6{height:1.5rem}.min-h-screen{min-height:100vh}.w-6{width:1.5rem}.max-w-4xl{max-width:56rem}@keyframes bounce{0%, 100%{transform:translateY(-25%);animation-timing-function:cubic-bezier(0.8,0,1,1)}50%{transform:none;animation-timing-function:cubic-bezier(0,0,0.2,1)}}.animate-bounce{animation:bounce 1s infinite}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.rounded-xl{border-radius:0.75rem}.rounded{border-radius:0.25rem}.border{border-width:1px}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-700{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.p-4{padding:1rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.text-left{text-align:left}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.tracking-widest{letter-spacing:0.1em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-rose-400{--tw-text-opacity:1;color:rgb(251 113 133 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-violet-400{--tw-text-opacity:1;color:rgb(167 139 250 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.text-blue-200{--tw-text-opacity:1;color:rgb(191 219 254 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}@media (min-width: 768px){.md\:p-8{padding:2rem}.md\:text-5xl{font-size:3rem;line-height:1}}</style></head>
+<body>
+
+    <!-- INLEIDING -->
+    <header class="min-h-screen flex flex-col justify-center items-center text-center p-4 md:p-8 max-w-4xl mx-auto">
+        <span class="text-sm font-bold tracking-widest text-slate-400 uppercase mb-4">Van informatie naar ontologie</span>
+        <h1 class="text-4xl md:text-5xl font-bold text-blue-400 mb-8">Waarom platte data niet meer genoeg is</h1>
+
+        <div class="text-left bg-slate-800 p-4 md:p-8 rounded-xl border border-slate-700 shadow-2xl">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-4">De casus</h2>
+            <p class="mb-4 text-slate-200 leading-relaxed">
+                Het verwijsproces van patiënten met een <strong>Geriatrische Revalidatiezorg (GRZ)-indicatie</strong> loopt van <strong>Ziekenhuis A</strong> naar het herstelcentrum van <strong>Zorggroep B</strong>. Kwetsbare patiënten moeten veilig, tijdig en efficiënt worden aangemeld, beoordeeld en overgeplaatst.
+            </p>
+            <p class="mb-4 text-slate-200 leading-relaxed">
+                Bij dit ketenproces zijn veel stakeholders betrokken — van medisch specialisten en transferverpleegkundigen tot beddenplanners en management. Hoe maak je al die verbindingen zichtbaar?
+            </p>
+            <p class="text-slate-300 leading-relaxed italic">
+                In deze interactieve scrollytelling ontdek je stap voor stap hoe je van een platte tabel naar een <strong>ontologie</strong> komt — en waarom dat juist nu zo belangrijk is.
+            </p>
+        </div>
+
+        <div class="mt-16 text-slate-400 animate-bounce flex flex-col items-center">
+            <p class="mb-2 font-semibold">Scroll naar beneden</p>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+        </div>
+    </header>
+
+    <section id="scrolly">
+        <!-- LINKER KOLOM: VERHAALLIJN -->
+        <article>
+            <!-- DEEL 1: DATA -->
+            <div class="step" data-step="0">
+                <span class="dikw-badge dikw-data">DATA</span>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400">1. De platte realiteit</h2>
+                <p class="mb-4">Dit is hoe we traditioneel informatie vastleggen: in een <strong>tabel</strong>. Perfect om snel door te scannen, maar voor een computer is dit ‘plat’ — rijen en kolommen zonder structuur.</p>
+                <p class="mb-4">Ziekenhuis A heeft zijn eigen systemen. Zorggroep B ook. Ze <em>praten niet met elkaar</em>. Dit zijn <strong>informatiesilos</strong> — en ze kosten bedrijven miljarden per jaar.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn1" class="footnote-ref" title="NIST, 2020">1</a></p>
+                <p class="text-slate-400 text-sm">Een systeem ziet hier slechts tekst in vakjes. Het snapt niet hoe de chirurg samenwerkt met het transferpunt, of welke invloed het management uitoefent.</p>
+            </div>
+
+            <!-- DEEL 2: INFORMATIE (a) -->
+            <div class="step" data-step="1">
+                <span class="dikw-badge dikw-informatie">INFORMATIE</span>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400">2. De spelers identificeren</h2>
+                <p class="mb-4">Om van data naar informatie te komen, breken we de tabel open. We identificeren de <strong>entiteiten</strong> — in ontologie-taal: de <em>zelfstandige naamwoorden</em> (nouns) van je bedrijfsproces.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn2" class="footnote-ref" title="Palantir, 2025">2</a></p>
+                <p>Elke rij wordt een los object. We groeperen ze: <span class="text-blue-400 font-bold">Blauw = Ziekenhuis A</span>, <span class="text-emerald-400 font-bold">Groen = Zorggroep B</span>, <span class="text-purple-400 font-bold">Paars = Management</span>.</p>
+            </div>
+
+            <!-- DEEL 2: INFORMATIE (b) -->
+            <div class="step" data-step="2">
+                <span class="dikw-badge dikw-informatie">INFORMATIE</span>
+                <h2 class="text-2xl font-bold mb-4 text-blue-400">3. Betekenis toevoegen</h2>
+                <p class="mb-4">Een entiteit alleen is niet genoeg. De andere kolommen worden <strong>eigenschappen</strong> (<em>properties</em>). Zo ‘weet’ het systeem dat A44 Orthopedie hoge invloed heeft.</p>
+                <p class="mb-4">Hier zit het <strong>aha-moment</strong>: de tabel bevat <em>impliciete</em> relaties die nergens formeel staan. Dat Orthopedie patiënten verwijst <em>via</em> het Transferpunt — een mens leest dat ertussen, een computer niet.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn3" class="footnote-ref" title="Beverly, 2024">3</a></p>
+                <p class="text-slate-300 text-sm">Vraag 10 stakeholders hoe het verwijsproces werkt en je krijgt 10 antwoorden. Een ontologie dwingt je om vanuit de <em>wereld</em> te beginnen: wat gebeurt er werkelijk?<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn3" class="footnote-ref" title="Beverly, 2024">3</a></p>
+            </div>
+
+            <!-- DEEL 3: KENNIS (a) -->
+            <div class="step" data-step="3">
+                <span class="dikw-badge dikw-kennis">KENNIS</span>
+                <h2 class="text-2xl font-bold mb-4 text-emerald-400">4. Verbindingen leggen</h2>
+                <p class="mb-4">Nu de belangrijkste stap: het leggen van <strong>relaties</strong> (<em>edges</em>) tussen entiteiten. Dit is waar data <em>kennis</em> wordt.</p>
+                <p class="mb-4">‘A44 Orthopedie’ is een <strong>instantie</strong> van de klasse ‘Verwijzende afdeling’. Het Transferpunt is een instantie van ‘Coördinatiefunctie’.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn4" class="footnote-ref" title="BFO - ISO 21838">4</a> De relatie <code>verwijst_patiënt_naar</code> verbindt ze formeel.</p>
+                <p class="text-slate-400 text-sm">Klassen zijn categorieën, instanties zijn concrete gevallen. Dit onderscheid maakt een ontologie herbruikbaar over zorgketens heen.</p>
+            </div>
+
+            <!-- DEEL 3: KENNIS (b) -->
+            <div class="step" data-step="4">
+                <span class="dikw-badge dikw-kennis">KENNIS</span>
+                <h2 class="text-2xl font-bold mb-4 text-emerald-400">5. De kennisgraaf</h2>
+                <p class="mb-4">Het resultaat is een <strong>knowledge graph</strong>: machine-interpreteerbare vocabulaires die entiteiten en logische relaties beschrijven.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn4" class="footnote-ref" title="BFO - ISO 21838">4</a></p>
+                <p class="mb-4">Geen platte tabel meer, maar een dynamisch netwerk. Systemen kunnen nu berekenen wie de bottleneck is, wie de meeste invloed heeft, en hoe informatie stroomt.</p>
+                <p class="font-bold text-yellow-400">Sleep de bollen met je muis en zie hoe het netwerk reageert!</p>
+            </div>
+
+            <!-- DEEL 4: INZICHT (a) - AI als navigator -->
+            <div class="step" data-step="5">
+                <span class="dikw-badge dikw-inzicht">INZICHT</span>
+                <h2 class="text-2xl font-bold mb-4 text-amber-400">6. AI als navigator</h2>
+                <p class="mb-4">De kennisgraaf is een <strong>digital twin</strong> van het verwijsproces. En nu kan AI die twin <em>navigeren</em>.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn2" class="footnote-ref" title="Palantir, 2025">2</a></p>
+                <p class="mb-4">Een transferverpleegkundige vraagt: <em>“Mw. de Vries, heupfractuur, moet naar GRZ. Wat zijn de opties?”</em> De AI doorzoekt de ontologie, weegt constraints af en vindt het pad.</p>
+                <p class="mb-4 text-slate-400 text-sm">Klik en volg het AI-dialoog terwijl het pad door de graaf oplicht.</p>
+                <button id="btn-scenario" class="scenario-btn btn-success" onclick="runScenario()">▶ Start overplaatsing</button>
+                <button id="btn-reset" class="scenario-btn" style="background:#334155;color:#94a3b8;margin-left:0.5rem;display:none" onclick="resetScenario()">Reset</button>
+            </div>
+
+            <!-- DEEL 5: IMPACT - AI als autonome agent -->
+            <div class="step" data-step="6">
+                <span class="dikw-badge dikw-impact">IMPACT</span>
+                <h2 class="text-2xl font-bold mb-4 text-rose-400">7. Van kennis naar actie</h2>
+                <p class="mb-4">Na goedkeuring handelt de AI <strong>zelfstandig</strong>. Ze belt de huisarts (medische overdrachtsinfo), het taxibedrijf (alleen tijdstip en locatie) en het behandelteam (volledige dossieroverdracht). Elke actor krijgt <em>alleen de informatie die bij hun rol hoort</em> — de ontologie bepaalt de grenzen.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn2" class="footnote-ref" title="Palantir, 2025">2</a></p>
+                <p class="mb-4">Een ontologie is niets meer dan de zelfstandige naamwoorden en werkwoorden van je bedrijf<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn2" class="footnote-ref" title="Palantir, 2025">2</a> — hoe je organisatie écht werkt, los van hoe je IT-systemen het toevallig opslaan. Zonder die gedeelde taal praten afdelingen langs elkaar heen<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn3" class="footnote-ref" title="Beverly, 2024">3</a> — precies het probleem van Ziekenhuis A en Zorggroep B.</p>
+                <p class="text-slate-300">AI zonder ontologie is blind. Een ontologie zonder AI is traag. Samen brengen ze <strong>impact</strong>: van silos naar gedeelde taal, van data naar beslissingen.</p>
+            </div>
+
+            <!-- DEEL 4: INZICHT (b) - AI als sandbox-denker -->
+            <div class="step" data-step="7">
+                <span class="dikw-badge dikw-inzicht">INZICHT</span>
+                <h2 class="text-2xl font-bold mb-4 text-amber-400">8. Sandbox: wat als het misgaat?</h2>
+                <p class="mb-4">De AI experimenteert in een <strong>sandbox</strong> — een veilige kopie van de ontologie. Niets raakt de echte planning. Pas na menselijke goedkeuring wordt het scenario “gemerged” naar productie.<a href="https://businessdatasolutions.github.io/ontology-case-example/#fn2" class="footnote-ref" title="Palantir, 2025">2</a></p>
+                <p class="mb-4">Maar wat als een stap faalt? Bij een overplaatsing moeten bed vrijkomen, dossier overgedragen én behandelteam geïnformeerd — <em>tegelijk</em>. Faalt één stap, dan is de patiënt in een <strong>ongedefinieerde toestand</strong>. De ontologie garandeert met <strong>transacties</strong>: alles slaagt, of alles wordt teruggedraaid.</p>
+                <button id="btn-fail" class="scenario-btn btn-danger" onclick="runFailScenario()">⚠ Simuleer storing</button>
+                <button id="btn-reset-fail" class="scenario-btn" style="background:#334155;color:#94a3b8;margin-left:0.5rem;display:none" onclick="resetScenario()">Reset</button>
+            </div>
+
+            <!-- DEEL 6: MULTI-AGENT -->
+            <div class="step" data-step="8">
+                <span class="dikw-badge dikw-netwerk">NETWERK</span>
+                <h2 class="text-2xl font-bold mb-4 text-violet-400">9. Over organisatiegrenzen heen</h2>
+                <p class="mb-4">Wat als de AI van Ziekenhuis A kan communiceren met de AI van Zorggroep B? Dan zoeken ze <em>samen</em> wanneer Mw. de Vries het snelst terecht kan.</p>
+                <p class="mb-4">Stel je nu voor dat er meer zorggroepen zijn. Alle AI-agents spreken dezelfde taal — de <strong>ontologie</strong> — en onderhandelen over de beste optie voor de patiënt.</p>
+                <p class="mb-4 text-slate-400 text-sm">Klik en zie hoe het netwerk groeit wanneer nieuwe zorgaanbieders zich aansluiten.</p>
+                <button id="btn-multiagent" class="scenario-btn" style="background:#7c3aed;color:white" onclick="runMultiAgent()">▶ Verbind zorgnetwerk</button>
+                <button id="btn-reset-multi" class="scenario-btn" style="background:#334155;color:#94a3b8;margin-left:0.5rem;display:none" onclick="resetMultiAgent()">Reset</button>
+            </div>
+
+            <!-- AFSLUITING: DIKW visual -->
+            <div class="step is-active" data-step="9">
+                <span class="dikw-badge dikw-impact">IMPACT</span>
+                <h2 class="text-2xl font-bold mb-4 text-rose-400">De reis in beeld</h2>
+                <p class="mb-4">Van losse datapunten in een tabel, via gestructureerde entiteiten en verbonden netwerken, naar AI-agents die over organisatiegrenzen heen samenwerken.</p>
+                <p class="text-slate-300">De ontologie schaalt van één keten naar een heel netwerk van zorgaanbieders. Dat is de belofte — en de noodzaak.</p>
+            </div>
+        </article>
+
+        <!-- RECHTER KOLOM: VISUALISATIE -->
+        <figure>
+            <div id="data-table-container" style="pointer-events: none; opacity: 0;">
+                <table id="grz-table">
+                    <thead>
+                        <tr><th style="opacity: 0;">Stakeholder</th><th style="opacity: 0;">Rol in verwijsproces</th><th style="opacity: 0;">Invloed</th><th style="opacity: 0;">Behoefte</th></tr>
+                    </thead>
+                    <tbody id="table-body"><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZHA" style="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); border-radius: 30px;">ZHA - Transferpunt</div></td>
+                <td class="other-cell" style="opacity: 0;">Coördineert aanmelding GRZ</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Duidelijke criteria, soepele afstemming</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZHA" style="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); border-radius: 30px;">ZHA - A44 Orthopedie</div></td>
+                <td class="other-cell" style="opacity: 0;">Grote verwijzer (heup/mobiliteit)</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Snelle plaatsing, duidelijk proces</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZHA" style="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); border-radius: 30px;">ZHA - B20 Long/Interne</div></td>
+                <td class="other-cell" style="opacity: 0;">Verwijzer kwetsbare ouderen</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Passende vervolgzorg</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZHA" style="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); border-radius: 30px;">ZHA - B12 Neurologie</div></td>
+                <td class="other-cell" style="opacity: 0;">Verwijzer (CVA/neuro)</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Middelhoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Snelle beoordeling</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZHA" style="background-color: rgb(59, 130, 246); color: rgb(255, 255, 255); border-radius: 30px;">ZHA - C40 Chirurgie</div></td>
+                <td class="other-cell" style="opacity: 0;">Verwijzer (postoperatief)</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Middelhoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Beschikbare plek</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZGB" style="background-color: rgb(16, 185, 129); color: rgb(255, 255, 255); border-radius: 30px;">ZGB - Herstelcentrum Opname</div></td>
+                <td class="other-cell" style="opacity: 0;">Beoordeelt aanmelding en plant</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Complete overdracht, voorspelbaarheid</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="ZGB" style="background-color: rgb(16, 185, 129); color: rgb(255, 255, 255); border-radius: 30px;">ZGB - Behandelteam GRZ</div></td>
+                <td class="other-cell" style="opacity: 0;">Levert revalidatiezorg</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Middel</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Passende indicaties, goede info</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="MGT" style="background-color: rgb(168, 85, 247); color: rgb(255, 255, 255); border-radius: 30px;">Management Ziekenhuis A</div></td>
+                <td class="other-cell" style="opacity: 0;">Doorstroom en capaciteit</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Efficiënt proces, minder ligdagen</td>
+            </tr><tr>
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="MGT" style="background-color: rgb(168, 85, 247); color: rgb(255, 255, 255); border-radius: 30px;">Management Zorggroep B</div></td>
+                <td class="other-cell" style="opacity: 0;">Bezetting herstelcentrum</td>
+                <td class="other-cell" style="opacity: 0;"><span class="px-2 py-1 rounded bg-slate-700 text-xs">Hoog</span></td>
+                <td class="other-cell text-slate-300 italic" style="opacity: 0;">Optimale instroom</td>
+            </tr></tbody>
+                </table>
+            </div>
+            <svg id="d3-canvas" width="830" height="626" style="opacity: 0;"><defs><marker id="arrowhead" viewBox="-0 -5 10 10" refX="25" refY="0" orient="auto" markerWidth="6" markerHeight="6" xoverflow="visible"><path d="M 0,-5 L 10 ,0 L 0,5" fill="#64748b" style="stroke: none;"></path></marker><marker id="arrowhead-green" viewBox="-0 -5 10 10" refX="25" refY="0" orient="auto" markerWidth="6" markerHeight="6"><path d="M 0,-5 L 10 ,0 L 0,5" fill="#22c55e" style="stroke: none;"></path></marker></defs><g class="links"><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="99.6" y1="93.89999999999999" x2="315.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="99.6" y1="175.28" x2="315.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="99.6" y1="256.66" x2="315.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="99.6" y1="338.04" x2="315.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="315.4" y1="219.1" x2="539.5" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="539.5" y1="219.1" x2="730.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="249" y1="513.3199999999999" x2="315.4" y2="219.1"></line><line class="link" stroke-width="2" marker-end="url(#arrowhead)" style="opacity: 0.989105;" stroke="rgb(100, 116, 139)" stroke-opacity="0.6" x1="581" y1="513.3199999999999" x2="539.5" y2="219.1"></line><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(185.92, 143.98) rotate(30.12088479323446) translate(0, -8)">verwijst_patiënt_naar</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(185.92, 192.808) rotate(11.478325919087075) translate(0, -8)">verwijst_patiënt_naar</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(185.92, 241.63600000000002) rotate(-9.873426003057164) translate(0, -8)">verwijst_patiënt_naar</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(185.92, 290.464) rotate(-28.861729287783042) translate(0, -8)">verwijst_patiënt_naar</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(405.03999999999996, 219.09999999999997) rotate(0) translate(0, -8)">draagt_over_aan</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(615.86, 219.09999999999997) rotate(0) translate(0, -8)">plaatst_patiënt_bij</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(275.56, 395.63199999999995) rotate(-77.2824583952878) translate(0, -8)">stuurt_op_doorstroom</text><text class="link-label" text-anchor="middle" font-size="9px" style="opacity: 1;" transform="translate(564.4, 395.63199999999995) rotate(81.97134268119216) translate(0, -8)">stuurt_op_bezetting</text></g><g class="nodes"><g class="node" transform="translate(315.3999938964844, 219.10000610351562)" style="opacity: 1;"><circle r="23.880000000000003" fill="#3b82f6" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="35.88" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">Transferpunt</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g><g class="node" transform="translate(99.5999984741211, 93.9000015258789)" style="opacity: 1;"><circle r="19.900000000000002" fill="#3b82f6" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="31.900000000000002" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">A44 Orthopedie</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g><g class="node" transform="translate(99.5999984741211, 175.27999877929688)" style="opacity: 1;"><circle r="19.900000000000002" fill="#3b82f6" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="31.900000000000002" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">B20 Long/Interne</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g><g class="node" transform="translate(99.5999984741211, 256.6600036621094)" style="opacity: 1;"><circle r="15.920000000000002" fill="#3b82f6" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="27.92" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">B12 Neurologie</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#172554" stroke="#2563eb"></rect><text dx="33" dy="4" fill="#93c5fd" font-size="9px" font-weight="500">Invloed: Middel</text></g></g><g class="node" transform="translate(99.5999984741211, 338.0400085449219)" style="opacity: 1;"><circle r="15.920000000000002" fill="#3b82f6" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="27.92" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">C40 Chirurgie</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#172554" stroke="#2563eb"></rect><text dx="33" dy="4" fill="#93c5fd" font-size="9px" font-weight="500">Invloed: Middel</text></g></g><g class="node" transform="translate(249, 513.3200073242188)" style="opacity: 1;"><circle r="19.900000000000002" fill="#a855f7" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="31.900000000000002" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">Mgt. Ziekenhuis A</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g><g class="node" transform="translate(539.5, 219.10000610351562)" style="opacity: 1;"><circle r="23.880000000000003" fill="#10b981" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="35.88" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">Opname ZGB</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g><g class="node" transform="translate(730.4000244140625, 219.10000610351562)" style="opacity: 1;"><circle r="19.900000000000002" fill="#10b981" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="31.900000000000002" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">Behandelteam ZGB</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#172554" stroke="#2563eb"></rect><text dx="33" dy="4" fill="#93c5fd" font-size="9px" font-weight="500">Invloed: Middel</text></g></g><g class="node" transform="translate(581, 513.3200073242188)" style="opacity: 1;"><circle r="19.900000000000002" fill="#a855f7" stroke="rgb(255, 255, 255)" stroke-width="2"></circle><text dx="0" dy="31.900000000000002" text-anchor="middle" fill="white" font-size="12px" font-weight="bold">Mgt. Zorggroep B</text><g class="properties" style="opacity: 0;"><rect x="28" y="-8" width="72.38909090909091" height="18" rx="4" fill="#450a0a" stroke="#dc2626"></rect><text dx="33" dy="4" fill="#fca5a5" font-size="9px" font-weight="500">Invloed: Hoog</text></g></g></g></svg>
+            <div id="ai-chat"></div>
+            <div id="dikw-visual" class="visible"><svg id="dikw-svg" width="788.5" height="575.9200000000001"><g><rect x="10" y="10" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="22" y="32" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">data:</text><circle cx="26.071932057994665" cy="160.04395948499814" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="186.93518293425615" cy="106.23040910939724" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="108.33034565834983" cy="92.42702860052421" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="239.55373429155014" cy="157.51703757358442" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="142.07993266312087" cy="104.95265154361041" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="49.43426078497519" cy="219.95783160917262" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="223.06916277528353" cy="145.0998190853557" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="79.69922095066795" cy="102.95617633884417" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="67.20065563788388" cy="118.59177408111448" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="48.639912663546" cy="218.2867440330859" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="142.94692452759196" cy="225.92372917132803" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="187.28432447031852" cy="68.13341898558049" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="143.9532239506517" cy="78.98254324585437" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="214.74931093871842" cy="147.68827790167956" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="129.2834220968964" cy="144.68302288331375" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle><circle cx="77.0920862856713" cy="54.536946557273104" r="4" fill="none" stroke="#94a3b8" stroke-width="1.5"></circle></g><g><rect x="268.83333333333337" y="10" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="280.83333333333337" y="32" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">informatie:</text><circle cx="284.90526539132804" cy="160.04395948499814" r="4" fill="#3b82f6"></circle><circle cx="445.7685162675895" cy="106.23040910939724" r="4" fill="#3b82f6"></circle><circle cx="367.1636789916832" cy="92.42702860052421" r="4" fill="#3b82f6"></circle><circle cx="498.3870676248835" cy="157.51703757358442" r="4" fill="#10b981"></circle><circle cx="400.91326599645424" cy="104.95265154361041" r="4" fill="#3b82f6"></circle><circle cx="308.2675941183086" cy="219.95783160917262" r="4" fill="#22d3ee"></circle><circle cx="481.9024961086169" cy="145.0998190853557" r="4" fill="#1e40af"></circle><circle cx="338.5325542840013" cy="102.95617633884417" r="4" fill="#10b981"></circle><circle cx="326.03398897121724" cy="118.59177408111448" r="4" fill="#10b981"></circle><circle cx="307.47324599687937" cy="218.2867440330859" r="4" fill="#22d3ee"></circle><circle cx="401.7802578609253" cy="225.92372917132803" r="4" fill="#1e40af"></circle><circle cx="446.1176578036519" cy="68.13341898558049" r="4" fill="#22d3ee"></circle><circle cx="402.7865572839851" cy="78.98254324585437" r="4" fill="#22d3ee"></circle><circle cx="473.58264427205177" cy="147.68827790167956" r="4" fill="#1e40af"></circle><circle cx="388.1167554302298" cy="144.68302288331375" r="4" fill="#3b82f6"></circle><circle cx="335.9254196190047" cy="54.536946557273104" r="4" fill="#22d3ee"></circle></g><g><rect x="527.6666666666667" y="10" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="539.6666666666667" y="32" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">kennis:</text><line x1="543.7385987246614" y1="160.04395948499814" x2="567.100927451642" y2="219.95783160917262" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="160.04395948499814" x2="597.3658876173347" y2="102.95617633884417" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="160.04395948499814" x2="584.8673223045506" y2="118.59177408111448" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="160.04395948499814" x2="566.3065793302128" y2="218.2867440330859" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="625.9970123250166" y2="92.42702860052421" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="757.2204009582169" y2="157.51703757358442" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="659.7465993297876" y2="104.95265154361041" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="740.7358294419503" y2="145.0998190853557" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="704.9509911369853" y2="68.13341898558049" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="732.4159776053851" y2="147.68827790167956" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="106.23040910939724" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="659.7465993297876" y2="104.95265154361041" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="597.3658876173347" y2="102.95617633884417" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="584.8673223045506" y2="118.59177408111448" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="704.9509911369853" y2="68.13341898558049" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="92.42702860052421" x2="594.758752952338" y2="54.536946557273104" stroke="#64748b" stroke-width="1.5"></line><line x1="757.2204009582169" y1="157.51703757358442" x2="740.7358294419503" y2="145.0998190853557" stroke="#64748b" stroke-width="1.5"></line><line x1="757.2204009582169" y1="157.51703757358442" x2="732.4159776053851" y2="147.68827790167956" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="740.7358294419503" y2="145.0998190853557" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="597.3658876173347" y2="102.95617633884417" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="584.8673223045506" y2="118.59177408111448" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="704.9509911369853" y2="68.13341898558049" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="732.4159776053851" y2="147.68827790167956" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="104.95265154361041" x2="594.758752952338" y2="54.536946557273104" stroke="#64748b" stroke-width="1.5"></line><line x1="567.100927451642" y1="219.95783160917262" x2="566.3065793302128" y2="218.2867440330859" stroke="#64748b" stroke-width="1.5"></line><line x1="567.100927451642" y1="219.95783160917262" x2="660.6135911942587" y2="225.92372917132803" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="145.0998190853557" x2="704.9509911369853" y2="68.13341898558049" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="145.0998190853557" x2="732.4159776053851" y2="147.68827790167956" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="145.0998190853557" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="102.95617633884417" x2="584.8673223045506" y2="118.59177408111448" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="102.95617633884417" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="102.95617633884417" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="102.95617633884417" x2="594.758752952338" y2="54.536946557273104" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="118.59177408111448" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="118.59177408111448" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="118.59177408111448" x2="594.758752952338" y2="54.536946557273104" stroke="#64748b" stroke-width="1.5"></line><line x1="566.3065793302128" y1="218.2867440330859" x2="660.6135911942587" y2="225.92372917132803" stroke="#64748b" stroke-width="1.5"></line><line x1="660.6135911942587" y1="225.92372917132803" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="704.9509911369853" y1="68.13341898558049" x2="661.6198906173184" y2="78.98254324585437" stroke="#64748b" stroke-width="1.5"></line><line x1="704.9509911369853" y1="68.13341898558049" x2="732.4159776053851" y2="147.68827790167956" stroke="#64748b" stroke-width="1.5"></line><line x1="661.6198906173184" y1="78.98254324585437" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><line x1="661.6198906173184" y1="78.98254324585437" x2="594.758752952338" y2="54.536946557273104" stroke="#64748b" stroke-width="1.5"></line><line x1="732.4159776053851" y1="147.68827790167956" x2="646.9500887635631" y2="144.68302288331375" stroke="#64748b" stroke-width="1.5"></line><circle cx="543.7385987246614" cy="160.04395948499814" r="4" fill="#3b82f6"></circle><circle cx="704.6018496009228" cy="106.23040910939724" r="4" fill="#3b82f6"></circle><circle cx="625.9970123250166" cy="92.42702860052421" r="4" fill="#3b82f6"></circle><circle cx="757.2204009582169" cy="157.51703757358442" r="4" fill="#10b981"></circle><circle cx="659.7465993297876" cy="104.95265154361041" r="4" fill="#3b82f6"></circle><circle cx="567.100927451642" cy="219.95783160917262" r="4" fill="#22d3ee"></circle><circle cx="740.7358294419503" cy="145.0998190853557" r="4" fill="#1e40af"></circle><circle cx="597.3658876173347" cy="102.95617633884417" r="4" fill="#10b981"></circle><circle cx="584.8673223045506" cy="118.59177408111448" r="4" fill="#10b981"></circle><circle cx="566.3065793302128" cy="218.2867440330859" r="4" fill="#22d3ee"></circle><circle cx="660.6135911942587" cy="225.92372917132803" r="4" fill="#1e40af"></circle><circle cx="704.9509911369853" cy="68.13341898558049" r="4" fill="#22d3ee"></circle><circle cx="661.6198906173184" cy="78.98254324585437" r="4" fill="#22d3ee"></circle><circle cx="732.4159776053851" cy="147.68827790167956" r="4" fill="#1e40af"></circle><circle cx="646.9500887635631" cy="144.68302288331375" r="4" fill="#3b82f6"></circle><circle cx="594.758752952338" cy="54.536946557273104" r="4" fill="#22d3ee"></circle></g><g><rect x="10" y="281.96000000000004" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="22" y="303.96000000000004" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">inzicht:</text><line x1="26.071932057994665" y1="432.0039594849982" x2="49.43426078497519" y2="491.91783160917265" stroke="#64748b" stroke-width="1.5"></line><line x1="26.071932057994665" y1="432.0039594849982" x2="79.69922095066795" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="26.071932057994665" y1="432.0039594849982" x2="67.20065563788388" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="26.071932057994665" y1="432.0039594849982" x2="48.639912663546" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="108.33034565834983" y2="364.3870286005242" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="239.55373429155014" y2="429.4770375735844" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="142.07993266312087" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="223.06916277528353" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="187.28432447031852" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="214.74931093871842" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="186.93518293425615" y1="378.1904091093973" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="142.07993266312087" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="79.69922095066795" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="67.20065563788388" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="187.28432447031852" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="108.33034565834983" y1="364.3870286005242" x2="77.0920862856713" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="239.55373429155014" y1="429.4770375735844" x2="223.06916277528353" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="239.55373429155014" y1="429.4770375735844" x2="214.74931093871842" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="223.06916277528353" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="79.69922095066795" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="67.20065563788388" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="187.28432447031852" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="214.74931093871842" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="142.07993266312087" y1="376.9126515436105" x2="77.0920862856713" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="49.43426078497519" y1="491.91783160917265" x2="48.639912663546" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="49.43426078497519" y1="491.91783160917265" x2="142.94692452759196" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="223.06916277528353" y1="417.05981908535574" x2="187.28432447031852" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="223.06916277528353" y1="417.05981908535574" x2="214.74931093871842" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="223.06916277528353" y1="417.05981908535574" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="79.69922095066795" y1="374.9161763388442" x2="67.20065563788388" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="79.69922095066795" y1="374.9161763388442" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="79.69922095066795" y1="374.9161763388442" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="79.69922095066795" y1="374.9161763388442" x2="77.0920862856713" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="67.20065563788388" y1="390.5517740811145" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="67.20065563788388" y1="390.5517740811145" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="67.20065563788388" y1="390.5517740811145" x2="77.0920862856713" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="48.639912663546" y1="490.246744033086" x2="142.94692452759196" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="142.94692452759196" y1="497.88372917132807" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="187.28432447031852" y1="340.0934189855805" x2="143.9532239506517" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="187.28432447031852" y1="340.0934189855805" x2="214.74931093871842" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="143.9532239506517" y1="350.9425432458544" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="143.9532239506517" y1="350.9425432458544" x2="77.0920862856713" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="214.74931093871842" y1="419.6482779016796" x2="129.2834220968964" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><circle cx="26.071932057994665" cy="432.0039594849982" r="4" fill="#3b82f6"></circle><circle cx="186.93518293425615" cy="378.1904091093973" r="4" fill="#3b82f6"></circle><circle cx="108.33034565834983" cy="364.3870286005242" r="10" fill="#facc15" opacity="0.35"></circle><circle cx="108.33034565834983" cy="364.3870286005242" r="4" fill="#facc15"></circle><circle cx="239.55373429155014" cy="429.4770375735844" r="4" fill="#10b981"></circle><circle cx="142.07993266312087" cy="376.9126515436105" r="4" fill="#3b82f6"></circle><circle cx="49.43426078497519" cy="491.91783160917265" r="4" fill="#22d3ee"></circle><circle cx="223.06916277528353" cy="417.05981908535574" r="4" fill="#1e40af"></circle><circle cx="79.69922095066795" cy="374.9161763388442" r="10" fill="#facc15" opacity="0.35"></circle><circle cx="79.69922095066795" cy="374.9161763388442" r="4" fill="#facc15"></circle><circle cx="67.20065563788388" cy="390.5517740811145" r="4" fill="#10b981"></circle><circle cx="48.639912663546" cy="490.246744033086" r="4" fill="#22d3ee"></circle><circle cx="142.94692452759196" cy="497.88372917132807" r="4" fill="#1e40af"></circle><circle cx="187.28432447031852" cy="340.0934189855805" r="10" fill="#facc15" opacity="0.35"></circle><circle cx="187.28432447031852" cy="340.0934189855805" r="4" fill="#facc15"></circle><circle cx="143.9532239506517" cy="350.9425432458544" r="4" fill="#22d3ee"></circle><circle cx="214.74931093871842" cy="419.6482779016796" r="4" fill="#1e40af"></circle><circle cx="129.2834220968964" cy="416.6430228833138" r="10" fill="#facc15" opacity="0.35"></circle><circle cx="129.2834220968964" cy="416.6430228833138" r="4" fill="#facc15"></circle><circle cx="77.0920862856713" cy="326.49694655727313" r="4" fill="#22d3ee"></circle></g><g><rect x="268.83333333333337" y="281.96000000000004" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="280.83333333333337" y="303.96000000000004" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">wijsheid:</text><line x1="284.90526539132804" y1="432.0039594849982" x2="308.2675941183086" y2="491.91783160917265" stroke="#64748b" stroke-width="1.5"></line><line x1="284.90526539132804" y1="432.0039594849982" x2="338.5325542840013" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="284.90526539132804" y1="432.0039594849982" x2="326.03398897121724" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="284.90526539132804" y1="432.0039594849982" x2="307.47324599687937" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="367.1636789916832" y2="364.3870286005242" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="498.3870676248835" y2="429.4770375735844" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="400.91326599645424" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="481.9024961086169" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="446.1176578036519" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="473.58264427205177" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="400.91326599645424" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="338.5325542840013" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="326.03398897121724" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="446.1176578036519" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="335.9254196190047" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="498.3870676248835" y1="429.4770375735844" x2="481.9024961086169" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="498.3870676248835" y1="429.4770375735844" x2="473.58264427205177" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="481.9024961086169" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="338.5325542840013" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="326.03398897121724" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="446.1176578036519" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="473.58264427205177" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="400.91326599645424" y1="376.9126515436105" x2="335.9254196190047" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="308.2675941183086" y1="491.91783160917265" x2="307.47324599687937" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="308.2675941183086" y1="491.91783160917265" x2="401.7802578609253" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="481.9024961086169" y1="417.05981908535574" x2="446.1176578036519" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="481.9024961086169" y1="417.05981908535574" x2="473.58264427205177" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="481.9024961086169" y1="417.05981908535574" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="338.5325542840013" y1="374.9161763388442" x2="326.03398897121724" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="338.5325542840013" y1="374.9161763388442" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="338.5325542840013" y1="374.9161763388442" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="338.5325542840013" y1="374.9161763388442" x2="335.9254196190047" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="326.03398897121724" y1="390.5517740811145" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="326.03398897121724" y1="390.5517740811145" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="326.03398897121724" y1="390.5517740811145" x2="335.9254196190047" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="307.47324599687937" y1="490.246744033086" x2="401.7802578609253" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="401.7802578609253" y1="497.88372917132807" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="446.1176578036519" y1="340.0934189855805" x2="402.7865572839851" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="446.1176578036519" y1="340.0934189855805" x2="473.58264427205177" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="402.7865572839851" y1="350.9425432458544" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="402.7865572839851" y1="350.9425432458544" x2="335.9254196190047" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="473.58264427205177" y1="419.6482779016796" x2="388.1167554302298" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="284.90526539132804" y1="432.0039594849982" x2="338.5325542840013" y2="374.9161763388442" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="367.1636789916832" y2="364.3870286005242" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="445.7685162675895" y1="378.1904091093973" x2="498.3870676248835" y2="429.4770375735844" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="367.1636789916832" y1="364.3870286005242" x2="338.5325542840013" y2="374.9161763388442" stroke="#facc15" stroke-width="4" opacity="0.9"></line><circle cx="284.90526539132804" cy="432.0039594849982" r="9" fill="#facc15" opacity="0.3"></circle><circle cx="284.90526539132804" cy="432.0039594849982" r="4" fill="#facc15"></circle><circle cx="445.7685162675895" cy="378.1904091093973" r="9" fill="#facc15" opacity="0.3"></circle><circle cx="445.7685162675895" cy="378.1904091093973" r="4" fill="#facc15"></circle><circle cx="367.1636789916832" cy="364.3870286005242" r="9" fill="#facc15" opacity="0.3"></circle><circle cx="367.1636789916832" cy="364.3870286005242" r="4" fill="#facc15"></circle><circle cx="498.3870676248835" cy="429.4770375735844" r="9" fill="#facc15" opacity="0.3"></circle><circle cx="498.3870676248835" cy="429.4770375735844" r="4" fill="#facc15"></circle><circle cx="400.91326599645424" cy="376.9126515436105" r="4" fill="#3b82f6"></circle><circle cx="308.2675941183086" cy="491.91783160917265" r="4" fill="#22d3ee"></circle><circle cx="481.9024961086169" cy="417.05981908535574" r="4" fill="#1e40af"></circle><circle cx="338.5325542840013" cy="374.9161763388442" r="9" fill="#facc15" opacity="0.3"></circle><circle cx="338.5325542840013" cy="374.9161763388442" r="4" fill="#facc15"></circle><circle cx="326.03398897121724" cy="390.5517740811145" r="4" fill="#10b981"></circle><circle cx="307.47324599687937" cy="490.246744033086" r="4" fill="#22d3ee"></circle><circle cx="401.7802578609253" cy="497.88372917132807" r="4" fill="#1e40af"></circle><circle cx="446.1176578036519" cy="340.0934189855805" r="4" fill="#22d3ee"></circle><circle cx="402.7865572839851" cy="350.9425432458544" r="4" fill="#22d3ee"></circle><circle cx="473.58264427205177" cy="419.6482779016796" r="4" fill="#1e40af"></circle><circle cx="388.1167554302298" cy="416.6430228833138" r="4" fill="#3b82f6"></circle><circle cx="335.9254196190047" cy="326.49694655727313" r="4" fill="#22d3ee"></circle></g><g><rect x="527.6666666666667" y="281.96000000000004" width="250.83333333333334" height="263.96000000000004" rx="8" ry="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"></rect><text x="539.6666666666667" y="303.96000000000004" fill="#e2e8f0" font-size="13px" font-weight="700" font-style="italic">impact:</text><circle cx="543.7385987246614" cy="432.0039594849982" r="80.26666666666667" fill="#ef4444" opacity="0.12"></circle><circle cx="543.7385987246614" cy="432.0039594849982" r="66.88888888888889" fill="#f97316" opacity="0.12"></circle><circle cx="543.7385987246614" cy="432.0039594849982" r="53.511111111111106" fill="#facc15" opacity="0.12"></circle><circle cx="543.7385987246614" cy="432.0039594849982" r="40.13333333333333" fill="#22c55e" opacity="0.12"></circle><circle cx="543.7385987246614" cy="432.0039594849982" r="26.755555555555553" fill="#3b82f6" opacity="0.12"></circle><circle cx="543.7385987246614" cy="432.0039594849982" r="13.37777777777778" fill="#8b5cf6" opacity="0.1"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="80.26666666666667" fill="#ef4444" opacity="0.12"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="66.88888888888889" fill="#f97316" opacity="0.12"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="53.511111111111106" fill="#facc15" opacity="0.12"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="40.13333333333333" fill="#22c55e" opacity="0.12"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="26.755555555555553" fill="#3b82f6" opacity="0.12"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="13.37777777777778" fill="#8b5cf6" opacity="0.1"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="80.26666666666667" fill="#ef4444" opacity="0.12"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="66.88888888888889" fill="#f97316" opacity="0.12"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="53.511111111111106" fill="#facc15" opacity="0.12"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="40.13333333333333" fill="#22c55e" opacity="0.12"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="26.755555555555553" fill="#3b82f6" opacity="0.12"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="13.37777777777778" fill="#8b5cf6" opacity="0.1"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="80.26666666666667" fill="#ef4444" opacity="0.12"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="66.88888888888889" fill="#f97316" opacity="0.12"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="53.511111111111106" fill="#facc15" opacity="0.12"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="40.13333333333333" fill="#22c55e" opacity="0.12"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="26.755555555555553" fill="#3b82f6" opacity="0.12"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="13.37777777777778" fill="#8b5cf6" opacity="0.1"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="80.26666666666667" fill="#ef4444" opacity="0.12"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="66.88888888888889" fill="#f97316" opacity="0.12"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="53.511111111111106" fill="#facc15" opacity="0.12"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="40.13333333333333" fill="#22c55e" opacity="0.12"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="26.755555555555553" fill="#3b82f6" opacity="0.12"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="13.37777777777778" fill="#8b5cf6" opacity="0.1"></circle><line x1="543.7385987246614" y1="432.0039594849982" x2="567.100927451642" y2="491.91783160917265" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="432.0039594849982" x2="597.3658876173347" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="432.0039594849982" x2="584.8673223045506" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="432.0039594849982" x2="566.3065793302128" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="625.9970123250166" y2="364.3870286005242" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="757.2204009582169" y2="429.4770375735844" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="659.7465993297876" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="740.7358294419503" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="704.9509911369853" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="732.4159776053851" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="659.7465993297876" y2="376.9126515436105" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="597.3658876173347" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="584.8673223045506" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="704.9509911369853" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="594.758752952338" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="757.2204009582169" y1="429.4770375735844" x2="740.7358294419503" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="757.2204009582169" y1="429.4770375735844" x2="732.4159776053851" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="740.7358294419503" y2="417.05981908535574" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="597.3658876173347" y2="374.9161763388442" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="584.8673223045506" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="704.9509911369853" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="732.4159776053851" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="659.7465993297876" y1="376.9126515436105" x2="594.758752952338" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="567.100927451642" y1="491.91783160917265" x2="566.3065793302128" y2="490.246744033086" stroke="#64748b" stroke-width="1.5"></line><line x1="567.100927451642" y1="491.91783160917265" x2="660.6135911942587" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="417.05981908535574" x2="704.9509911369853" y2="340.0934189855805" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="417.05981908535574" x2="732.4159776053851" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="740.7358294419503" y1="417.05981908535574" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="374.9161763388442" x2="584.8673223045506" y2="390.5517740811145" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="374.9161763388442" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="374.9161763388442" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="597.3658876173347" y1="374.9161763388442" x2="594.758752952338" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="390.5517740811145" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="390.5517740811145" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="584.8673223045506" y1="390.5517740811145" x2="594.758752952338" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="566.3065793302128" y1="490.246744033086" x2="660.6135911942587" y2="497.88372917132807" stroke="#64748b" stroke-width="1.5"></line><line x1="660.6135911942587" y1="497.88372917132807" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="704.9509911369853" y1="340.0934189855805" x2="661.6198906173184" y2="350.9425432458544" stroke="#64748b" stroke-width="1.5"></line><line x1="704.9509911369853" y1="340.0934189855805" x2="732.4159776053851" y2="419.6482779016796" stroke="#64748b" stroke-width="1.5"></line><line x1="661.6198906173184" y1="350.9425432458544" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="661.6198906173184" y1="350.9425432458544" x2="594.758752952338" y2="326.49694655727313" stroke="#64748b" stroke-width="1.5"></line><line x1="732.4159776053851" y1="419.6482779016796" x2="646.9500887635631" y2="416.6430228833138" stroke="#64748b" stroke-width="1.5"></line><line x1="543.7385987246614" y1="432.0039594849982" x2="597.3658876173347" y2="374.9161763388442" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="625.9970123250166" y2="364.3870286005242" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="704.6018496009228" y1="378.1904091093973" x2="757.2204009582169" y2="429.4770375735844" stroke="#facc15" stroke-width="4" opacity="0.9"></line><line x1="625.9970123250166" y1="364.3870286005242" x2="597.3658876173347" y2="374.9161763388442" stroke="#facc15" stroke-width="4" opacity="0.9"></line><circle cx="543.7385987246614" cy="432.0039594849982" r="4" fill="#facc15"></circle><circle cx="704.6018496009228" cy="378.1904091093973" r="4" fill="#facc15"></circle><circle cx="625.9970123250166" cy="364.3870286005242" r="4" fill="#facc15"></circle><circle cx="757.2204009582169" cy="429.4770375735844" r="4" fill="#facc15"></circle><circle cx="659.7465993297876" cy="376.9126515436105" r="4" fill="#3b82f6"></circle><circle cx="567.100927451642" cy="491.91783160917265" r="4" fill="#22d3ee"></circle><circle cx="740.7358294419503" cy="417.05981908535574" r="4" fill="#1e40af"></circle><circle cx="597.3658876173347" cy="374.9161763388442" r="4" fill="#facc15"></circle><circle cx="584.8673223045506" cy="390.5517740811145" r="4" fill="#10b981"></circle><circle cx="566.3065793302128" cy="490.246744033086" r="4" fill="#22d3ee"></circle><circle cx="660.6135911942587" cy="497.88372917132807" r="4" fill="#1e40af"></circle><circle cx="704.9509911369853" cy="340.0934189855805" r="4" fill="#22d3ee"></circle><circle cx="661.6198906173184" cy="350.9425432458544" r="4" fill="#22d3ee"></circle><circle cx="732.4159776053851" cy="419.6482779016796" r="4" fill="#1e40af"></circle><circle cx="646.9500887635631" cy="416.6430228833138" r="4" fill="#3b82f6"></circle><circle cx="594.758752952338" cy="326.49694655727313" r="4" fill="#22d3ee"></circle></g><text x="394.25" y="571.9200000000001" text-anchor="middle" fill="#64748b" font-size="11px" font-style="italic">Van losse datapunten naar gestructureerde impact — de reis die je zojuist hebt doorlopen.</text></svg></div>
+        </figure>
+    </section>
+
+    <!-- FOOTNOTES -->
+    <footer class="footnotes" id="footnotes">
+        <h3 class="text-lg font-bold text-slate-300 mb-4">Bronnen</h3>
+        <ol>
+            <li id="fn1"><strong>NIST (2020)</strong>: kosten niet-interoperabiliteit industriële datasets $21–43 miljard/jaar. McKinsey: midsize bedrijven $20–50M/jaar door informatiesilos.</li>
+            <li id="fn2"><strong>Palantir DevCon (2025)</strong>: “<a href="https://youtu.be/YDAxITCNcko?si=qpTElkwMDX_FykGt" target="_blank" style="color:#60a5fa">Ontology Overview</a>” &amp; “<a href="https://youtu.be/dz20P3j3GMc?si=h2hOZfvhUhvizdKo" target="_blank" style="color:#60a5fa">Ontology Foundations</a>” — ontologie als zelfstandige naamwoorden en werkwoorden van je bedrijf; digital twin; scenario’s en transacties.</li>
+            <li id="fn3"><strong>Beverly, J. (2024)</strong>: “<a href="https://youtu.be/VH9uBxLJx30?si=vhVlZCgIZmWRhwmC" target="_blank" style="color:#60a5fa">Applied Ontology</a>” — University at Buffalo / National Center for Ontological Research. Over informatiesilos, Gene Ontology, en het expliciet maken van impliciete betekenis.</li>
+            <li id="fn4"><strong>BFO — ISO 21838</strong>: Basic Formal Ontology, de enige ISO-standaard voor top-level ontologieën. 700+ projecten wereldwijd. Onderscheid klassen/instanties en relaties.</li>
+        </ol>
+    </footer>
+
+    <script>
+        // =============================================
+        // 1. DATA DEFINITIE
+        // =============================================
+
+        const tableData = [
+            { stakeholder: "ZHA - Transferpunt", rol: "Coördineert aanmelding GRZ", invloed: "Hoog", behoefte: "Duidelijke criteria, soepele afstemming" },
+            { stakeholder: "ZHA - A44 Orthopedie", rol: "Grote verwijzer (heup/mobiliteit)", invloed: "Hoog", behoefte: "Snelle plaatsing, duidelijk proces" },
+            { stakeholder: "ZHA - B20 Long/Interne", rol: "Verwijzer kwetsbare ouderen", invloed: "Hoog", behoefte: "Passende vervolgzorg" },
+            { stakeholder: "ZHA - B12 Neurologie", rol: "Verwijzer (CVA/neuro)", invloed: "Middelhoog", behoefte: "Snelle beoordeling" },
+            { stakeholder: "ZHA - C40 Chirurgie", rol: "Verwijzer (postoperatief)", invloed: "Middelhoog", behoefte: "Beschikbare plek" },
+            { stakeholder: "ZGB - Herstelcentrum Opname", rol: "Beoordeelt aanmelding en plant", invloed: "Hoog", behoefte: "Complete overdracht, voorspelbaarheid" },
+            { stakeholder: "ZGB - Behandelteam GRZ", rol: "Levert revalidatiezorg", invloed: "Middel", behoefte: "Passende indicaties, goede info" },
+            { stakeholder: "Management Ziekenhuis A", rol: "Doorstroom en capaciteit", invloed: "Hoog", behoefte: "Efficiënt proces, minder ligdagen" },
+            { stakeholder: "Management Zorggroep B", rol: "Bezetting herstelcentrum", invloed: "Hoog", behoefte: "Optimale instroom" }
+        ];
+
+        const graphData = {
+            nodes: [
+                { id: "Transferpunt", group: "ZHA", type: "Coordination", invloed: "Hoog", radius: 30 },
+                { id: "A44 Orthopedie", group: "ZHA", type: "Ward", invloed: "Hoog", radius: 25 },
+                { id: "B20 Long/Interne", group: "ZHA", type: "Ward", invloed: "Hoog", radius: 25 },
+                { id: "B12 Neurologie", group: "ZHA", type: "Ward", invloed: "Middel", radius: 20 },
+                { id: "C40 Chirurgie", group: "ZHA", type: "Ward", invloed: "Middel", radius: 20 },
+                { id: "Mgt. Ziekenhuis A", group: "MGT", type: "Management", invloed: "Hoog", radius: 25 },
+                { id: "Opname ZGB", group: "ZGB", type: "Coordination", invloed: "Hoog", radius: 30 },
+                { id: "Behandelteam ZGB", group: "ZGB", type: "Care", invloed: "Middel", radius: 25 },
+                { id: "Mgt. Zorggroep B", group: "MGT", type: "Management", invloed: "Hoog", radius: 25 }
+            ],
+            links: [
+                { source: "A44 Orthopedie", target: "Transferpunt", label: "verwijst_patiënt_naar" },
+                { source: "B20 Long/Interne", target: "Transferpunt", label: "verwijst_patiënt_naar" },
+                { source: "B12 Neurologie", target: "Transferpunt", label: "verwijst_patiënt_naar" },
+                { source: "C40 Chirurgie", target: "Transferpunt", label: "verwijst_patiënt_naar" },
+                { source: "Transferpunt", target: "Opname ZGB", label: "draagt_over_aan" },
+                { source: "Opname ZGB", target: "Behandelteam ZGB", label: "plaatst_patiënt_bij" },
+                { source: "Mgt. Ziekenhuis A", target: "Transferpunt", label: "stuurt_op_doorstroom" },
+                { source: "Mgt. Zorggroep B", target: "Opname ZGB", label: "stuurt_op_bezetting" }
+            ]
+        };
+
+        const colorScale = { "ZHA": "#3b82f6", "ZGB": "#10b981", "MGT": "#a855f7" };
+
+        // =============================================
+        // 2. DOM INITIALISATIE
+        // =============================================
+
+        // Vul de tabel
+        const tbody = document.getElementById('table-body');
+        tableData.forEach(row => {
+            const tr = document.createElement('tr');
+            let group = "ZHA";
+            if (row.stakeholder.includes("ZGB")) group = "ZGB";
+            if (row.stakeholder.includes("Management")) group = "MGT";
+            tr.innerHTML = `
+                <td><div class="stakeholder-cell font-semibold text-blue-200 inline-block px-3 py-1" data-group="${group}">${row.stakeholder}</div></td>
+                <td class="other-cell">${row.rol}</td>
+                <td class="other-cell"><span class="px-2 py-1 rounded bg-slate-700 text-xs">${row.invloed}</span></td>
+                <td class="other-cell text-slate-300 italic">${row.behoefte}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Setup D3 Canvas
+        const container = document.querySelector('figure');
+        let width = container.clientWidth;
+        let height = container.clientHeight;
+
+        // Continuous scaling based on container size
+        function getScale() {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            const minDim = Math.min(w, h);
+            const t = Math.max(0, Math.min(1, (minDim - 280) / 550)); // 0 at 280px, 1 at 830px+
+            return {
+                radiusScale:      0.45 + t * 0.55,
+                fontSize:         Math.round(9 + t * 5),
+                fontSizeProp:     Math.round(7 + t * 3),
+                labelOffset:      Math.round(8 + t * 7),
+                propOffset:       Math.round(16 + t * 19),
+                propRectH:        Math.round(15 + t * 5),
+                propWidthScale:   0.6 + t * 0.4,
+                linkDistance:      Math.round(55 + t * 95),
+                chargeStrength:   Math.round(-120 - t * 280),
+                collideExtra:     Math.round(12 + t * 28),
+                nodeSpacingY:     Math.max(30, h * 0.13),
+                managementY:      Math.min(h * 0.82, h - 60),
+                multiAgentRadius: Math.round(14 + t * 10),
+                floatingLabelSize: Math.round(9 + t * 2),
+                dikwPad:          Math.round(6 + t * 6),
+                dikwDotR:         Math.round(3 + t * 2),
+                dikwInset:        Math.round(10 + t * 10),
+                dikwTopOff:       Math.round(18 + t * 12),
+                dikwLabelSize:    Math.round(10 + t * 4),
+                initSpacingY:     Math.round(30 + t * 30),
+                initOffsetY:      Math.round(30 + t * 70),
+            };
+        }
+        let S = getScale();
+
+        const svg = d3.select("#d3-canvas").attr("width", width).attr("height", height);
+
+        svg.append("defs").append("marker")
+            .attr("id", "arrowhead").attr("viewBox", "-0 -5 10 10")
+            .attr("refX", 25).attr("refY", 0).attr("orient", "auto")
+            .attr("markerWidth", 6).attr("markerHeight", 6).attr("xoverflow", "visible")
+            .append("svg:path").attr("d", "M 0,-5 L 10 ,0 L 0,5").attr("fill", "#64748b").style("stroke","none");
+
+        // Groene pijlpunt voor scenario
+        svg.select("defs").append("marker")
+            .attr("id", "arrowhead-green").attr("viewBox", "-0 -5 10 10")
+            .attr("refX", 25).attr("refY", 0).attr("orient", "auto")
+            .attr("markerWidth", 6).attr("markerHeight", 6)
+            .append("svg:path").attr("d", "M 0,-5 L 10 ,0 L 0,5").attr("fill", "#22c55e").style("stroke","none");
+
+        const linkGroup = svg.append("g").attr("class", "links");
+        const nodeGroup = svg.append("g").attr("class", "nodes");
+
+        let nodesData = graphData.nodes.map(d => ({...d}));
+        let linksData = graphData.links.map(d => ({...d}));
+
+        const nodes = nodeGroup.selectAll(".node")
+            .data(nodesData).enter().append("g").attr("class", "node")
+            .attr("transform", (d, i) => {
+                const x = width / 2, y = S.initOffsetY + (i * S.initSpacingY);
+                d.x = x; d.y = y; d.baseX = x; d.baseY = y;
+                return `translate(${x},${y})`;
+            }).style("opacity", 0);
+
+        nodes.append("circle").attr("r", d => d.radius * S.radiusScale).attr("fill", d => colorScale[d.group]);
+
+        nodes.append("text").attr("dx", 0).attr("dy", d => d.radius * S.radiusScale + S.labelOffset)
+            .attr("text-anchor", "middle").attr("fill", "white")
+            .attr("font-size", S.fontSize + "px").attr("font-weight", "bold").text(d => d.id);
+
+        const propColors = {
+            "Hoog": { bg: "#450a0a", stroke: "#dc2626", text: "#fca5a5", width: 85 },
+            "Middelhoog": { bg: "#431407", stroke: "#ea580c", text: "#fdba74", width: 115 },
+            "Middel": { bg: "#172554", stroke: "#2563eb", text: "#93c5fd", width: 85 }
+        };
+
+        const propsGroup = nodes.append("g").attr("class", "properties").style("opacity", 0);
+        propsGroup.append("rect").attr("x", S.propOffset).attr("y", -8)
+            .attr("width", d => (propColors[d.invloed] ? propColors[d.invloed].width : 80) * S.propWidthScale).attr("height", S.propRectH).attr("rx", 4)
+            .attr("fill", d => propColors[d.invloed] ? propColors[d.invloed].bg : "#1e293b")
+            .attr("stroke", d => propColors[d.invloed] ? propColors[d.invloed].stroke : "#334155");
+        propsGroup.append("text").attr("dx", S.propOffset + 5).attr("dy", 4)
+            .attr("fill", d => propColors[d.invloed] ? propColors[d.invloed].text : "#94a3b8")
+            .attr("font-size", S.fontSizeProp + "px").attr("font-weight", "500").text(d => `Invloed: ${d.invloed}`);
+
+        const links = linkGroup.selectAll(".link").data(linksData).enter().append("line")
+            .attr("class", "link").attr("stroke-width", 2).attr("marker-end", "url(#arrowhead)").style("opacity", 0);
+
+        const linkLabels = linkGroup.selectAll(".link-label").data(linksData).enter().append("text")
+            .attr("class", "link-label").attr("text-anchor", "middle").attr("font-size", S.fontSizeProp + "px").text(d => d.label).style("opacity", 0);
+
+        // Force Simulation
+        const simulation = d3.forceSimulation(nodesData)
+            .force("link", d3.forceLink(linksData).id(d => d.id).distance(S.linkDistance))
+            .force("charge", d3.forceManyBody().strength(S.chargeStrength))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collide", d3.forceCollide().radius(d => d.radius * S.radiusScale + S.collideExtra))
+            .stop();
+
+        function ticked() {
+            links.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+                 .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+            nodes.attr("transform", d => `translate(${d.x},${d.y})`);
+            linkLabels.attr("transform", d => {
+                const t = 0.4;
+                const x = d.source.x * (1 - t) + d.target.x * t;
+                const y = d.source.y * (1 - t) + d.target.y * t;
+                let angle = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x) * (180 / Math.PI);
+                if (angle > 90 || angle < -90) angle += 180;
+                return `translate(${x}, ${y}) rotate(${angle}) translate(0, -8)`;
+            }).attr("x", null).attr("y", null);
+        }
+        simulation.on("tick", ticked);
+
+        function drag(sim) {
+            return d3.drag()
+                .on("start", e => { if (!e.active) sim.alphaTarget(0.3).restart(); e.subject.fx = e.subject.x; e.subject.fy = e.subject.y; })
+                .on("drag", e => { e.subject.fx = e.x; e.subject.fy = e.y; })
+                .on("end", e => { if (!e.active) sim.alphaTarget(0); e.subject.fx = null; e.subject.fy = null; });
+        }
+
+        // =============================================
+        // 3. HULPFUNCTIES
+        // =============================================
+
+        function getNodePosition(d, i, w, h) {
+            let xOff = w / 2, yOff = h / 2;
+            if (d.id === "Transferpunt") { xOff = w * 0.38; yOff = h * 0.35; }
+            else if (d.id === "Opname ZGB") { xOff = w * 0.65; yOff = h * 0.35; }
+            else if (d.group === "ZHA" && d.type === "Ward") { xOff = w * 0.12; yOff = (h * 0.15) + ((i - 1) * S.nodeSpacingY); }
+            else if (d.id === "Behandelteam ZGB") { xOff = w * 0.88; yOff = h * 0.35; }
+            else if (d.group === "MGT") { xOff = d.id.includes("Ziekenhuis") ? w * 0.3 : w * 0.7; yOff = S.managementY; }
+            return { x: xOff, y: yOff };
+        }
+
+        function positionNodesFixed() {
+            nodesData.forEach((d, i) => {
+                const pos = getNodePosition(d, i, width, height);
+                d.x = pos.x; d.y = pos.y;
+            });
+            nodes.transition().duration(800).style("opacity", 1)
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+        }
+
+        function updateLinksFixed() {
+            links.each(function(d) {
+                const src = nodesData.find(n => n.id === (d.source.id || d.source));
+                const tgt = nodesData.find(n => n.id === (d.target.id || d.target));
+                d3.select(this).attr("x1", src.x).attr("y1", src.y).attr("x2", tgt.x).attr("y2", tgt.y);
+            });
+            linkLabels.each(function(d) {
+                const src = nodesData.find(n => n.id === (d.source.id || d.source));
+                const tgt = nodesData.find(n => n.id === (d.target.id || d.target));
+                const t = 0.4, x = src.x * (1-t) + tgt.x * t, y = src.y * (1-t) + tgt.y * t;
+                let angle = Math.atan2(tgt.y - src.y, tgt.x - src.x) * (180 / Math.PI);
+                if (angle > 90 || angle < -90) angle += 180;
+                d3.select(this).attr("transform", `translate(${x}, ${y}) rotate(${angle}) translate(0, -8)`).attr("x", null).attr("y", null);
+            });
+        }
+
+        // =============================================
+        // 4. SCENARIO FUNCTIES
+        // =============================================
+
+        let scenarioRunning = false;
+        let scenarioTimeouts = [];
+
+        const scenarioSteps = [
+            { node: "A44 Orthopedie", label: "Patiënt aangemeld" },
+            { edge: ["A44 Orthopedie", "Transferpunt"], label: "Verwijzing verstuurd" },
+            { node: "Transferpunt", label: "Dossier compleet ✓" },
+            { edge: ["Transferpunt", "Opname ZGB"], label: "Bed beschikbaar ✓" },
+            { node: "Opname ZGB", label: "Opname gepland ✓" },
+            { edge: ["Opname ZGB", "Behandelteam ZGB"], label: "Team geïnformeerd ✓" },
+            { node: "Behandelteam ZGB", label: "Revalidatie gestart ✓" }
+        ];
+
+        function highlightNode(nodeId, color) {
+            nodes.filter(d => d.id === nodeId)
+                .classed("node-pulse-green", color === "#22c55e")
+                .classed("node-pulse-red", color === "#ef4444")
+                .select("circle")
+                .transition().duration(400)
+                .attr("stroke", color).attr("stroke-width", 5);
+        }
+
+        function highlightEdge(src, tgt, color) {
+            links.filter(d => {
+                const sId = d.source.id || d.source, tId = d.target.id || d.target;
+                return (sId === src && tId === tgt) || (sId === tgt && tId === src);
+            }).transition().duration(400)
+                .attr("stroke", color).attr("stroke-width", 4)
+                .attr("stroke-opacity", 1)
+                .attr("marker-end", color === "#22c55e" ? "url(#arrowhead-green)" : "url(#arrowhead)");
+        }
+
+        function showLabel(nodeId, text, color) {
+            const node = nodesData.find(n => n.id === nodeId);
+            if (!node) return;
+            svg.append("text").attr("class", "floating-label scenario-label")
+                .attr("x", node.x).attr("y", node.y - node.radius * S.radiusScale - S.labelOffset)
+                .attr("text-anchor", "middle").attr("fill", color)
+                .attr("font-size", S.floatingLabelSize + "px").attr("font-weight", "600")
+                .text(text).style("opacity", 0)
+                .transition().duration(300).style("opacity", 1);
+        }
+
+        // AI Chat helpers
+        const aiChat = document.getElementById('ai-chat');
+
+        function addBubble(text, type) {
+            const bubble = document.createElement('div');
+            bubble.className = `ai-bubble ${type || ''}`;
+            bubble.innerHTML = `<span class="ai-icon">AI</span> ${text}`;
+            aiChat.appendChild(bubble);
+            requestAnimationFrame(() => {
+                bubble.classList.add('visible');
+                aiChat.scrollTop = aiChat.scrollHeight;
+            });
+        }
+
+        function clearBubbles() { aiChat.innerHTML = ''; }
+
+        function runScenario() {
+            if (scenarioRunning) return;
+            scenarioRunning = true;
+            document.getElementById('btn-scenario').disabled = true;
+            document.getElementById('btn-reset').style.display = 'inline-block';
+            clearBubbles();
+
+            const delay = 900;
+            const chatSteps = [
+                { node: "A44 Orthopedie", label: "Patiënt aangemeld", chat: "Mw. de Vries is postoperatief op A44 Orthopedie. Herstelfase na heupoperatie, GRZ-indicatie.", type: "success" },
+                { edge: ["A44 Orthopedie", "Transferpunt"], chat: "Verwijzing verstuurd naar transferpunt..." },
+                { node: "Transferpunt", label: "Dossier compleet ✓", chat: "Dossier compleet. Medische info, risicoprofiel en voorkeur gecontroleerd.", type: "success" },
+                { edge: ["Transferpunt", "Opname ZGB"], chat: "Bedbeschikbaarheid herstelcentrum controleren..." },
+                { node: "Opname ZGB", label: "Opname gepland ✓", chat: "Bed 12B beschikbaar. Opname gepland voor morgen 10:00.", type: "success" },
+                { edge: ["Opname ZGB", "Behandelteam ZGB"], chat: "Behandelteam informeren..." },
+                { node: "Behandelteam ZGB", label: "Revalidatie gestart ✓", chat: "Behandelteam Y bevestigd. Revalidatieplan klaar. Klaar voor goedkeuring.", type: "success" }
+            ];
+
+            chatSteps.forEach((step, i) => {
+                const t = setTimeout(() => {
+                    if (step.node) {
+                        highlightNode(step.node, "#22c55e");
+                        showLabel(step.node, step.label, "#86efac");
+                    }
+                    if (step.edge) highlightEdge(step.edge[0], step.edge[1], "#22c55e");
+                    if (step.chat) addBubble(step.chat, step.type);
+                }, i * delay);
+                scenarioTimeouts.push(t);
+            });
+        }
+
+        function runFailScenario() {
+            if (scenarioRunning) return;
+            scenarioRunning = true;
+            document.getElementById('btn-fail').disabled = true;
+            document.getElementById('btn-reset-fail').style.display = 'inline-block';
+            clearBubbles();
+
+            const delay = 900;
+
+            const t1 = setTimeout(() => {
+                highlightNode("A44 Orthopedie", "#22c55e");
+                showLabel("A44 Orthopedie", "Patiënt aangemeld", "#86efac");
+                addBubble("Sandbox-scenario gestart. Mw. de Vries voorbereiden voor overplaatsing...", "success");
+            }, 0);
+
+            const t2 = setTimeout(() => {
+                highlightEdge("A44 Orthopedie", "Transferpunt", "#22c55e");
+                addBubble("Verwijzing verstuurd. Dossier controleren...");
+            }, delay);
+
+            const t3 = setTimeout(() => {
+                highlightNode("Transferpunt", "#22c55e");
+                showLabel("Transferpunt", "Dossier compleet ✓", "#86efac");
+                addBubble("Dossier compleet. Bedbeschikbaarheid opvragen...", "success");
+            }, delay * 2);
+
+            const t4 = setTimeout(() => {
+                highlightEdge("Transferpunt", "Opname ZGB", "#ef4444");
+                showLabel("Opname ZGB", "Geen bed beschikbaar ✗", "#fca5a5");
+                highlightNode("Opname ZGB", "#ef4444");
+                addBubble("FOUT: Geen bed beschikbaar in herstelcentrum. Transactie mislukt.", "fail");
+            }, delay * 3);
+
+            const t5 = setTimeout(() => {
+                nodes.filter(d => ["A44 Orthopedie","Transferpunt"].includes(d.id))
+                    .classed("node-pulse-green", false).classed("node-pulse-red", true)
+                    .select("circle").transition().duration(300)
+                    .attr("stroke", "#ef4444").attr("stroke-width", 5);
+                svg.selectAll(".scenario-label").transition().duration(300).style("opacity", 0).remove();
+                addBubble("Rollback gestart. Alle wijzigingen worden teruggedraaid...", "fail");
+            }, delay * 4);
+
+            const t6 = setTimeout(() => {
+                showLabel("Transferpunt", "\u21a9 Rollback compleet", "#fcd34d");
+                nodes.classed("node-pulse-green", false).classed("node-pulse-red", false)
+                    .select("circle").transition().duration(600)
+                    .attr("stroke", "#fff").attr("stroke-width", 2);
+                links.transition().duration(600)
+                    .attr("stroke", "#64748b").attr("stroke-width", 2).attr("stroke-opacity", 0.6)
+                    .attr("marker-end", "url(#arrowhead)");
+                addBubble("Sandbox veilig. Geen productiedata gewijzigd. De mens beslist over volgende stap.", "rollback");
+            }, delay * 5.5);
+
+            scenarioTimeouts.push(t1, t2, t3, t4, t5, t6);
+        }
+
+        function resetScenario() {
+            scenarioTimeouts.forEach(clearTimeout);
+            scenarioTimeouts = [];
+            scenarioRunning = false;
+            clearBubbles();
+
+            svg.selectAll(".scenario-label").remove();
+            nodes.classed("node-pulse-green", false).classed("node-pulse-red", false)
+                .select("circle").transition().duration(400)
+                .attr("stroke", "#fff").attr("stroke-width", 2);
+            links.transition().duration(400)
+                .attr("stroke", "#64748b").attr("stroke-width", 2).attr("stroke-opacity", 0.6)
+                .attr("marker-end", "url(#arrowhead)");
+
+            ['btn-scenario','btn-fail'].forEach(id => { const b = document.getElementById(id); if(b) b.disabled = false; });
+            ['btn-reset','btn-reset-fail'].forEach(id => { const b = document.getElementById(id); if(b) b.style.display = 'none'; });
+        }
+
+        // =============================================
+        // 5. MULTI-AGENT FUNCTIES (stap 8)
+        // =============================================
+
+        const multiAgentColors = { "ZGC": "#f97316", "ZGD": "#ec4899" }; // oranje, roze
+        let multiAgentElements = []; // voor cleanup
+
+        function removeMultiAgentNodes() {
+            multiAgentElements.forEach(el => el.remove());
+            multiAgentElements = [];
+            clearBubbles();
+            const btnM = document.getElementById('btn-multiagent');
+            const btnR = document.getElementById('btn-reset-multi');
+            if (btnM) btnM.disabled = false;
+            if (btnR) btnR.style.display = 'none';
+        }
+
+        function runMultiAgent() {
+            removeMultiAgentNodes();
+            clearBubbles();
+            document.getElementById('btn-multiagent').disabled = true;
+            document.getElementById('btn-reset-multi').style.display = 'inline-block';
+
+            // Posities voor nieuwe organisaties
+            const tpNode = nodesData.find(n => n.id === "Transferpunt");
+            const newOrgs = [
+                { id: "Opname ZGC", label: "Zorggroep C", group: "ZGC", x: width * 0.75, y: height * 0.18, r: S.multiAgentRadius },
+                { id: "Opname ZGD", label: "Zorggroep D", group: "ZGD", x: width * 0.82, y: height * 0.55, r: S.multiAgentRadius }
+            ];
+
+            const delay = 1000;
+
+            // Stap 1: AI ZHA en ZGB communiceren
+            const t1 = setTimeout(() => {
+                highlightNode("Transferpunt", "#22c55e");
+                highlightNode("Opname ZGB", "#22c55e");
+                highlightEdge("Transferpunt", "Opname ZGB", "#22c55e");
+                addBubble("<strong>AI Ziekenhuis A:</strong> Mw. de Vries is klaar voor overplaatsing. Wanneer is er plek?", "success");
+            }, 0);
+
+            const t2 = setTimeout(() => {
+                addBubble("<strong>AI Zorggroep B:</strong> Bed beschikbaar over 2 dagen. Behandelteam Y inzetbaar.", "success");
+            }, delay);
+
+            // Stap 2: Zorggroep C verschijnt
+            const t3 = setTimeout(() => {
+                const org = newOrgs[0];
+                const g = nodeGroup.append("g").attr("class", "node multi-agent-node")
+                    .attr("transform", `translate(${tpNode.x},${tpNode.y})`).style("opacity", 0);
+                g.append("circle").attr("r", org.r).attr("fill", multiAgentColors[org.group])
+                    .attr("stroke", "#fff").attr("stroke-width", 2);
+                g.append("text").attr("dy", org.r + S.labelOffset).attr("text-anchor", "middle")
+                    .attr("fill", "white").attr("font-size", S.fontSize + "px").attr("font-weight", "bold").text(org.label);
+                g.transition().duration(600).style("opacity", 1)
+                    .attr("transform", `translate(${org.x},${org.y})`);
+                multiAgentElements.push(g);
+
+                // Edge van Transferpunt naar ZGC
+                const line = linkGroup.append("line").attr("class", "link multi-agent-link")
+                    .attr("x1", tpNode.x).attr("y1", tpNode.y).attr("x2", tpNode.x).attr("y2", tpNode.y)
+                    .attr("stroke", multiAgentColors[org.group]).attr("stroke-width", 2)
+                    .attr("stroke-opacity", 0.8).attr("stroke-dasharray", "6,3");
+                line.transition().duration(600).attr("x2", org.x).attr("y2", org.y);
+                multiAgentElements.push(line);
+
+                addBubble("<strong>AI Zorggroep C:</strong> Bed morgen beschikbaar. Gespecialiseerd GRZ-team inzetbaar.", "success");
+            }, delay * 2);
+
+            // Stap 3: Zorggroep D verschijnt
+            const t4 = setTimeout(() => {
+                const org = newOrgs[1];
+                const g = nodeGroup.append("g").attr("class", "node multi-agent-node")
+                    .attr("transform", `translate(${tpNode.x},${tpNode.y})`).style("opacity", 0);
+                g.append("circle").attr("r", org.r).attr("fill", multiAgentColors[org.group])
+                    .attr("stroke", "#fff").attr("stroke-width", 2);
+                g.append("text").attr("dy", org.r + S.labelOffset).attr("text-anchor", "middle")
+                    .attr("fill", "white").attr("font-size", S.fontSize + "px").attr("font-weight", "bold").text(org.label);
+                g.transition().duration(600).style("opacity", 1)
+                    .attr("transform", `translate(${org.x},${org.y})`);
+                multiAgentElements.push(g);
+
+                const line = linkGroup.append("line").attr("class", "link multi-agent-link")
+                    .attr("x1", tpNode.x).attr("y1", tpNode.y).attr("x2", tpNode.x).attr("y2", tpNode.y)
+                    .attr("stroke", multiAgentColors[org.group]).attr("stroke-width", 2)
+                    .attr("stroke-opacity", 0.8).attr("stroke-dasharray", "6,3");
+                line.transition().duration(600).attr("x2", org.x).attr("y2", org.y);
+                multiAgentElements.push(line);
+
+                addBubble("<strong>AI Zorggroep D:</strong> Wachtlijst 5 dagen. Geen geschikte match op dit moment.");
+            }, delay * 3);
+
+            // Stap 4: AI-conclusie
+            const t5 = setTimeout(() => {
+                addBubble("<strong>AI Ziekenhuis A:</strong> Beste optie: <strong>Zorggroep C</strong> — morgen beschikbaar, gespecialiseerd team. Scenario klaarzetten voor goedkeuring?", "success");
+            }, delay * 4.2);
+
+            scenarioTimeouts.push(t1, t2, t3, t4, t5);
+        }
+
+        function resetMultiAgent() {
+            scenarioTimeouts.forEach(clearTimeout);
+            scenarioTimeouts = [];
+            removeMultiAgentNodes();
+            // Reset highlights
+            nodes.classed("node-pulse-green", false).select("circle").transition().duration(400)
+                .attr("stroke", "#fff").attr("stroke-width", 2);
+            links.transition().duration(400)
+                .attr("stroke", "#64748b").attr("stroke-width", 2).attr("stroke-opacity", 0.6)
+                .attr("marker-end", "url(#arrowhead)");
+        }
+
+        // =============================================
+        // 6. DIKW VISUAL (stap 9)
+        // =============================================
+
+        function buildDIKWVisual() {
+            const svgW = width * 0.95, svgH = height * 0.92;
+            const dikwSvg = d3.select("#dikw-svg").attr("width", svgW).attr("height", svgH);
+
+            const cols = 3, rows = 2;
+            const pad = S.dikwPad, gap = Math.max(4, pad - 2);
+            const cellW = (svgW - pad * 2 - gap * (cols - 1)) / cols;
+            const cellH = (svgH - pad * 2 - gap * (rows - 1) - 20) / rows;
+            const dotR = S.dikwDotR;
+            const dotColors = ["#3b82f6", "#10b981", "#1e40af", "#22d3ee"];
+            const yellow = "#facc15";
+
+            function seededRandom(seed) { let s = seed; return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; }
+
+            // Genereer relatieve posities (0-1) EEN KEER, hergebruik in elk panel
+            const dotCount = 16;
+            const rngPos = seededRandom(42);
+            const relDots = [];
+            for (let i = 0; i < dotCount; i++) {
+                relDots.push({ rx: rngPos(), ry: rngPos() });
+            }
+
+            // Vaste kleur per stip (consistent over panelen)
+            const rngCol = seededRandom(77);
+            const dotColorIdx = relDots.map(() => Math.floor(rngCol() * dotColors.length));
+
+            // Map relatieve posities naar absolute cel-coordinaten
+            function cellDots(x, y, w, h) {
+                const inset = S.dikwInset, topOff = S.dikwTopOff;
+                return relDots.map(d => ({
+                    x: x + inset + d.rx * (w - inset * 2),
+                    y: y + topOff + inset + d.ry * (h - topOff - inset * 2)
+                }));
+            }
+
+            // Edges: verbind nabije punten
+            function makeEdges(dots, maxDist) {
+                const edges = [];
+                for (let i = 0; i < dots.length; i++)
+                    for (let j = i + 1; j < dots.length; j++) {
+                        const dx = dots[i].x - dots[j].x, dy = dots[i].y - dots[j].y;
+                        if (Math.sqrt(dx*dx + dy*dy) < maxDist) edges.push([i, j]);
+                    }
+                return edges;
+            }
+
+            // BFS langste pad
+            function bfsLongest(adj, start) {
+                const visited = new Set([start]), queue = [[start, [start]]];
+                let longest = [start];
+                while (queue.length) {
+                    const [node, path] = queue.shift();
+                    if (path.length > longest.length) longest = path;
+                    for (const nb of (adj[node] || []))
+                        if (!visited.has(nb)) { visited.add(nb); queue.push([nb, [...path, nb]]); }
+                }
+                return longest;
+            }
+
+            const highlightIdx = [2, 7, 11, 14]; // gele insight-nodes
+
+            const panels = [
+                { label: "data:", row: 0, col: 0 },
+                { label: "informatie:", row: 0, col: 1 },
+                { label: "kennis:", row: 0, col: 2 },
+                { label: "inzicht:", row: 1, col: 0 },
+                { label: "wijsheid:", row: 1, col: 1 },
+                { label: "impact:", row: 1, col: 2 }
+            ];
+
+            panels.forEach((p, pi) => {
+                const x = pad + p.col * (cellW + gap);
+                const y = pad + p.row * (cellH + gap);
+                const g = dikwSvg.append("g");
+                const dots = cellDots(x, y, cellW, cellH);
+                const edgeDist = Math.min(cellW, cellH) * 0.38;
+
+                // Panel achtergrond
+                g.append("rect").attr("x", x).attr("y", y).attr("width", cellW).attr("height", cellH)
+                    .attr("rx", 8).attr("ry", 8)
+                    .attr("fill", "#1e293b").attr("stroke", "#475569").attr("stroke-width", 1.5);
+
+                // Label
+                g.append("text").attr("x", x + pad + 2).attr("y", y + S.dikwTopOff - 4)
+                    .attr("fill", "#e2e8f0").attr("font-size", S.dikwLabelSize + "px").attr("font-weight", "700")
+                    .attr("font-style", "italic").text(p.label);
+
+                if (pi === 0) {
+                    // DATA: lege onverbonden cirkels
+                    dots.forEach(d => {
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", "none").attr("stroke", "#94a3b8").attr("stroke-width", 1.5);
+                    });
+                }
+                else if (pi === 1) {
+                    // INFORMATIE: gekleurde stippen, los
+                    dots.forEach((d, di) => {
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", dotColors[dotColorIdx[di]]);
+                    });
+                }
+                else if (pi === 2) {
+                    // KENNIS: gekleurde stippen + verbindingslijnen
+                    const edges = makeEdges(dots, edgeDist);
+                    edges.forEach(([i, j]) => {
+                        g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                            .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                            .attr("stroke", "#64748b").attr("stroke-width", 1.5);
+                    });
+                    dots.forEach((d, di) => {
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", dotColors[dotColorIdx[di]]);
+                    });
+                }
+                else if (pi === 3) {
+                    // INZICHT: netwerk + gele highlights
+                    const edges = makeEdges(dots, edgeDist);
+                    edges.forEach(([i, j]) => {
+                        g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                            .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                            .attr("stroke", "#64748b").attr("stroke-width", 1.5);
+                    });
+                    dots.forEach((d, di) => {
+                        const hl = highlightIdx.includes(di);
+                        if (hl) g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR + 6)
+                            .attr("fill", yellow).attr("opacity", 0.35);
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", hl ? yellow : dotColors[dotColorIdx[di]]);
+                    });
+                }
+                else if (pi === 4) {
+                    // WIJSHEID: netwerk + geel pad
+                    const edges = makeEdges(dots, edgeDist);
+                    const adj = {}; dots.forEach((_, i) => adj[i] = []);
+                    edges.forEach(([i, j]) => { adj[i].push(j); adj[j].push(i); });
+                    const path = bfsLongest(adj, 0);
+                    const pathSet = new Set(path);
+                    const pathEdgeSet = new Set();
+                    for (let k = 0; k < path.length - 1; k++)
+                        pathEdgeSet.add(`${Math.min(path[k],path[k+1])}-${Math.max(path[k],path[k+1])}`);
+
+                    edges.forEach(([i, j]) => {
+                        g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                            .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                            .attr("stroke", "#64748b").attr("stroke-width", 1.5);
+                    });
+                    edges.forEach(([i, j]) => {
+                        if (pathEdgeSet.has(`${Math.min(i,j)}-${Math.max(i,j)}`)) {
+                            g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                                .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                                .attr("stroke", yellow).attr("stroke-width", 4).attr("opacity", 0.9);
+                        }
+                    });
+                    dots.forEach((d, di) => {
+                        const onPath = pathSet.has(di);
+                        if (onPath) g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR + 5)
+                            .attr("fill", yellow).attr("opacity", 0.3);
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", onPath ? yellow : dotColors[dotColorIdx[di]]);
+                    });
+                }
+                else if (pi === 5) {
+                    // IMPACT: zelfde netwerk, maar rainbow radiating circles vanuit de gele wisdom-nodes
+                    const edges = makeEdges(dots, edgeDist);
+                    const adj = {}; dots.forEach((_, i) => adj[i] = []);
+                    edges.forEach(([i, j]) => { adj[i].push(j); adj[j].push(i); });
+                    const path = bfsLongest(adj, 0);
+                    const pathSet = new Set(path);
+                    const pathEdgeSet = new Set();
+                    for (let k = 0; k < path.length - 1; k++)
+                        pathEdgeSet.add(`${Math.min(path[k],path[k+1])}-${Math.max(path[k],path[k+1])}`);
+
+                    // Rainbow ring kleuren (semi-transparant)
+                    const rainbow = [
+                        { color: "#ef4444", opacity: 0.12 },  // rood
+                        { color: "#f97316", opacity: 0.12 },  // oranje
+                        { color: "#facc15", opacity: 0.12 },  // geel
+                        { color: "#22c55e", opacity: 0.12 },  // groen
+                        { color: "#3b82f6", opacity: 0.12 },  // blauw
+                        { color: "#8b5cf6", opacity: 0.10 },  // violet
+                    ];
+                    const maxRingR = Math.min(cellW, cellH) * 0.32;
+
+                    // Teken radiating cirkels EERST (achtergrond)
+                    dots.forEach((d, di) => {
+                        if (!pathSet.has(di)) return;
+                        rainbow.forEach((ring, ri) => {
+                            const r = maxRingR - ri * (maxRingR / rainbow.length);
+                            g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", r)
+                                .attr("fill", ring.color).attr("opacity", ring.opacity);
+                        });
+                    });
+
+                    // Edges
+                    edges.forEach(([i, j]) => {
+                        g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                            .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                            .attr("stroke", "#64748b").attr("stroke-width", 1.5);
+                    });
+                    edges.forEach(([i, j]) => {
+                        if (pathEdgeSet.has(`${Math.min(i,j)}-${Math.max(i,j)}`)) {
+                            g.append("line").attr("x1", dots[i].x).attr("y1", dots[i].y)
+                                .attr("x2", dots[j].x).attr("y2", dots[j].y)
+                                .attr("stroke", yellow).attr("stroke-width", 4).attr("opacity", 0.9);
+                        }
+                    });
+
+                    // Dots
+                    dots.forEach((d, di) => {
+                        const onPath = pathSet.has(di);
+                        g.append("circle").attr("cx", d.x).attr("cy", d.y).attr("r", dotR)
+                            .attr("fill", onPath ? yellow : dotColors[dotColorIdx[di]]);
+                    });
+                }
+            });
+
+            // Ondertitel
+            dikwSvg.append("text").attr("x", svgW / 2).attr("y", svgH - 4)
+                .attr("text-anchor", "middle").attr("fill", "#64748b")
+                .attr("font-size", Math.max(8, S.dikwLabelSize - 2) + "px").attr("font-style", "italic")
+                .text("Van losse datapunten naar gestructureerde impact — de reis die je zojuist hebt doorlopen.");
+        }
+
+        buildDIKWVisual();
+
+        // =============================================
+        // 6. STAP-FUNCTIES (SCÈNES)
+        // =============================================
+
+        const domTable = document.getElementById('data-table-container');
+        const domSvg = document.getElementById('d3-canvas');
+        const domDIKW = document.getElementById('dikw-visual');
+
+        const steps = [
+            // STAP 0: DATA - Platte tabel
+            function step0() {
+                simulation.stop(); resetScenario();
+                domTable.style.pointerEvents = "auto";
+                domSvg.style.opacity = 0;
+                domDIKW.classList.remove("visible");
+
+                d3.select(domTable).transition().duration(500).style("opacity", 1).style("transform", "scale(1)");
+                d3.selectAll('.other-cell, th').transition().duration(500).style("opacity", 1);
+                d3.selectAll('.stakeholder-cell').transition().duration(500)
+                    .style("background-color", "transparent").style("color", "#bfdbfe").style("border-radius", "0px");
+
+                nodes.transition().duration(300).style("opacity", 0);
+                links.transition().duration(300).style("opacity", 0);
+                linkLabels.transition().duration(300).style("opacity", 0);
+            },
+
+            // STAP 1: INFORMATIE - Entiteiten
+            function step1() {
+                simulation.stop(); resetScenario();
+                domTable.style.pointerEvents = "none";
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+
+                d3.selectAll('.other-cell, th').transition().duration(400).style("opacity", 0);
+                d3.selectAll('.stakeholder-cell').transition().duration(600)
+                    .style("background-color", function() { return colorScale[this.getAttribute('data-group')]; })
+                    .style("color", "white").style("border-radius", "30px");
+
+                d3.select(domTable).transition().delay(600).duration(400).style("opacity", 0).style("transform", "scale(0.9)");
+
+                nodes.transition().delay(600).duration(800).style("opacity", 1)
+                    .attr("transform", (d, i) => {
+                        const pos = getNodePosition(d, i, width, height);
+                        d.x = pos.x; d.y = pos.y;
+                        return `translate(${d.x},${d.y})`;
+                    });
+
+                propsGroup.transition().duration(500).style("opacity", 0);
+                links.transition().duration(500).style("opacity", 0);
+                linkLabels.transition().duration(500).style("opacity", 0);
+            },
+
+            // STAP 2: INFORMATIE - Properties
+            function step2() {
+                simulation.stop(); resetScenario();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+                d3.select(domTable).transition().duration(200).style("opacity", 0);
+                domTable.style.pointerEvents = "none";
+
+                positionNodesFixed();
+                propsGroup.transition().delay(300).duration(800).style("opacity", 1);
+                links.transition().duration(500).style("opacity", 0);
+                linkLabels.transition().duration(500).style("opacity", 0);
+            },
+
+            // STAP 3: KENNIS - Edges
+            function step3() {
+                simulation.stop(); resetScenario();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+                domTable.style.pointerEvents = "none";
+
+                positionNodesFixed();
+                propsGroup.transition().duration(500).style("opacity", 1);
+                updateLinksFixed();
+
+                links.transition().duration(1000).style("opacity", 1);
+                linkLabels.transition().delay(500).duration(1000).style("opacity", 1);
+                nodes.on(".drag", null);
+            },
+
+            // STAP 4: KENNIS - Force sim (interactief)
+            function step4() {
+                resetScenario();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+
+                nodes.style("opacity", 1);
+                propsGroup.style("opacity", 1);
+                links.style("opacity", 1);
+                linkLabels.style("opacity", 1);
+
+                // Verwijder vaste posities
+                nodesData.forEach(d => { d.fx = null; d.fy = null; });
+                simulation.alpha(1).restart();
+                nodes.call(drag(simulation));
+            },
+
+            // STAP 5: INZICHT - Digital Twin scenario
+            function step5() {
+                simulation.stop(); resetScenario();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+
+                // Fix posities voor helder scenario-pad
+                positionNodesFixed();
+                updateLinksFixed();
+                propsGroup.transition().duration(500).style("opacity", 0);
+                links.transition().duration(500).style("opacity", 1);
+                linkLabels.transition().duration(500).style("opacity", 1);
+                nodes.on(".drag", null);
+            },
+
+            // STAP 6: IMPACT - Van kennis naar actie (graaf zichtbaar)
+            function step6() {
+                simulation.stop(); resetScenario(); removeMultiAgentNodes();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+                domTable.style.pointerEvents = "none";
+
+                positionNodesFixed();
+                updateLinksFixed();
+                propsGroup.transition().duration(500).style("opacity", 0);
+                links.transition().duration(500).style("opacity", 1);
+                linkLabels.transition().duration(500).style("opacity", 1);
+                nodes.on(".drag", null);
+            },
+
+            // STAP 7: INZICHT - Sandbox / Transacties
+            function step7() {
+                simulation.stop(); resetScenario(); removeMultiAgentNodes();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+
+                positionNodesFixed();
+                updateLinksFixed();
+                propsGroup.transition().duration(500).style("opacity", 0);
+                links.transition().duration(500).style("opacity", 1);
+                linkLabels.transition().duration(500).style("opacity", 1);
+                nodes.on(".drag", null);
+            },
+
+            // STAP 8: MULTI-AGENT - Netwerk groeit
+            function step8() {
+                simulation.stop(); resetScenario(); removeMultiAgentNodes();
+                domSvg.style.opacity = 1;
+                domDIKW.classList.remove("visible");
+                domTable.style.pointerEvents = "none";
+
+                positionNodesFixed();
+                updateLinksFixed();
+                propsGroup.transition().duration(500).style("opacity", 0);
+                links.transition().duration(500).style("opacity", 1);
+                linkLabels.transition().duration(500).style("opacity", 1);
+                nodes.on(".drag", null);
+            },
+
+            // STAP 9: DIKW Visual (afsluiting)
+            function step9() {
+                simulation.stop(); resetScenario(); removeMultiAgentNodes();
+                domSvg.style.opacity = 0;
+                domDIKW.classList.add("visible");
+                domTable.style.pointerEvents = "none";
+                d3.select(domTable).transition().duration(200).style("opacity", 0);
+            }
+        ];
+
+        // =============================================
+        // 7. INTERSECTION OBSERVER
+        // =============================================
+
+        const stepElements = document.querySelectorAll('.step');
+        const observerOptions = { root: null, rootMargin: '-40% 0px -40% 0px', threshold: 0 };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    stepElements.forEach(el => el.classList.remove('is-active'));
+                    entry.target.classList.add('is-active');
+                    const stepIndex = parseInt(entry.target.getAttribute('data-step'));
+                    if (steps[stepIndex]) steps[stepIndex]();
+                }
+            });
+        }, observerOptions);
+
+        stepElements.forEach(step => observer.observe(step));
+        steps[0]();
+
+        // Responsive resize with debounce
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                width = container.clientWidth;
+                height = container.clientHeight;
+                S = getScale();
+
+                svg.attr("width", width).attr("height", height);
+
+                // Update node visuals
+                nodes.select("circle").attr("r", d => d.radius * S.radiusScale);
+                nodes.select("text")
+                    .attr("font-size", S.fontSize + "px")
+                    .attr("dy", d => d.radius * S.radiusScale + S.labelOffset);
+
+                // Update link labels
+                linkLabels.attr("font-size", S.fontSizeProp + "px");
+
+                // Update property badges
+                propsGroup.select("rect")
+                    .attr("x", S.propOffset)
+                    .attr("width", d => (propColors[d.invloed] ? propColors[d.invloed].width : 80) * S.propWidthScale)
+                    .attr("height", S.propRectH);
+                propsGroup.select("text")
+                    .attr("dx", S.propOffset + 5)
+                    .attr("font-size", S.fontSizeProp + "px");
+
+                // Update simulation forces
+                simulation
+                    .force("link", d3.forceLink(linksData).id(d => d.id).distance(S.linkDistance))
+                    .force("charge", d3.forceManyBody().strength(S.chargeStrength))
+                    .force("center", d3.forceCenter(width / 2, height / 2))
+                    .force("collide", d3.forceCollide().radius(d => d.radius * S.radiusScale + S.collideExtra));
+
+                // Rebuild DIKW visual
+                d3.select("#dikw-svg").selectAll("*").remove();
+                buildDIKWVisual();
+
+                // Re-trigger active step
+                const active = document.querySelector('.step.is-active');
+                if (active) {
+                    const idx = parseInt(active.getAttribute('data-step'));
+                    if (steps[idx]) steps[idx]();
+                }
+            }, 200);
+        });
+
+    </script>
+
+
+</body></html>
