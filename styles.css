@@ -16,10 +16,14 @@ html, body {
   padding: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: "Playfair Display", "Times New Roman", Georgia, serif;
-  font-size: 16px;
-  line-height: 1.45;
+  font-family: "Crimson Text", "Times New Roman", Georgia, serif;
+  font-size: 17px;
+  line-height: 1.5;
   min-height: 100vh;
+}
+
+h1, .dash-title, .overlay-card h1 {
+  font-family: "Playfair Display", "Times New Roman", Georgia, serif;
 }
 
 #app {
@@ -272,6 +276,32 @@ html, body {
   opacity: 0.75;
   stroke: #3a0f0a;
   stroke-width: 0.3;
+  animation: fade-in 400ms ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 0.75; }
+}
+
+#map-bg {
+  transition: opacity 600ms ease-out;
+}
+
+.menu-btn {
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.menu-btn:hover { transform: translateX(2px); }
+
+/* Day-advance flash */
+@keyframes day-flash {
+  0% { color: var(--accent); transform: scale(1.15); }
+  100% { color: var(--accent); transform: scale(1); }
+}
+
+.dash-value.flash {
+  animation: day-flash 400ms ease-out;
 }
 
 .pump-marker {

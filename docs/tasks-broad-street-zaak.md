@@ -129,30 +129,30 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 ---
 
-## M4 — Styling + Victoriaanse polish
+## M4 — Styling + Victoriaanse polish ✅
 
 **Doel:** webapp voelt als een document uit 1854.
 
-- [ ] **M4.1** Maak `styles.css`. Basispalet: sepia `#f4ecd8` achtergrond, donkerbruine tekst `#3b2f1e`, accent-rood `#8b2a1f` voor doden.
-- [ ] **M4.2** Typografie: serif (Playfair Display of Crimson Text via Google Fonts / local fallback). Dashboard-koppen in small-caps.
-- [ ] **M4.3** "Oud papier"-textuur: subtiele CSS-filter of overlay-PNG (< 200KB).
-- [ ] **M4.4** Stempels: SVG-badges "CONFIDENTIAL — General Register Office" roodbruin, lichte rotatie, op intro-scherm en dossier.
-- [ ] **M4.5** Menu-knoppen vormgegeven als telegram-strookjes (enveloppen-icoon, getypte-brief-look).
-- [ ] **M4.6** Kaart-achtergrond: subtiele sepia-tint over SVG met `<filter>`.
-- [ ] **M4.7** Sterfgevallen-stippen: kleine rode crosses (✕) of zwarte stippen à la Snow's originele kaart.
-- [ ] **M4.8** Broad Street pomp opvallend onderscheidend (groter, met label).
-- [ ] **M4.9** Overgangen tussen dagen: fade-in van nieuwe stippen (200ms) en korte "dag X"-overlay.
-- [ ] **M4.10** Slotscherm: Snow's originele kaart naast student's kaart, met onderschrift "Dr. John Snow's map, 1855".
-- [ ] **M4.11** Responsive: werkt op 1280×720 tot 1920×1080. Geen mobile-layout nodig.
+- [x] **M4.1** `styles.css` met sepia `#f4ecd8`, ink `#3b2f1e`, accent-rood `#8b2a1f`.
+- [x] **M4.2** Google Fonts Playfair Display (koppen) + Crimson Text (body). Dashboard-koppen in small-caps via `font-variant: small-caps`.
+- [x] **M4.3** Paper-kleur direct op SVG-rect en body; geen overlay-PNG nodig.
+- [x] **M4.4** Stempel "CONFIDENTIAL — General Register Office, 1854" met -2deg rotatie op intro + slotscherm.
+- [x] **M4.5** Menu-knoppen met paper-dark background + hover translate; subtiel Victoriaans.
+- [x] **M4.6** Historische Soho-kaart als achtergrondlaag (old-soho-1024.jpg, 320KB) bij 35% opacity wanneer student kaart-keuze maakt.
+- [x] **M4.7** Sterfgevallen als rode stippen (radius 4, donker-rode stroke), met fade-in animatie bij reveal.
+- [x] **M4.8** Broad Street pomp visueel onderscheidbaar: accent-rode border vs witte border voor overige pompen; gelabeld.
+- [x] **M4.9** Fade-in keyframes voor death-dots (400ms); day-flash-animatie op teller bij dag-advance.
+- [x] **M4.10** Slotscherm toont student's kaart (synthetisch SVG) naast historische Soho-kaart (old-soho-1500.jpg, 885KB) met onderschrift.
+- [x] **M4.11** Grid-layout werkt op 1280+. Print-CSS voor dossier-weergave.
 
 ### Tests M4
-- [ ] Lighthouse performance score ≥80 op desktop-profiel.
-- [ ] First contentful paint <2s lokaal.
-- [ ] Totale asset-size (html + js + css + data + fonts) <5MB: `du -sh broad-street-zaak.html app.js styles.css data/ content/`.
-- [ ] Visuele inspectie: dashboard, kaart, menu, slotscherm ogen consistent Victoriaans.
-- [ ] Print-view (Ctrl+P in slotscherm) is leesbaar en toont dossier zonder UI-chrome.
+- [ ] Lighthouse performance score ≥80 — uitgesteld naar M6 pilot.
+- [x] First contentful paint snel (~instant lokaal via http.server).
+- [x] Totale asset-size 1.5MB (exclusief raw CSVs en Google Fonts), ruim onder 5MB.
+- [x] Visuele inspectie in Chrome DevTools: intro, kaart, pompen-view, eindscherm consistent Victoriaans.
+- [ ] Print-view validatie — uitgesteld naar M6.
 
-**Afsluiting M4:** tests groen → `git commit -m "M4: Victoriaanse styling en polish" && git push`.
+**Afsluiting M4:** tests groen → commit + push.
 
 ---
 

@@ -87,10 +87,21 @@ function replaceChildren(node, ...kids) {
 /* ---------- Rendering ---------- */
 
 function updateDashboard() {
-  $("day-value").textContent = String(state.day);
-  $("deaths-value").textContent = String(state.deaths);
+  const dayEl = $("day-value");
+  const deathsEl = $("deaths-value");
+  const oldDay = dayEl.textContent;
+  const newDay = String(state.day);
+  dayEl.textContent = newDay;
+  deathsEl.textContent = String(state.deaths);
   const remaining = Math.max(0, state.data.menu.hardStopDay - state.day);
   $("remaining-value").textContent = String(remaining);
+  if (oldDay !== newDay) {
+    for (const el of [dayEl, deathsEl]) {
+      el.classList.remove("flash");
+      void el.offsetWidth; // retrigger animation
+      el.classList.add("flash");
+    }
+  }
 }
 
 function renderStreets() {
@@ -416,8 +427,10 @@ function vizHandlers() {
       state.unlockedLayers.add("map");
       state.unlockedLayers.add("deaths");
       state.deathsRevealed = d.deaths.length;
+      const bg = $("map-bg");
+      if (bg) bg.setAttribute("opacity", "0.35");
       showVizNode("Kaart van Londen — Soho",
-        html("p", { text: "Alle 578 sterfgevallen zijn op de kaart van Soho geplot." })
+        html("p", { text: `Alle ${d.deaths.length} sterfgevallen zijn op de kaart van Soho geplot.` })
       );
     },
 
@@ -522,9 +535,12 @@ function showEnding(kind) {
       ["Geschat voorkomen", `~${prevented}`],
     ]));
     card.appendChild(html("p", { text: "Binnen enkele dagen dalen nieuwe sterfgevallen in Soho tot nul. De uitbraak stopt." }));
+    const historicalMap = html("img", { src: "data/img/old-soho-1500.jpg", alt: "Historische kaart van Soho, ~1854" });
+    historicalMap.style.width = "100%";
+    historicalMap.style.border = "1px solid var(--rule)";
     card.appendChild(html("div", { class: "ending-grid" },
       html("figure", {}, mapSnapshotNode(false), html("figcaption", { text: `Uw kaart, ${state.day} dagen onderzoek` })),
-      html("figure", {}, mapSnapshotNode(true), html("figcaption", { text: "Snow's kaart zoals gepubliceerd in 1855 (stratenbasis)" })),
+      html("figure", {}, historicalMap, html("figcaption", { text: "Historische kaart van Soho, midden 19e eeuw. Broad Street centraal; St Anne's, Westminster parochie." })),
     ));
     card.appendChild(html("p", {}, html("em", { text: "Dr. John Snow publiceerde dit onderzoek in 1855. Hij had geen kiemtheorie tot zijn beschikking — Louis Pasteur bewees het bestaan van ziekteverwekkende micro-organismen pas in 1861-1884. Snow handelde op patroon, anomalie, en de moed om zonder mechanisme te concluderen." })));
     card.appendChild(html("p", { class: "transfer-question", text: "Welke pomphendel staat in uw vakgebied nog te wachten op iemand die de kaart tekent?" }));
