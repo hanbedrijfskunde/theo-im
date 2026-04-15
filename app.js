@@ -641,12 +641,12 @@ function showEnding(kind) {
       ["Geschat voorkomen", `~${prevented}`],
     ]));
     card.appendChild(html("p", { text: "Binnen enkele dagen dalen nieuwe sterfgevallen in Soho tot nul. De uitbraak stopt." }));
-    const historicalMap = html("img", { src: "data/img/old-soho-1500.jpg", alt: "Historische kaart van Soho, ~1854" });
-    historicalMap.style.width = "100%";
-    historicalMap.style.border = "1px solid var(--rule)";
+    const snowMap = html("img", { src: "data/img/snow-map-1500.jpg", alt: "Dr. John Snow's originele cholera-kaart, 1855" });
+    snowMap.style.width = "100%";
+    snowMap.style.border = "1px solid var(--rule)";
     card.appendChild(html("div", { class: "ending-grid" },
       html("figure", {}, mapSnapshotNode(false), html("figcaption", { text: `Uw kaart, ${state.day} dagen onderzoek` })),
-      html("figure", {}, historicalMap, html("figcaption", { text: "Historische kaart van Soho, midden 19e eeuw. Broad Street centraal; St Anne's, Westminster parochie." })),
+      html("figure", {}, snowMap, html("figcaption", { text: "Dr. John Snow's originele kaart, gepubliceerd in On the Mode of Communication of Cholera (2e editie, 1855). Elk zwart blokje is één sterfgeval; de pomp op Broad Street staat centraal." })),
     ));
     card.appendChild(html("p", {}, html("em", { text: "Dr. John Snow publiceerde dit onderzoek in 1855. Hij had geen kiemtheorie tot zijn beschikking — Louis Pasteur bewees het bestaan van ziekteverwekkende micro-organismen pas in 1861-1884. Snow handelde op patroon, anomalie, en de moed om zonder mechanisme te concluderen." })));
     card.appendChild(html("p", { class: "transfer-question", text: "Welke pomphendel staat in uw vakgebied nog te wachten op iemand die de kaart tekent?" }));
