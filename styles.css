@@ -356,6 +356,8 @@ h1, .dash-title, .overlay-card h1 {
   border: 2px double var(--rule);
   padding: 2rem 2.5rem;
   max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   text-align: left;
 }
