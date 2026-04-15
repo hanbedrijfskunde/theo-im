@@ -77,10 +77,30 @@ def read_csv(path: Path) -> list[dict]:
         return list(csv.DictReader(f))
 
 
+CLASS_BASE = [
+    ("Ambachtsman", 142), ("Dagloner", 118), ("Dienstbode", 94),
+    ("Winkelier", 67), ("Geestelijke", 8), ("Gegoede burger", 41),
+    ("Onbekend", 108),
+]
+
+
+def build_class_pool(total: int) -> list[str]:
+    base_sum = sum(c for _, c in CLASS_BASE)
+    pool: list[str] = []
+    for name, count in CLASS_BASE:
+        pool.extend([name] * round(count * total / base_sum))
+    while len(pool) < total:
+        pool.append(CLASS_BASE[-1][0])
+    pool = pool[:total]
+    random.shuffle(pool)
+    return pool
+
+
 def load_deaths() -> list[dict]:
     """Echte Snow.deaths + synthetische namen/leeftijden/adressen + datum uit dates-curve."""
     raw = read_csv(RAW / "snow-deaths.csv")
     dates = read_csv(RAW / "snow-dates.csv")
+    class_pool = build_class_pool(len(raw))
 
     # Verdeel doden over dagen volgens dates-curve (alleen dagen met deaths > 0).
     # Snow.dates loopt van 1854-08-19 t/m 1854-09-30. Alleen sterftedagen gebruiken.
@@ -116,6 +136,7 @@ def load_deaths() -> list[dict]:
             "address": f"{house} {street}",
             "age": age,
             "gender": gender,
+            "class": class_pool[i - 1],
         })
     return deaths
 

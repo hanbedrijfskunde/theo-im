@@ -28,12 +28,18 @@ const state = {
   data: null,
   day: 1,
   deaths: START_DEATHS,
-  deathsRevealed: 0,
   unlockedLayers: new Set(),
   currentStageIdx: 0,
   chosenOptions: new Set(),
   endChoice: null,
 };
+
+// Subset van sterfgevallen die tot NU toe zijn gevallen. snow-deaths.json
+// is gesorteerd op datum, dus slice(0, state.deaths) geeft de correcte
+// historisch-plausibele snapshot op elke spel-dag.
+function deathsSoFar() {
+  return state.data.deaths.slice(0, state.deaths);
+}
 
 async function loadData() {
   const entries = await Promise.all(
@@ -116,8 +122,8 @@ function renderStreets() {
 function renderDeaths() {
   const g = $("layer-deaths");
   clear(g);
-  const show = state.data.deaths.slice(0, state.deathsRevealed);
-  for (const d of show) {
+  if (!state.unlockedLayers.has("deaths")) return;
+  for (const d of deathsSoFar()) {
     g.appendChild(svg("circle", { cx: d.x, cy: d.y, r: 4, class: "death-dot" }));
   }
   // Hampstead marker als die is vrijgespeeld
@@ -371,6 +377,35 @@ function parishNode(deaths) {
   return tableNode(rows, ["street", "count"], ["Straat", "Aantal"]);
 }
 
+function computeDemographics(deaths) {
+  const bins = [[0, 5], [6, 14], [15, 29], [30, 44], [45, 59], [60, 999]];
+  const out = [];
+  for (const [lo, hi] of bins) {
+    for (const g of ["M", "F"]) {
+      const count = deaths.filter(d => d.age >= lo && d.age <= hi && d.gender === g).length;
+      out.push({ ageRange: hi < 999 ? `${lo}-${hi}` : `${lo}+`, gender: g, count });
+    }
+  }
+  return out;
+}
+
+function computeClasses(deaths) {
+  const counts = {};
+  for (const d of deaths) counts[d.class] = (counts[d.class] || 0) + 1;
+  // Behoud originele volgorde uit CLASS_BASE voor herkenbare tabel
+  const order = ["Ambachtsman", "Dagloner", "Dienstbode", "Winkelier", "Geestelijke", "Gegoede burger", "Onbekend"];
+  return order.filter(c => counts[c]).map(c => ({ class: c, count: counts[c] }));
+}
+
+function computeCauses(soFar, totalAll, ref) {
+  const scale = totalAll > 0 ? soFar / totalAll : 0;
+  return ref.map(row =>
+    row.cause.startsWith("Cholera")
+      ? { cause: row.cause, count: soFar }
+      : { cause: row.cause, count: Math.round(row.count * scale) }
+  );
+}
+
 function narrativeNode(paragraphs, findings = []) {
   const wrap = html("div", { class: "viz-narrative" });
   for (const f of findings) wrap.appendChild(html("div", { class: "finding" }, f));
@@ -455,21 +490,36 @@ const MODE_M2_ONLY_KEY_CHOICES = false;
 function vizHandlers() {
   const d = state.data;
   return {
-    causesTable: () => showVizNode("Doodsoorzaken", tableNode(d.rh_causes, ["cause", "count"], ["Doodsoorzaak", "Aantal"])),
-    demographicsChart: () => showVizNode("Demografie", demographicsChartNode(d.rh_demographics)),
+    causesTable: () => showVizNode(
+      "Doodsoorzaken (gemeld tot nu)",
+      tableNode(computeCauses(state.deaths, d.deaths.length, d.rh_causes), ["cause", "count"], ["Doodsoorzaak", "Aantal"]),
+    ),
+    demographicsChart: () => showVizNode(
+      "Demografie (slachtoffers tot nu)",
+      demographicsChartNode(computeDemographics(deathsSoFar())),
+    ),
     previousOutbreaksTable: () => showVizNode("Eerdere uitbraken", tableNode(d.rh_previous, ["year", "city", "deaths", "duration_weeks"], ["Jaar", "Stad", "Doden", "Duur (wk)"])),
     europeMap: () => showVizNode("Cholera elders in Europa 1854", europeMapNode(d.rh_europe)),
-    addressesTable: () => showVizNode(`Namen en adressen (${d.deaths.length})`, addressTableNode(d.deaths, false)),
+    addressesTable: () => showVizNode(
+      `Namen en adressen (${state.deaths} tot nu)`,
+      addressTableNode(deathsSoFar(), false),
+    ),
 
-    addressesTableSorted: () => showVizNode("Adressen alfabetisch", addressTableNode(d.deaths, true)),
-    parishGrouping: () => showVizNode("Gegroepeerd per parochie", parishNode(d.deaths)),
-    classTable: () => showVizNode("Beroep / sociale klasse", tableNode(d.rh_class, ["class", "count"], ["Klasse", "Aantal"])),
+    addressesTableSorted: () => showVizNode(
+      "Adressen alfabetisch (tot nu)",
+      addressTableNode(deathsSoFar(), true),
+    ),
+    parishGrouping: () => showVizNode("Gegroepeerd per parochie (tot nu)", parishNode(deathsSoFar())),
+    classTable: () => showVizNode(
+      "Beroep / sociale klasse (tot nu)",
+      tableNode(computeClasses(deathsSoFar()), ["class", "count"], ["Klasse", "Aantal"]),
+    ),
     mapDeaths: () => {
       state.unlockedLayers.add("map");
       state.unlockedLayers.add("deaths");
-      state.deathsRevealed = d.deaths.length;
+      renderDeaths();
       showVizNode("Kaart van Londen — Soho",
-        html("p", { text: `Alle ${d.deaths.length} sterfgevallen zijn op de kaart van Soho geplot.` })
+        html("p", { text: `Alle ${state.deaths} tot nu toe gemelde sterfgevallen zijn op de kaart van Soho geplot.` })
       );
     },
 
@@ -524,7 +574,7 @@ function mapSnapshotNode(snowStyle = false) {
     const pts = pl.points.map(([x, y]) => `${x},${y}`).join(" ");
     s.appendChild(svg("polyline", { points: pts, fill: "none", stroke: "#6b5a3e", "stroke-width": 1 }));
   }
-  for (const d of state.data.deaths) {
+  for (const d of deathsSoFar()) {
     s.appendChild(svg("circle", { cx: d.x, cy: d.y, r: 4, fill: snowStyle ? "#222" : "#8b2a1f", opacity: 0.75 }));
   }
   for (const p of state.data.pumps) {
@@ -630,9 +680,7 @@ function handleChoice(option) {
   state.day += 1;
   const newDeaths = DEATHS_PER_DAY_ADVANCE[state.day] || 0;
   state.deaths += newDeaths;
-  if (state.unlockedLayers.has("deaths")) {
-    state.deathsRevealed = Math.min(state.data.deaths.length, state.deathsRevealed + newDeaths);
-  }
+  // renderDeaths leest state.deaths automatisch via deathsSoFar()
 
   if (option.advancesStage) state.currentStageIdx += 1;
 
