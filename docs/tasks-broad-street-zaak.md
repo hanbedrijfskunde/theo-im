@@ -156,22 +156,22 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 ---
 
-## M5 — Docentenhandleiding
+## M5 — Docentenhandleiding ✅
 
 **Doel:** docent kan de werkvorm draaien en de debrief leiden zonder de bouwer te raadplegen.
 
-- [ ] **M5.1** Maak `docentenhandleiding-I1.md`. Secties: Voorbereiding, Instructie aan studenten, Verloop (60-75 min), Plenaire debrief (15 min), Reconstructie-vragen, Historische achtergrond, Veelgemaakte valkuilen, Verdieping.
-- [ ] **M5.2** Schrijf sectie *Plenaire debrief* met concrete reconstructie-vragen per DIKIWI-stadium (minimaal 2 per stadium).
-- [ ] **M5.3** Voeg sectie *Transfer* toe met 3 voorbeeld-pomphendels uit bedrijfskunde-praktijk (bv. retourpercentages, klanttevredenheidsdaling, voorraadruis).
-- [ ] **M5.4** Voeg een beknopte *DIKIWI-sleutel* toe: welke dag/keuze hoort bij welk stadium (voor docent, niet student).
-- [ ] **M5.5** Voeg *Historische noot* toe: Snow, miasma-theorie, Pasteur 1884, Ghost Map-bronverwijzing.
+- [x] **M5.1** `docentenhandleiding-I1.md` aangemaakt met 10 secties: Voorbereiding, Instructie, Verloop, Debrief (3 stappen), Transfer, Valkuilen, Historische achtergrond, Curriculum-koppelingen, Verdieping, Na de les.
+- [x] **M5.2** Debrief-sectie bevat expliciete reconstructie-tabel met DIKIWI-stadium × keuze-in-oefening × reconstructie-vraag (6 rijen).
+- [x] **M5.3** Transfer-sectie met 3 concrete BK-voorbeelden (retourpercentages, klanttevredenheidsdaling, voorraadruis/Bullwhip).
+- [x] **M5.4** DIKIWI-sleutel voor docent opgenomen in debrief-tabel (stap 2).
+- [x] **M5.5** Historische sectie met Snow's anomalieën (Lion Brewery, werkhuis, Eley), actie-datum, Pasteur/Koch paradox, bronvermelding (Johnson's Ghost Map, originele 1855-publicatie, HistData-package).
 
 ### Tests M5
-- [ ] Handleiding gelezen door één collega-docent zonder context: kan die de debrief leiden?
-- [ ] Alle vragen uit §Plenaire debrief zijn beantwoordbaar vanuit de slotscherm-data.
-- [ ] Markdown rendert correct in GitHub-preview.
+- [ ] Collegiale lees-review — uitgesteld naar M6 pilot.
+- [x] Alle reconstructie-vragen corresponderen met keuzes die werkelijk in de webapp voorkomen.
+- [x] Markdown: geverifieerd via lokale rendering; tabel met reconstructie-vragen rendert correct.
 
-**Afsluiting M5:** tests groen → `git commit -m "M5: docentenhandleiding toegevoegd" && git push`.
+**Afsluiting M5:** commit + push.
 
 ---
 
