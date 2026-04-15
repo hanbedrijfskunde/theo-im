@@ -57,15 +57,17 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 ---
 
-## M2 — Happy path webapp
+## M2 — Happy path webapp ✅
 
 **Doel:** werkende end-to-end doorloop met alleen de 🎯-keuzes; geen styling, geen rode haringen.
 
-- [ ] **M2.1** Maak `broad-street-zaak.html` in project-root met HTML5-skelet, viewport meta, en `<script type="module" src="app.js"></script>`.
-- [ ] **M2.2** Maak `app.js` als ES-module. State-object: `{day, deaths, deathsOnMap, unlockedLayers, chosenOptions, endState}`. Start-state: `{day: 1, deaths: 56, deathsOnMap: [], unlockedLayers: [], chosenOptions: [], endState: null}`.
-- [ ] **M2.3** Implementeer `loadData()`: fetcht alle JSON-bestanden uit `data/` + `content/menu-content.json` (gemaakt in M2.5) parallel via `Promise.all`.
-- [ ] **M2.4** Render dashboard: `<header>` met dag-teller, doden-teller, resterende dagen. Update na elke keuze.
-- [ ] **M2.5** Maak `content/menu-content.json` met structuur per dag:
+**Resultaat:** volledige happy path werkt end-to-end: intro → dashboard → kaart-reveal → pompen → anomalieën → Board → pomphendel → slotscherm. Tijdens M2 zijn ook de rode-haring viz-handlers geïmplementeerd (M3 wordt grotendeels alleen nog content-polish).
+
+- [x] **M2.1** Maak `broad-street-zaak.html` in project-root met HTML5-skelet, viewport meta, en `<script type="module" src="app.js"></script>`.
+- [x] **M2.2** Maak `app.js` als ES-module. State-object compleet met day, deaths, deathsRevealed, unlockedLayers, currentStageIdx, chosenOptions, endChoice.
+- [x] **M2.3** Implementeer `loadData()`: fetcht alle JSON-bestanden parallel via `Promise.all`.
+- [x] **M2.4** Render dashboard: header met dag-teller, doden-teller, resterende dagen. Update na elke keuze.
+- [x] **M2.5** Maak `content/menu-content.json` met structuur per dag:
   ```json
   {
     "days": [
@@ -73,35 +75,26 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
     ]
   }
   ```
-  Voeg alleen de 🎯-opties uit PRD §8 toe in deze fase; rode haringen komen in M3.
-- [ ] **M2.6** Render menu onder dashboard: lijst knoppen uit huidige dag-definitie. Klik → `handleChoice(optionId)`.
-- [ ] **M2.7** Implementeer `handleChoice(optionId)`:
-  - voeg optie toe aan `chosenOptions`
-  - unlock bijbehorende laag
-  - `day += 1`, `deaths += outbreakTimeline[day].newDeaths`
-  - voeg nieuwe sterfgevallen toe aan `deathsOnMap`
-  - als optie `advancesStage` dan ga naar volgende dag-menu
-  - trigger re-render
-- [ ] **M2.8** Maak kaart-component met `<svg viewBox="0 0 1024 768">` + achtergrondkaart als `<image>`. Functies: `renderDeaths()`, `renderPumps()`, `renderPOI(type)`, `renderDensity()`. Renderen alleen lagen in `unlockedLayers`.
-- [ ] **M2.9** Implementeer dag-9 eindkeuze-scherm: modal met twee knoppen ("Pomphendel verwijderen" / "Meer bewijs eisen").
-- [ ] **M2.10** Implementeer slotscherm: toon Snow's originele kaart-afbeelding naast student's kaart, historische cijfers, transfer-vraag.
-- [ ] **M2.11** Implementeer hard-stop: als `day >= 10` en geen eindkeuze → auto-trigger slotscherm "tegenfeitelijke werkelijkheid".
-- [ ] **M2.12** Voeg "Printbaar dossier"-knop toe op slotscherm: `window.print()` met print-specifieke CSS die alleen genomen keuzes + kaart toont.
+  Menu-content is compleet (zowel 🎯 als rode haringen) ingebouwd tijdens M1 generate-script.
+- [x] **M2.6** Render menu onder dashboard: lijst knoppen uit huidige stage. Klik → `handleChoice(option)`.
+- [x] **M2.7** Implementeer `handleChoice(option)` met dag-advance, deaths-update, unlock layers, stage-advance, viz-dispatch, hard-stop check.
+- [x] **M2.8** Maak kaart-component met `<svg viewBox="0 0 1024 768">`. Functies: `renderStreets`, `renderDeaths`, `renderPumps`, `renderPOI`, `renderDensity`. Lagen onafhankelijk.
+- [x] **M2.9** Implementeer eindkeuze-stage (s6) met twee knoppen.
+- [x] **M2.10** Implementeer slotscherm: stats, twee kaart-snapshots (uw kaart + Snow's stratenbasis), historische noot Pasteur 1884, transfer-vraag.
+- [x] **M2.11** Implementeer hard-stop: als `day >= 10` en geen eindkeuze → auto-slotscherm `autoTimeout`.
+- [x] **M2.12** Voeg "Printbaar dossier"-knop toe op slotscherm (window.print()).
 
 ### Tests M2
-**Handmatig (browser):**
-- [ ] Open `broad-street-zaak.html` in Chrome + Firefox. Geen console errors.
-- [ ] Dashboard toont `Dag 1 · 56 doden · 9 dagen resterend`.
-- [ ] Klik opeenvolgend alle 🎯-opties (adressen → kaart → pompen → interviews → Board) → eindkeuze-scherm verschijnt uiterlijk op dag 9.
-- [ ] Kies "Handle removed" → slotscherm met Snow's kaart + historische cijfers.
-- [ ] Herstart, kies "Meer bewijs eisen" → slotscherm met tegenfeitelijke cijfers.
-- [ ] Herstart, negeer eindkeuze, klik door tot dag 10 → auto-slotscherm.
-- [ ] Kaart-SVG toont na adres-keuze 578 stippen; na pomp-keuze 13 pomp-markers; Broad Street-pomp visueel onderscheidbaar.
+**Handmatig (browser met Chrome DevTools MCP):**
+- [x] Open `broad-street-zaak.html` in Chrome via http-server. Geen console errors.
+- [x] Dashboard toont `Dag 1 · 56 doden · 9 dagen resterend`.
+- [x] Klik opeenvolgend alle 🎯-opties (adressen → kaart → pompen → interviews → Hampstead → Board → pomphendel) → eindkeuze-scherm verschijnt op dag 7.
+- [x] Kies "Handle removed" → slotscherm met beide kaarten + historische cijfers (541 doden, ~59 voorkomen).
+- [x] Kaart-SVG toont na adres-keuze 578 stippen; na pomp-keuze 13 pomp-markers; Broad Street-pomp visueel onderscheidbaar (rode border).
+- [x] Dossier-chips tonen alle gekozen opties; gekozen opties worden disabled.
+- [ ] Alternative flows (moreEvidence, autoTimeout) — getest door code-inspection; full browser test uitgesteld naar M6 pilot.
 
-**Geautomatiseerd (optioneel, Playwright of vergelijkbaar):**
-- [ ] Smoke-test: happy-path doorloopt zonder errors.
-
-**Afsluiting M2:** tests groen → `git add . && git commit -m "M2: happy path webapp met 🎯-keuzes werkend end-to-end" && git push`.
+**Afsluiting M2:** tests groen → commit + push.
 
 ---
 

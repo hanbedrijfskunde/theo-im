@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280, initial-scale=1">
+  <title>De Broad Street Zaak — Londen, 1854</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="dashboard">
+      <div class="dash-cell">
+        <div class="dash-label">Dag</div>
+        <div class="dash-value" id="day-value">1</div>
+      </div>
+      <div class="dash-cell">
+        <div class="dash-label">Doden</div>
+        <div class="dash-value" id="deaths-value">56</div>
+      </div>
+      <div class="dash-cell">
+        <div class="dash-label">Dagen resterend</div>
+        <div class="dash-value" id="remaining-value">9</div>
+      </div>
+      <div class="dash-cell dash-brand">
+        <div class="dash-title">De Broad Street Zaak</div>
+        <div class="dash-subtitle">Assistent van Dr. John Snow · Soho, september 1854</div>
+      </div>
+    </header>
+
+    <main id="workspace">
+      <section id="map-panel">
+        <svg id="map-svg" viewBox="0 0 1024 768" preserveAspectRatio="xMidYMid meet"
+             xmlns="http://www.w3.org/2000/svg">
+          <rect width="1024" height="768" fill="#f4ecd8"/>
+          <g id="layer-streets"></g>
+          <g id="layer-density"></g>
+          <g id="layer-poi"></g>
+          <g id="layer-deaths"></g>
+          <g id="layer-pumps"></g>
+        </svg>
+        <div id="map-placeholder" class="placeholder">
+          Geen kaart opgevraagd. Zie menu rechts.
+        </div>
+      </section>
+
+      <aside id="side-panel">
+        <div id="telegram">
+          <div class="telegram-head">Telegram van Dr. Snow</div>
+          <div class="telegram-body" id="menu-prompt">
+            Wat heb je nu nodig, assistent?
+          </div>
+        </div>
+        <div id="menu" role="list"></div>
+        <div id="viz" class="viz-panel hidden"></div>
+        <div id="dossier">
+          <div class="dossier-head">Dossier</div>
+          <ul id="dossier-list"></ul>
+        </div>
+      </aside>
+    </main>
+
+    <div id="intro-overlay" class="overlay">
+      <div class="overlay-card">
+        <div class="stamp">CONFIDENTIAL — General Register Office, 1854</div>
+        <h1>Soho, 1854</h1>
+        <p>Broad Street. Eind augustus. De eerste zesenvijftig lijken worden afgelegd.</p>
+        <p>U bent <strong>junior-assistent</strong> van Dr. John Snow. De Board of Guardians sluit het onderzoek over <strong>10 dagen</strong>. Elke beslissing die u neemt kost één dag. Elke dag vallen er nieuwe doden.</p>
+        <p>Dr. Snow zal u geen antwoorden geven. U kiest zelf wat te onderzoeken. U oordeelt zelf of een aanwijzing u verder brengt.</p>
+        <p class="signature">— Dr. John Snow, M.D.</p>
+        <button id="start-btn" class="primary">Start onderzoek</button>
+      </div>
+    </div>
+
+    <div id="ending-overlay" class="overlay hidden">
+      <div class="overlay-card wide" id="ending-card"></div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
