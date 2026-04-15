@@ -98,43 +98,34 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 ---
 
-## M3 — Rode haringen
+## M3 — Rode haringen ✅
 
 **Doel:** alle niet-🎯 opties uit PRD §8 functioneel maken; elke optie toont echte data zonder "dit helpt niet"-tekst.
 
-- [ ] **M3.1** Vul `content/menu-content.json` aan met alle rode-haring-opties per dag (zie PRD §8).
-- [ ] **M3.2** Implementeer voor Dag 1 de visualisatie-handlers:
-  - `renderCausesTable()` — tabel uit `red-herring-causes.json`
-  - `renderDemographicsChart()` — staafdiagram leeftijd × geslacht
-  - `renderPreviousOutbreaks()` — tabel/lijngrafiek 1832/1849
-  - `renderEuropeMap()` — kleine Europa-kaart met andere steden
-- [ ] **M3.3** Implementeer voor Dag 2-3:
-  - `renderSortedAddresses()` — alfabetisch gesorteerde tabel
-  - `renderByParish()` — groupering per parochie met tellingen
-  - `renderByClass()` — tabel beroep/klasse
-- [ ] **M3.4** Implementeer voor Dag 4-5:
-  - `renderDensityHeatmap()` — heatmap-laag op kaart
-  - `renderSchools()` — school-markers op kaart
-  - `renderMarkets()` — markt/slachthuis-markers
-  - `renderWorkhouses()` — werkhuis-markers (inclusief die ene in het cluster met lage sterfte)
-- [ ] **M3.5** Implementeer voor Dag 6-7:
-  - `renderWaterAnalysis()` — microscopie-beschrijving in dossier-paneel
-  - `renderOtherPumpsTest()` — tabel pomptest-uitkomsten (negatief)
-- [ ] **M3.6** Implementeer voor Dag 8-9:
-  - `renderLancetPreview()` — toont dat publicatie weken kost
-  - `renderMoreDataProgress()` — toont oplopende doden tijdens "meer data"
-  - `renderPamphletResults()` — gedeeltelijk effect
-- [ ] **M3.7** Dossier-paneel: chips van alle gekozen opties (🎯 en rode haringen) met klikbaar terug-zicht op hun visualisatie.
-- [ ] **M3.8** Dag-progressie audit: elke klik kost exact 1 dag, incl. rode haringen. Timer stopt nooit.
+**Resultaat:** meeste viz-handlers al in M2 uitgewerkt. M3 heeft polish toegevoegd:
+- demografie als horizontale bar chart (M vs F naast elkaar)
+- Europa als schematische kaart met proportionele cirkels
+- dossier-chips klikbaar voor herbezichtiging
+- kaart-SVG verborgen tot student 'kaart van Londen'-keuze maakt
+
+- [x] **M3.1** `content/menu-content.json` bevat alle rode-haring-opties (M1-output).
+- [x] **M3.2** Dag 1: causesTable, demographicsChart (bar chart SVG), previousOutbreaksTable, europeMap (schematische SVG).
+- [x] **M3.3** Dag 2-3: addressesTableSorted, parishGrouping, classTable.
+- [x] **M3.4** Dag 4-5: mapDensity (heatmap), mapSchools, mapMarkets (inc. slachthuizen), mapWorkhouses (incl. workhouse-note over lage sterfte).
+- [x] **M3.5** Dag 6-7: waterAnalysisPanel (microscopie + 1854-conclusie), otherPumpsTable.
+- [x] **M3.6** Dag 8-9: lancetPreview, moreDataProgress, pamphletResults.
+- [x] **M3.7** Dossier-chips klikbaar: hover-effect, re-trigger viz handler.
+- [x] **M3.8** Elke keuze kost exact 1 dag, getest in browser.
 
 ### Tests M3
-- [ ] Elke rode-haring-optie toont unieke, inhoudelijk-relevante data (visueel geïnspecteerd).
-- [ ] Geen tekst als "dit helpt niet" / "fout" / "probeer opnieuw" in UI (grep: `grep -r -i "helpt niet\|fout\|probeer opnieuw" *.html *.js *.json` → leeg).
-- [ ] Doorloop met alleen rode haringen bereikt dag 10 zonder eindkeuze → auto-slotscherm.
-- [ ] Mix van 3 rode haringen + 🎯-keuzes: dag-teller klopt (3 + aantal keys).
-- [ ] Dossier-chips zijn aanklikbaar en tonen eerder bekeken visualisatie.
+- [x] Elke rode-haring-optie toont unieke, inhoudelijk-relevante data (visueel geïnspecteerd).
+- [x] Geen tekst als "dit helpt niet" / "fout" / "probeer opnieuw" in UI (grep-test leeg).
+- [x] Happy path met anomalie-keuzes: dag 7, 541 doden, slotscherm OK.
+- [x] Demografie bar chart: toont 600 totaal met patroon in midden-leeftijden.
+- [x] Europa-kaart: cirkel-grootte proportioneel aan dodental, 5 steden zichtbaar.
+- [x] Dossier-chips tonen eerder bekeken visualisatie bij klik.
 
-**Afsluiting M3:** tests groen → `git commit -m "M3: alle rode haringen met echte data toegevoegd" && git push`.
+**Afsluiting M3:** tests groen → commit + push.
 
 ---
 

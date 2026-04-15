@@ -249,6 +249,12 @@ html, body {
   font-size: 0.75rem;
   background: var(--paper);
   color: var(--ink-soft);
+  transition: background 0.15s;
+}
+
+#dossier-list li:hover {
+  background: var(--paper-dark);
+  color: var(--ink);
 }
 
 /* Map layers */

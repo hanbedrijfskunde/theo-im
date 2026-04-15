@@ -191,12 +191,21 @@ function renderDossier() {
     const opt = allOpts.find(o => o.id === id);
     if (!opt) continue;
     const label = opt.label.length > 40 ? opt.label.slice(0, 38) + "..." : opt.label;
-    list.appendChild(html("li", { text: label }));
+    const li = html("li", {
+      title: "Toon deze waarneming opnieuw",
+      onclick: () => {
+        const viz = vizHandlers()[opt.viz];
+        if (viz) viz();
+      },
+    }, label);
+    li.style.cursor = "pointer";
+    list.appendChild(li);
   }
 }
 
 function setPlaceholderVisible(v) {
   $("map-placeholder").style.display = v ? "flex" : "none";
+  $("map-svg").style.visibility = v ? "hidden" : "visible";
 }
 
 function render() {
@@ -238,6 +247,63 @@ function addressTableNode(deaths, sorted) {
   const scroll = html("div", { class: "scroll-rows" }, table);
   const note = html("p", {}, html("em", { text: `Eerste 60 van ${deaths.length} regels getoond.` }));
   return html("div", {}, scroll, note);
+}
+
+function demographicsChartNode(rows) {
+  // Horizontale staafdiagram per leeftijdsgroep, M/F gestapeld naast elkaar.
+  const width = 360, rowH = 22, pad = 70;
+  const groups = [...new Set(rows.map(r => r.ageRange))];
+  const max = Math.max(...rows.map(r => r.count));
+  const height = groups.length * rowH * 2 + 30;
+  const root = svg("svg", { viewBox: `0 0 ${width} ${height}`, width: "100%" });
+
+  let y = 10;
+  for (const age of groups) {
+    for (const g of ["M", "F"]) {
+      const row = rows.find(r => r.ageRange === age && r.gender === g);
+      if (!row) continue;
+      const barW = (row.count / max) * (width - pad - 40);
+      root.appendChild(svgText("text", { x: 0, y: y + 14, "font-size": 11, fill: "#6b5a3e" }, `${age} ${g}`));
+      root.appendChild(svg("rect", { x: pad, y, width: barW, height: rowH - 4, fill: g === "M" ? "#8b2a1f" : "#b9583f", opacity: 0.85 }));
+      root.appendChild(svgText("text", { x: pad + barW + 4, y: y + 14, "font-size": 11, fill: "#3b2f1e" }, String(row.count)));
+      y += rowH;
+    }
+    y += 4;
+  }
+  const cap = html("p", {}, html("em", { text: `Totaal ${rows.reduce((s, r) => s + r.count, 0)} sterfgevallen, gecategoriseerd naar leeftijd en geslacht.` }));
+  return html("div", {}, root, cap);
+}
+
+function europeMapNode(rows) {
+  // Schematische Europa-kaart met city-markers. Grove geografische posities.
+  const cities = {
+    Paris: { x: 200, y: 200 },
+    Hamburg: { x: 280, y: 130 },
+    Naples: { x: 330, y: 300 },
+    Copenhagen: { x: 290, y: 90 },
+    London: { x: 180, y: 140 },
+  };
+  const w = 480, h = 360;
+  const root = svg("svg", { viewBox: `0 0 ${w} ${h}`, width: "100%" });
+  // Achtergrond
+  root.appendChild(svg("rect", { width: w, height: h, fill: "#ede3c9" }));
+  // Grove landgrenzen (gestileerd silhouet Europa)
+  const europeShape = "M60,220 L120,180 L150,150 L180,130 L210,110 L260,100 L300,80 L340,90 L390,120 L420,170 L430,230 L410,280 L380,310 L340,330 L290,340 L240,335 L200,320 L160,290 L120,260 Z";
+  root.appendChild(svg("path", { d: europeShape, fill: "#f4ecd8", stroke: "#6b5a3e", "stroke-width": 1.5, opacity: 0.9 }));
+  // Londen als referentie
+  root.appendChild(svg("circle", { cx: cities.London.x, cy: cities.London.y, r: 5, fill: "#1e3a5f", stroke: "#fff", "stroke-width": 1.5 }));
+  root.appendChild(svgText("text", { x: cities.London.x + 8, y: cities.London.y + 4, "font-size": 11, fill: "#1e3a5f", "font-weight": "bold" }, "London (Soho)"));
+  for (const row of rows) {
+    const pos = cities[row.city];
+    if (!pos) continue;
+    const r = Math.max(4, Math.sqrt(row.deaths) / 10);
+    root.appendChild(svg("circle", {
+      cx: pos.x, cy: pos.y, r, fill: "#8b2a1f", stroke: "#3a0f0a", "stroke-width": 1, opacity: 0.8,
+    }));
+    root.appendChild(svgText("text", { x: pos.x + r + 4, y: pos.y + 4, "font-size": 11, fill: "#3b2f1e" }, `${row.city} (${row.deaths})`));
+  }
+  const caption = html("p", {}, html("em", { text: "Cirkel-oppervlak proportioneel aan dodental. Cholera-uitbraken in 1853-1854 volgden geen geografisch patroon onderling — elke stad had zijn eigen bronnen." }));
+  return html("div", {}, root, caption);
 }
 
 function parishNode(deaths) {
@@ -338,9 +404,9 @@ function vizHandlers() {
   const d = state.data;
   return {
     causesTable: () => showVizNode("Doodsoorzaken", tableNode(d.rh_causes, ["cause", "count"], ["Doodsoorzaak", "Aantal"])),
-    demographicsChart: () => showVizNode("Demografie", tableNode(d.rh_demographics, ["ageRange", "gender", "count"], ["Leeftijd", "Geslacht", "Aantal"])),
+    demographicsChart: () => showVizNode("Demografie", demographicsChartNode(d.rh_demographics)),
     previousOutbreaksTable: () => showVizNode("Eerdere uitbraken", tableNode(d.rh_previous, ["year", "city", "deaths", "duration_weeks"], ["Jaar", "Stad", "Doden", "Duur (wk)"])),
-    europeMap: () => showVizNode("Cholera elders in Europa 1854", tableNode(d.rh_europe, ["city", "country", "year", "deaths", "note"], ["Stad", "Land", "Jaar", "Doden", "Opmerking"])),
+    europeMap: () => showVizNode("Cholera elders in Europa 1854", europeMapNode(d.rh_europe)),
     addressesTable: () => showVizNode(`Namen en adressen (${d.deaths.length})`, addressTableNode(d.deaths, false)),
 
     addressesTableSorted: () => showVizNode("Adressen alfabetisch", addressTableNode(d.deaths, true)),
