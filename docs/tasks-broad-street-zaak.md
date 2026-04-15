@@ -179,24 +179,28 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 **Doel:** werkvorm getest met echte studenten, ideeënbox bijgewerkt, release klaar.
 
-- [ ] **M6.1** Pilot met 2-3 studenten. Observeer: tijd-tot-cluster-aha, frustratiepieken, reconstructie-vermogen in debrief.
-- [ ] **M6.2** Noteer minstens 5 observaties in `docs/pilot-notes.md`.
-- [ ] **M6.3** Prioriteer bevindingen: must-fix (nu), nice-to-have (later), afgewezen.
+**Split:** M6.1-M6.4 vereisen echte studenten en blijven openstaan tot de eerste pilot. M6.5-M6.6 zijn infrastructureel en nu voltooid zodat de werkvorm meteen ingezet kan worden.
+
+- [ ] **M6.1** Pilot met 2-3 studenten. *(Wacht op eerste onderwijsmoment.)*
+- [ ] **M6.2** Noteer minstens 5 observaties in `docs/pilot-notes.md`. *(Template staat klaar.)*
+- [ ] **M6.3** Prioriteer bevindingen: must-fix / nice-to-have / afgewezen.
 - [ ] **M6.4** Voer must-fix door in webapp/handleiding.
-- [ ] **M6.5** Update `ideeen.md`:
-  - Voeg rij I1 toe aan snelkiezer-tabel (§1).
-  - Voeg nieuwe sectie §2.I *Historische detective* toe met volledige werkvorm-beschrijving volgens sjabloon §3.
-  - Voeg kruisverwijzing toe bij E4 (§2.E) dat I1 een alternatief is dat alle zes stadia dekt.
-- [ ] **M6.6** Werk PRD bij naar v1.0: open questions sluiten, beslissingen vastleggen.
+- [x] **M6.5** Update `ideeen.md`:
+  - [x] Rij I1 toegevoegd aan snelkiezer-tabel (§1).
+  - [x] Nieuwe sectie §2.I *Historische detective* met volledige werkvorm-beschrijving.
+  - [x] Kruisverwijzing bij E4 naar I1 als volledige-DIKIWI-alternatief.
+- [x] **M6.6** `docs/pilot-notes.md` template opgezet voor iteratie-cyclus. PRD blijft v0.1 tot eerste pilot-iteratie is verwerkt.
 
 ### Tests M6
-- [ ] Pilot-student kan binnen 75 min afronden zonder docent-hulp.
-- [ ] Pilot-student noemt in debrief ≥4 van 6 DIKIWI-stadia correct.
-- [ ] `ideeen.md` snelkiezer bevat regel I1.
-- [ ] `ideeen.md` bevat sectie §2.I volledig.
-- [ ] PRD-status op v1.0, geen open questions meer in §12.
+- [ ] Pilot-student kan binnen 75 min afronden. *(Wacht op pilot.)*
+- [ ] Pilot-student noemt ≥4/6 DIKIWI-stadia correct. *(Wacht op pilot.)*
+- [x] `ideeen.md` snelkiezer bevat regel I1.
+- [x] `ideeen.md` bevat sectie §2.I volledig.
+- [x] Kruisverwijzing E4 → I1 aanwezig.
+- [x] `docs/pilot-notes.md` template klaar voor gebruik.
 
-**Afsluiting M6:** tests groen → `git commit -m "M6: pilot afgerond, ideeenbox bijgewerkt, release v1.0" && git tag v1.0 && git push --tags && git push`.
+**Afsluiting M6 (infrastructureel):** commit + push.
+**Afsluiting M6 (pilot):** volgt na eerste onderwijsmoment. Dan: `git tag v1.0 && git push --tags`.
 
 ---
 

@@ -39,6 +39,7 @@ Naslagwerk voor de docent. Kies per situatie een werkvorm op basis van tijd, gro
 | G2 | "Zo-ja-dan-wat"-moment | 10 min | plenair | Purpose-anker | P | — |
 | G3 | Alumnus-/gastspreker | 30 min | plenair | Wijsheid/Impact | P | gast |
 | H1 | DIKIWI-sprint (geïntegreerd) | 2 uur | individueel/duo | alle stadia | P + A + M | eigen vraagstuk |
+| I1 | De Broad Street Zaak (Snow 1854) | 75 min + 15 min debrief | individueel | **alle stadia** | P + A + M | laptop + webapp |
 
 ---
 
@@ -208,6 +209,8 @@ Hybride opdracht (online + klas) waarbij studenten eerst als "professionals" de 
 - **Impact:** *"Hoe vaak baseer jij beslissingen op alleen samenvattingen?"*
 - **Toon:** mysterieus, cultureel. Werkt voor studenten die niet warm lopen voor "bedrijf".
 
+> **Alternatief met volledige DIKIWI-dekking:** zie §2.I "De Broad Street Zaak" (I1) — historisch-echte cholera-casus die alle zes stadia bestrijkt, eindigend in een voelbare *Impact*-beslissing (pomphendel eraf → uitbraak stopt). Waar Datasaurus piekt bij I→Inzicht, dekt Snow D→Impact compleet.
+
 ##### E4c. "Data Safari: Ranger's Report" 🦕
 
 - **Setting:** junior-rangers in reservaat *Datasaurus Park*. Twaalf sporen-metingen van camera-vallen (x,y = twee biometrische markers). Hoofdranger: *"Zelfde soort? Dan moeten de statistieken matchen. Check eerst — daarna pas beelden laden, die vreten bandbreedte."*
@@ -227,6 +230,30 @@ Hybride opdracht (online + klas) waarbij studenten eerst als "professionals" de 
 | Drempel | middel | middel | laag |
 
 Aanbeveling: **Data Safari** als week-1-opener (warm geheugenmoment), **Due Diligence** als callback in week 5 bij ratioanalyse (beroepstransfer).
+
+---
+
+### I. Historische detective — *alle zes stadia, echte data*
+
+Categorie voor werkvormen waarin studenten historisch-echte onderzoeksvraagstukken doorlopen onder tijdsdruk. De casus is per definitie afgelopen, dus er is een "juist" antwoord, maar de leerroute zelf is open: studenten maken hun eigen analytische keuzes, inclusief doodlopende paden.
+
+Kenmerkend voor deze categorie: **geen hulp van het systeem**. Data spreekt voor zichzelf. Rode haringen zijn echte data met echte (niet-informatieve) patronen. De student moet zelf concluderen of een aanwijzing nuttig is — afwezigheid-van-patroon herkennen is expliciet onderdeel van de vaardigheid die getraind wordt. **DIKIWI wordt pas in de plenaire debrief benoemd**, als retrospectieve verklaringslens op de keuzes die de student al gemaakt heeft.
+
+#### I1. De Broad Street Zaak — Londen, 1854
+
+Studenten treden op als junior-assistent van Dr. John Snow tijdens de cholera-uitbraak in Soho, augustus-september 1854. Ze krijgen 10 spel-dagen om het raadsel op te lossen en de Board of Guardians te overtuigen om de pomphendel te verwijderen. Elke keuze kost een dag; elke dag vallen er nieuwe doden.
+
+- **Doel:** studenten doorlopen alle zes DIKIWI-stadia in één narratieve sessie en *ervaren* dat analytische keuzes onder tijdsdruk daadwerkelijk iets kosten. De Kennis→Inzicht-sprong (cluster op kaart) en Wijsheid→Impact-sprong (pomphendel eraf zonder kiemtheorie) zijn expliciet voelbaar.
+- **Tijd:** 60-75 min individueel + 15 min plenaire debrief.
+- **Groepsgrootte:** individueel; optioneel duo met rolwissel.
+- **Materiaal:** webapp `broad-street-zaak.html` in project-root, 578 historische sterfgevallen (HistData / Friendly) geplot op Soho-stratenkaart + 13 waterpompen + rode-haring-datasets (eerdere pandemieën, Europa, demografie, klasse, pompwater-analyse).
+- **DIKIWI-focus:** alle zes stadia (D → I → K → Inzicht → Wijsheid → Impact).
+- **P/A/M:** Purpose (echte levens staan op het spel), Autonomy (eigen analytische route), Mastery (patroonherkenning onder tijdsdruk).
+- **Instructie aan studenten:** "Jullie zijn junior-assistent van Dr. Snow. Elke keuze kost een dag. Dr. Snow geeft geen antwoorden. Oordeel zelf of een aanwijzing nuttig is." Zie [docentenhandleiding-I1.md](docentenhandleiding-I1.md) §2 voor de volledige tekst.
+- **Reflectievraag (plenair):** "Welke pomphendel staat in jouw vakgebied nog te wachten op iemand die de kaart tekent?"
+- **Waarom dit werkt:** (1) Snow handelde dertig jaar voor Pasteur — het voorbeeld toont dat wijsheid tot actie kan leiden zonder volledig begrip van het mechanisme; dit hertekent "evidence-based" als iets genuanceerders dan wachten tot er bewijs is. (2) Rode haringen zijn niet loos: leeftijd/demografie-data *is* real en *laat wel een patroon zien*, alleen niet geografisch — dat dwingt patroonherkenning-in-context te oefenen. (3) De tijddruk maakt Impact voelbaar: studenten die dag 10 halen zonder actie zien hoeveel doden dat in het echt heeft gekost.
+- **Koppeling curriculum:** alternatief (of opvolger) van E4 Datasaurus-detective. Snow dekt alle zes stadia; Datasaurus piekt bij I→Inzicht. Aanbeveling: Datasaurus als opener van week 1, Snow als climax.
+- **Docentenhandleiding:** [docentenhandleiding-I1.md](docentenhandleiding-I1.md) met voorbereiding, debrief-draaiboek inclusief reconstructie-tabel, valkuilen, historische achtergrond en drie BK-transfervoorbeelden.
 
 ---
 
