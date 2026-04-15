@@ -1,0 +1,30 @@
+[
+  {
+    "city": "Paris",
+    "country": "France",
+    "year": 1854,
+    "deaths": 9000,
+    "note": "Verspreid over de stad"
+  },
+  {
+    "city": "Hamburg",
+    "country": "Germany",
+    "year": 1854,
+    "deaths": 1800,
+    "note": "Havengebied"
+  },
+  {
+    "city": "Naples",
+    "country": "Italy",
+    "year": 1854,
+    "deaths": 4500,
+    "note": "Hele stad"
+  },
+  {
+    "city": "Copenhagen",
+    "country": "Denmark",
+    "year": 1853,
+    "deaths": 4700,
+    "note": "Recent, havenwijk"
+  }
+]

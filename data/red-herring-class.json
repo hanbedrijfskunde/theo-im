@@ -1,0 +1,30 @@
+[
+  {
+    "class": "Ambachtsman",
+    "count": 142
+  },
+  {
+    "class": "Dagloner",
+    "count": 118
+  },
+  {
+    "class": "Dienstbode",
+    "count": 94
+  },
+  {
+    "class": "Winkelier",
+    "count": 67
+  },
+  {
+    "class": "Geestelijke",
+    "count": 8
+  },
+  {
+    "class": "Gegoede burger",
+    "count": 41
+  },
+  {
+    "class": "Onbekend",
+    "count": 108
+  }
+]

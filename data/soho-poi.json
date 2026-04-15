@@ -1,0 +1,112 @@
+{
+  "schools": [
+    {
+      "id": "sch01",
+      "name": "St James's National School",
+      "x": 417,
+      "y": 224,
+      "type": "school"
+    },
+    {
+      "id": "sch02",
+      "name": "Poland Street Charity School",
+      "x": 519,
+      "y": 231,
+      "type": "school"
+    },
+    {
+      "id": "sch03",
+      "name": "Golden Square School",
+      "x": 559,
+      "y": 537,
+      "type": "school"
+    },
+    {
+      "id": "sch04",
+      "name": "Regent Street Polytechnic",
+      "x": 326,
+      "y": 401,
+      "type": "school"
+    }
+  ],
+  "workhouses": [
+    {
+      "id": "wh01",
+      "name": "St James's Workhouse (Poland Street)",
+      "x": 535,
+      "y": 361,
+      "type": "workhouse",
+      "note": "Eigen waterbron, opvallend lage sterfte"
+    },
+    {
+      "id": "wh02",
+      "name": "St Anne's Workhouse",
+      "x": 784,
+      "y": 471,
+      "type": "workhouse"
+    },
+    {
+      "id": "wh03",
+      "name": "Strand Union Workhouse",
+      "x": 906,
+      "y": 606,
+      "type": "workhouse"
+    }
+  ],
+  "markets": [
+    {
+      "id": "m01",
+      "name": "Carnaby Market",
+      "x": 670,
+      "y": 299,
+      "type": "market"
+    },
+    {
+      "id": "m02",
+      "name": "Berwick Street Market",
+      "x": 629,
+      "y": 442,
+      "type": "market"
+    },
+    {
+      "id": "m03",
+      "name": "Newport Market",
+      "x": 907,
+      "y": 531,
+      "type": "market"
+    }
+  ],
+  "slaughterhouses": [
+    {
+      "id": "sl01",
+      "name": "Marshall Street Slaughterhouse",
+      "x": 519,
+      "y": 286,
+      "type": "slaughterhouse"
+    },
+    {
+      "id": "sl02",
+      "name": "Peter Street Shambles",
+      "x": 749,
+      "y": 539,
+      "type": "slaughterhouse"
+    },
+    {
+      "id": "sl03",
+      "name": "Kingly Street Abattoir",
+      "x": 775,
+      "y": 207,
+      "type": "slaughterhouse"
+    }
+  ],
+  "breweries": [
+    {
+      "id": "br01",
+      "name": "Lion Brewery (Huggins & Co.)",
+      "x": 626,
+      "y": 348,
+      "type": "brewery",
+      "note": "70+ arbeiders, drinken bier, geen doden"
+    }
+  ]
+}

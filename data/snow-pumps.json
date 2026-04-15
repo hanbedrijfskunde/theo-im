@@ -1,0 +1,93 @@
+[
+  {
+    "id": "p01",
+    "name": "Oxford Market Pump",
+    "x": 340,
+    "y": 53,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p02",
+    "name": "Castle St E Pump",
+    "x": 481,
+    "y": 23,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p03",
+    "name": "Oxford St #1 Pump",
+    "x": 625,
+    "y": 77,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p04",
+    "name": "Oxford St #2 Pump",
+    "x": 716,
+    "y": 57,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p05",
+    "name": "Gt Marlborough Pump",
+    "x": 343,
+    "y": 197,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p06",
+    "name": "Crown Chapel Pump",
+    "x": 353,
+    "y": 300,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p07",
+    "name": "Broad St Pump",
+    "x": 577,
+    "y": 349,
+    "isBroadStreet": true
+  },
+  {
+    "id": "p08",
+    "name": "Warwick Pump",
+    "x": 461,
+    "y": 555,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p09",
+    "name": "Briddle St Pump",
+    "x": 634,
+    "y": 530,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p10",
+    "name": "So Soho Pump",
+    "x": 809,
+    "y": 468,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p11",
+    "name": "Dean St Pump",
+    "x": 959,
+    "y": 445,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p12",
+    "name": "Coventry St Pump",
+    "x": 783,
+    "y": 670,
+    "isBroadStreet": false
+  },
+  {
+    "id": "p13",
+    "name": "Vigo St Pump",
+    "x": 361,
+    "y": 667,
+    "isBroadStreet": false
+  }
+]

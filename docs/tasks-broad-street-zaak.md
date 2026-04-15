@@ -10,54 +10,50 @@ Gebaseerd op [prd-broad-street-zaak.md](prd-broad-street-zaak.md). Afgeleid uit 
 
 ---
 
-## M0 — Repo-initialisatie *(eenmalig, vooraf)*
+## M0 — Repo-initialisatie *(eenmalig, vooraf)* ✅
 
-- [ ] **M0.1** Open terminal in `/Users/witoldtenhove/Projects/theoim/`.
-- [ ] **M0.2** Initialiseer git repo: `git init`.
-- [ ] **M0.3** Maak `.gitignore` met minimaal: `.DS_Store`, `node_modules/`, `*.log`, `.claude/`, `.vscode/`.
-- [ ] **M0.4** Maak `README.md` met één alinea projectbeschrijving + link naar `docs/prd-broad-street-zaak.md`.
-- [ ] **M0.5** Voeg remote toe: `git remote add origin https://github.com/hanbedrijfskunde/theo-im.git`.
-- [ ] **M0.6** Eerste commit: `git add . && git commit -m "M0: initialiseer repo met bestaande materialen en PRD"`.
-- [ ] **M0.7** Push: `git branch -M main && git push -u origin main`.
+- [x] **M0.1** Open terminal in `/Users/witoldtenhove/Projects/theoim/`.
+- [x] **M0.2** Initialiseer git repo: `git init`.
+- [x] **M0.3** Maak `.gitignore` met minimaal: `.DS_Store`, `node_modules/`, `*.log`, `.claude/`, `.vscode/`.
+- [x] **M0.4** Maak `README.md` met één alinea projectbeschrijving + link naar `docs/prd-broad-street-zaak.md`.
+- [x] **M0.5** Voeg remote toe: `git remote add origin https://github.com/hanbedrijfskunde/theo-im.git`.
+- [x] **M0.6** Eerste commit: `git add . && git commit -m "M0: initialiseer repo met bestaande materialen en PRD"`.
+- [x] **M0.7** Push: `git branch -M main && git push -u origin main`.
 
 ### Tests M0
-- [ ] `git status` toont clean working tree.
-- [ ] `git remote -v` toont origin naar hanbedrijfskunde/theo-im.git.
-- [ ] Remote op GitHub bevat `README.md`, `ideeen.md`, `docs/prd-broad-street-zaak.md`.
+- [x] `git status` toont clean working tree.
+- [x] `git remote -v` toont origin naar hanbedrijfskunde/theo-im.git.
+- [x] Remote op GitHub bevat `README.md`, `ideeen.md`, `docs/prd-broad-street-zaak.md`.
 
 ---
 
-## M1 — Data-prep
+## M1 — Data-prep ✅
 
 **Doel:** alle historische data en kaart-assets klaarzetten als statische bestanden in het project.
 
-- [ ] **M1.1** Maak map `/Users/witoldtenhove/Projects/theoim/data/`.
-- [ ] **M1.2** Maak map `/Users/witoldtenhove/Projects/theoim/content/`.
-- [ ] **M1.3** Download Robin Wilson's Snow-data van `https://github.com/robintw/BroadStreetPump`. Controleer licentie (vermeld in README als licentie vereist attributie).
-- [ ] **M1.4** Converteer sterfgevallen naar `data/snow-deaths.json`. Elk record: `{id, x, y, date, address?}`. Coördinaten in referentie-pixelsysteem van de achtergrondkaart (M1.6).
-- [ ] **M1.5** Converteer pompen naar `data/snow-pumps.json`. Elk record: `{id, x, y, name, isBroadStreet}`. Precies 13 records.
-- [ ] **M1.6** Exporteer Soho 1854-kaart als `data/soho-1854.svg` of `.png` (max 1MB). Fixed canvas 1024×768 als coordinate reference.
-- [ ] **M1.7** Stel POI-data op in `data/soho-poi.json` met lagen: `schools`, `workhouses`, `markets`, `slaughterhouses`, `breweries`. Elk record: `{id, x, y, name, type}`. Minimaal 3 per categorie, historisch plausibel in Soho.
-- [ ] **M1.8** Stel bevolkingsdichtheid-grid op in `data/soho-density.json` als array van `{x, y, density}` waarden voor heatmap-rendering.
-- [ ] **M1.9** Maak `data/outbreak-timeline.json` met sterftecurve per dag (31 aug - 10 sep 1854), gebaseerd op Snow's eigen data.
-- [ ] **M1.10** Stel rode-haring-datasets op:
-  - `data/red-herring-causes.json` (doodsoorzaken uit doktersregisters; tabel)
-  - `data/red-herring-demographics.json` (leeftijd/geslacht verdeling)
-  - `data/red-herring-previous-outbreaks.json` (cijfers 1832, 1849)
-  - `data/red-herring-europe.json` (Parijs/Hamburg 1854)
-  - `data/red-herring-class.json` (beroep/klasse)
-  - `data/red-herring-water-analysis.json` (microscopie-beschrijving + "witte vlokjes")
+**Databron-wijziging:** Robin Wilson's repo bleek verwijderd. Vervangen door HistData (Dodson 1992 digitization, Friendly's R-package) via Rdatasets CSV-mirror — dezelfde authoritatieve bron die elke academische Snow-analyse gebruikt. Automatisering in [`scripts/generate_data.py`](../scripts/generate_data.py).
+
+- [x] **M1.1** Maak map `/Users/witoldtenhove/Projects/theoim/data/`.
+- [x] **M1.2** Maak map `/Users/witoldtenhove/Projects/theoim/content/`.
+- [x] **M1.3** Download HistData Snow-data via Rdatasets CSV-mirror (vrij beschikbaar onder GPL/MIT). Raw CSVs in `data/raw/`.
+- [x] **M1.4** Converteer sterfgevallen naar `data/snow-deaths.json`. Elk record: `{id, x, y, date, name, address, age, gender}`. Coördinaten geprojecteerd naar canvas 1024×768.
+- [x] **M1.5** Converteer pompen naar `data/snow-pumps.json`. Elk record: `{id, x, y, name, isBroadStreet}`. Precies 13 records.
+- [x] **M1.6** Genereer Soho 1854-kaart als `data/soho-1854.svg` uit HistData straten-segmenten. 22KB.
+- [x] **M1.7** Stel POI-data op in `data/soho-poi.json` met lagen: `schools`, `workhouses`, `markets`, `slaughterhouses`, `breweries`.
+- [x] **M1.8** Stel bevolkingsdichtheid-grid op in `data/soho-density.json` voor heatmap-rendering.
+- [x] **M1.9** Maak `data/outbreak-timeline.json` met sterftecurve per dag uit Snow.dates.
+- [x] **M1.10** Stel rode-haring-datasets op (7 bestanden: causes, demographics, previous-outbreaks, europe, class, water-analysis, other-pumps).
 
 ### Tests M1
-- [ ] `jq '. | length' data/snow-deaths.json` → ≥500 records.
-- [ ] `jq '. | length' data/snow-pumps.json` → 13.
-- [ ] `jq '.[] | select(.isBroadStreet == true) | .name' data/snow-pumps.json` → exact één resultaat.
-- [ ] Alle x/y-coördinaten vallen binnen canvas 0-1024 / 0-768 (shell one-liner met jq).
-- [ ] Alle JSON-bestanden parsen zonder fout: `for f in data/*.json; do jq empty "$f" || echo "FAIL: $f"; done`.
-- [ ] `data/soho-1854.svg` (of .png) < 1MB en opent in browser.
-- [ ] `outbreak-timeline.json` dekt ≥10 opeenvolgende dagen, sommatie sterfgevallen ≈ historisch totaal (~616).
+- [x] `jq '. | length' data/snow-deaths.json` → 578 records.
+- [x] `jq '. | length' data/snow-pumps.json` → 13.
+- [x] `jq '.[] | select(.isBroadStreet == true) | .name' data/snow-pumps.json` → "Broad St Pump".
+- [x] Alle x/y-coördinaten vallen binnen canvas 0-1024 / 0-768 (0 out-of-bounds).
+- [x] Alle 14 JSON-bestanden parsen zonder fout.
+- [x] `data/soho-1854.svg` = 22KB (< 1MB), renderbaar in browser.
+- [x] `outbreak-timeline.json` dekt 44 dagen, totaal 616 sterfgevallen ≈ historisch totaal.
 
-**Afsluiting M1:** tests groen → `git add data/ && git commit -m "M1: voeg Snow-data, kaart en rode-haring-datasets toe" && git push`.
+**Afsluiting M1:** tests groen → commit + push.
 
 ---
 

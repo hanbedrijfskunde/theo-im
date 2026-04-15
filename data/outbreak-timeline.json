@@ -1,0 +1,310 @@
+[
+  {
+    "day": 1,
+    "date": "1854-08-19",
+    "newDeaths": 1,
+    "attacks": 1,
+    "cumulativeDeaths": 1
+  },
+  {
+    "day": 2,
+    "date": "1854-08-20",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 1
+  },
+  {
+    "day": 3,
+    "date": "1854-08-21",
+    "newDeaths": 2,
+    "attacks": 1,
+    "cumulativeDeaths": 3
+  },
+  {
+    "day": 4,
+    "date": "1854-08-22",
+    "newDeaths": 0,
+    "attacks": 0,
+    "cumulativeDeaths": 3
+  },
+  {
+    "day": 5,
+    "date": "1854-08-23",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 3
+  },
+  {
+    "day": 6,
+    "date": "1854-08-24",
+    "newDeaths": 2,
+    "attacks": 1,
+    "cumulativeDeaths": 5
+  },
+  {
+    "day": 7,
+    "date": "1854-08-25",
+    "newDeaths": 0,
+    "attacks": 0,
+    "cumulativeDeaths": 5
+  },
+  {
+    "day": 8,
+    "date": "1854-08-26",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 5
+  },
+  {
+    "day": 9,
+    "date": "1854-08-27",
+    "newDeaths": 1,
+    "attacks": 1,
+    "cumulativeDeaths": 6
+  },
+  {
+    "day": 10,
+    "date": "1854-08-28",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 6
+  },
+  {
+    "day": 11,
+    "date": "1854-08-29",
+    "newDeaths": 1,
+    "attacks": 1,
+    "cumulativeDeaths": 7
+  },
+  {
+    "day": 12,
+    "date": "1854-08-30",
+    "newDeaths": 2,
+    "attacks": 8,
+    "cumulativeDeaths": 9
+  },
+  {
+    "day": 13,
+    "date": "1854-08-31",
+    "newDeaths": 3,
+    "attacks": 56,
+    "cumulativeDeaths": 12
+  },
+  {
+    "day": 14,
+    "date": "1854-09-01",
+    "newDeaths": 70,
+    "attacks": 143,
+    "cumulativeDeaths": 82
+  },
+  {
+    "day": 15,
+    "date": "1854-09-02",
+    "newDeaths": 127,
+    "attacks": 116,
+    "cumulativeDeaths": 209
+  },
+  {
+    "day": 16,
+    "date": "1854-09-03",
+    "newDeaths": 76,
+    "attacks": 54,
+    "cumulativeDeaths": 285
+  },
+  {
+    "day": 17,
+    "date": "1854-09-04",
+    "newDeaths": 71,
+    "attacks": 46,
+    "cumulativeDeaths": 356
+  },
+  {
+    "day": 18,
+    "date": "1854-09-05",
+    "newDeaths": 45,
+    "attacks": 36,
+    "cumulativeDeaths": 401
+  },
+  {
+    "day": 19,
+    "date": "1854-09-06",
+    "newDeaths": 37,
+    "attacks": 20,
+    "cumulativeDeaths": 438
+  },
+  {
+    "day": 20,
+    "date": "1854-09-07",
+    "newDeaths": 32,
+    "attacks": 28,
+    "cumulativeDeaths": 470
+  },
+  {
+    "day": 21,
+    "date": "1854-09-08",
+    "newDeaths": 30,
+    "attacks": 12,
+    "cumulativeDeaths": 500
+  },
+  {
+    "day": 22,
+    "date": "1854-09-09",
+    "newDeaths": 24,
+    "attacks": 11,
+    "cumulativeDeaths": 524
+  },
+  {
+    "day": 23,
+    "date": "1854-09-10",
+    "newDeaths": 18,
+    "attacks": 5,
+    "cumulativeDeaths": 542
+  },
+  {
+    "day": 24,
+    "date": "1854-09-11",
+    "newDeaths": 15,
+    "attacks": 5,
+    "cumulativeDeaths": 557
+  },
+  {
+    "day": 25,
+    "date": "1854-09-12",
+    "newDeaths": 6,
+    "attacks": 1,
+    "cumulativeDeaths": 563
+  },
+  {
+    "day": 26,
+    "date": "1854-09-13",
+    "newDeaths": 13,
+    "attacks": 3,
+    "cumulativeDeaths": 576
+  },
+  {
+    "day": 27,
+    "date": "1854-09-14",
+    "newDeaths": 6,
+    "attacks": 0,
+    "cumulativeDeaths": 582
+  },
+  {
+    "day": 28,
+    "date": "1854-09-15",
+    "newDeaths": 8,
+    "attacks": 1,
+    "cumulativeDeaths": 590
+  },
+  {
+    "day": 29,
+    "date": "1854-09-16",
+    "newDeaths": 6,
+    "attacks": 4,
+    "cumulativeDeaths": 596
+  },
+  {
+    "day": 30,
+    "date": "1854-09-17",
+    "newDeaths": 5,
+    "attacks": 2,
+    "cumulativeDeaths": 601
+  },
+  {
+    "day": 31,
+    "date": "1854-09-18",
+    "newDeaths": 2,
+    "attacks": 3,
+    "cumulativeDeaths": 603
+  },
+  {
+    "day": 32,
+    "date": "1854-09-19",
+    "newDeaths": 3,
+    "attacks": 0,
+    "cumulativeDeaths": 606
+  },
+  {
+    "day": 33,
+    "date": "1854-09-20",
+    "newDeaths": 0,
+    "attacks": 0,
+    "cumulativeDeaths": 606
+  },
+  {
+    "day": 34,
+    "date": "1854-09-21",
+    "newDeaths": 0,
+    "attacks": 2,
+    "cumulativeDeaths": 606
+  },
+  {
+    "day": 35,
+    "date": "1854-09-22",
+    "newDeaths": 2,
+    "attacks": 1,
+    "cumulativeDeaths": 608
+  },
+  {
+    "day": 36,
+    "date": "1854-09-23",
+    "newDeaths": 3,
+    "attacks": 1,
+    "cumulativeDeaths": 611
+  },
+  {
+    "day": 37,
+    "date": "1854-09-24",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 611
+  },
+  {
+    "day": 38,
+    "date": "1854-09-25",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 611
+  },
+  {
+    "day": 39,
+    "date": "1854-09-26",
+    "newDeaths": 2,
+    "attacks": 1,
+    "cumulativeDeaths": 613
+  },
+  {
+    "day": 40,
+    "date": "1854-09-27",
+    "newDeaths": 0,
+    "attacks": 1,
+    "cumulativeDeaths": 613
+  },
+  {
+    "day": 41,
+    "date": "1854-09-28",
+    "newDeaths": 2,
+    "attacks": 0,
+    "cumulativeDeaths": 615
+  },
+  {
+    "day": 42,
+    "date": "1854-09-29",
+    "newDeaths": 1,
+    "attacks": 0,
+    "cumulativeDeaths": 616
+  },
+  {
+    "day": 43,
+    "date": "1854-09-30",
+    "newDeaths": 0,
+    "attacks": 0,
+    "cumulativeDeaths": 616
+  },
+  {
+    "day": 44,
+    "date": "",
+    "newDeaths": 0,
+    "attacks": 45,
+    "cumulativeDeaths": 616
+  }
+]

@@ -1,0 +1,198 @@
+{
+  "stages": [
+    {
+      "stageId": "s1",
+      "label": "Dag 1 — alleen dodencijfers",
+      "dashboardStart": {
+        "day": 1,
+        "deaths": 56
+      },
+      "options": [
+        {
+          "id": "s1-causes",
+          "label": "Doodsoorzaken uit doktersregisters opvragen",
+          "viz": "causesTable",
+          "keyChoice": false
+        },
+        {
+          "id": "s1-demographics",
+          "label": "Leeftijd en geslacht van de slachtoffers analyseren",
+          "viz": "demographicsChart",
+          "keyChoice": false
+        },
+        {
+          "id": "s1-previous",
+          "label": "Sterftecijfers eerdere cholera-uitbraken (1832, 1849)",
+          "viz": "previousOutbreaksTable",
+          "keyChoice": false
+        },
+        {
+          "id": "s1-europe",
+          "label": "Cholera elders in Europa dit jaar",
+          "viz": "europeMap",
+          "keyChoice": false
+        },
+        {
+          "id": "s1-addresses",
+          "label": "Namen en adressen van de slachtoffers opvragen",
+          "viz": "addressesTable",
+          "keyChoice": true,
+          "advancesStage": true
+        }
+      ]
+    },
+    {
+      "stageId": "s2",
+      "label": "Dag 2-3 — adressenlijst",
+      "options": [
+        {
+          "id": "s2-sort",
+          "label": "Adressen alfabetisch sorteren",
+          "viz": "addressesTableSorted",
+          "keyChoice": false
+        },
+        {
+          "id": "s2-parish",
+          "label": "Adressen groeperen per parochie",
+          "viz": "parishGrouping",
+          "keyChoice": false
+        },
+        {
+          "id": "s2-class",
+          "label": "Beroep en sociale klasse van slachtoffers koppelen",
+          "viz": "classTable",
+          "keyChoice": false
+        },
+        {
+          "id": "s2-map",
+          "label": "Adressen plotten op een kaart van Londen",
+          "viz": "mapDeaths",
+          "keyChoice": true,
+          "advancesStage": true
+        }
+      ]
+    },
+    {
+      "stageId": "s3",
+      "label": "Dag 4-5 — cluster zichtbaar",
+      "options": [
+        {
+          "id": "s3-density",
+          "label": "Bevolkingsdichtheid van Soho als laag toevoegen",
+          "viz": "mapDensity",
+          "keyChoice": false
+        },
+        {
+          "id": "s3-schools",
+          "label": "Locaties van scholen markeren",
+          "viz": "mapSchools",
+          "keyChoice": false
+        },
+        {
+          "id": "s3-markets",
+          "label": "Slachthuizen en markten markeren (miasma-verdachte locaties)",
+          "viz": "mapMarkets",
+          "keyChoice": false
+        },
+        {
+          "id": "s3-workhouses",
+          "label": "Werkhuizen en armenhuizen markeren",
+          "viz": "mapWorkhouses",
+          "keyChoice": false
+        },
+        {
+          "id": "s3-pumps",
+          "label": "Waterpompen in de buurt markeren",
+          "viz": "mapPumps",
+          "keyChoice": true,
+          "advancesStage": true
+        }
+      ]
+    },
+    {
+      "stageId": "s4",
+      "label": "Dag 6-7 — pomp verdacht",
+      "options": [
+        {
+          "id": "s4-water",
+          "label": "Chemische en microscopische analyse pompwater",
+          "viz": "waterAnalysisPanel",
+          "keyChoice": false
+        },
+        {
+          "id": "s4-otherpumps",
+          "label": "Andere pompen laten testen",
+          "viz": "otherPumpsTable",
+          "keyChoice": false
+        },
+        {
+          "id": "s4-interviews",
+          "label": "Interviews met overlevenden in het cluster (Lion Brewery, werkhuis)",
+          "viz": "interviewsPanel",
+          "keyChoice": true,
+          "advancesStage": false
+        },
+        {
+          "id": "s4-outside",
+          "label": "Sterfgevallen ver buiten Soho onderzoeken (Hampstead)",
+          "viz": "hampsteadPanel",
+          "keyChoice": true,
+          "advancesStage": true
+        }
+      ]
+    },
+    {
+      "stageId": "s5",
+      "label": "Dag 8-9 — actie kiezen",
+      "options": [
+        {
+          "id": "s5-lancet",
+          "label": "Publicatie in The Lancet voorbereiden",
+          "viz": "lancetPreview",
+          "keyChoice": false
+        },
+        {
+          "id": "s5-moredata",
+          "label": "Meer data verzamelen voor 100% zekerheid",
+          "viz": "moreDataProgress",
+          "keyChoice": false
+        },
+        {
+          "id": "s5-pamphlets",
+          "label": "Pamfletten onder het publiek verspreiden",
+          "viz": "pamphletResults",
+          "keyChoice": false
+        },
+        {
+          "id": "s5-board",
+          "label": "Board of Guardians overtuigen de pomphendel te verwijderen",
+          "viz": "boardMeeting",
+          "keyChoice": true,
+          "advancesStage": true
+        }
+      ]
+    },
+    {
+      "stageId": "s6",
+      "label": "Dag 9-10 — eindkeuze",
+      "isFinal": true,
+      "options": [
+        {
+          "id": "s6-handle",
+          "label": "Pomphendel verwijderen",
+          "viz": "endingSuccess",
+          "keyChoice": true,
+          "endChoice": "handleRemoved"
+        },
+        {
+          "id": "s6-more",
+          "label": "Meer bewijs eisen",
+          "viz": "endingFailure",
+          "keyChoice": false,
+          "endChoice": "moreEvidence"
+        }
+      ]
+    }
+  ],
+  "hardStopDay": 10
+}

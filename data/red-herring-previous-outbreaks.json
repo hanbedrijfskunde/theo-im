@@ -1,0 +1,20 @@
+[
+  {
+    "year": 1832,
+    "city": "London",
+    "deaths": 6536,
+    "duration_weeks": 16
+  },
+  {
+    "year": 1849,
+    "city": "London",
+    "deaths": 14137,
+    "duration_weeks": 22
+  },
+  {
+    "year": 1854,
+    "city": "Soho (huidig)",
+    "deaths": "onbekend (loopt)",
+    "duration_weeks": "lopend"
+  }
+]

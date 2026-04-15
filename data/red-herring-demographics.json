@@ -1,0 +1,62 @@
+[
+  {
+    "ageRange": "0-5",
+    "gender": "M",
+    "count": 46
+  },
+  {
+    "ageRange": "0-5",
+    "gender": "F",
+    "count": 36
+  },
+  {
+    "ageRange": "6-14",
+    "gender": "M",
+    "count": 26
+  },
+  {
+    "ageRange": "6-14",
+    "gender": "F",
+    "count": 42
+  },
+  {
+    "ageRange": "15-29",
+    "gender": "M",
+    "count": 52
+  },
+  {
+    "ageRange": "15-29",
+    "gender": "F",
+    "count": 55
+  },
+  {
+    "ageRange": "30-44",
+    "gender": "M",
+    "count": 86
+  },
+  {
+    "ageRange": "30-44",
+    "gender": "F",
+    "count": 75
+  },
+  {
+    "ageRange": "45-59",
+    "gender": "M",
+    "count": 78
+  },
+  {
+    "ageRange": "45-59",
+    "gender": "F",
+    "count": 45
+  },
+  {
+    "ageRange": "60+",
+    "gender": "M",
+    "count": 26
+  },
+  {
+    "ageRange": "60+",
+    "gender": "F",
+    "count": 33
+  }
+]
