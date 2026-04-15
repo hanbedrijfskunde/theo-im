@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THEOIM Werkvormen — Bedrijfskunde jaar 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.portal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3rem 1.5rem 4rem;
+      min-height: 100vh;
+    }
+    .portal-wrap {
+      max-width: 880px;
+      width: 100%;
+    }
+    .portal-head {
+      text-align: center;
+      border-bottom: 2px double var(--rule);
+      padding-bottom: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .portal-head h1 {
+      margin: 0 0 0.4rem;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 2.4rem;
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+    }
+    .portal-head .tagline {
+      font-style: italic;
+      color: var(--ink-soft);
+      margin: 0;
+    }
+    .hero-card {
+      background: var(--paper-dark);
+      border: 2px double var(--rule);
+      padding: 2rem 2.2rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .hero-card .stamp {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      margin: 0;
+    }
+    .hero-card h2 {
+      margin: 0 0 0.5rem;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.8rem;
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+    }
+    .hero-card .meta {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin: 0 0 1rem;
+      letter-spacing: 0.04em;
+    }
+    .hero-card p {
+      margin: 0.6rem 0;
+    }
+    .cta-row {
+      margin-top: 1.2rem;
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .cta {
+      display: inline-block;
+      padding: 0.8rem 1.4rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      color: var(--ink);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .cta.primary {
+      background: var(--accent);
+      color: var(--paper);
+      border-color: var(--accent);
+    }
+    .cta.primary:hover {
+      background: var(--accent-soft);
+    }
+    .cta:hover {
+      background: var(--paper-dark);
+      border-color: var(--accent);
+    }
+    .section-head {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin: 2rem 0 0.8rem;
+      border-top: 1px solid var(--rule);
+      padding-top: 0.8rem;
+    }
+    .resource-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0.8rem;
+    }
+    .resource-list li {
+      border: 1px solid var(--rule);
+      padding: 0.9rem 1rem;
+      background: var(--paper);
+    }
+    .resource-list a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .resource-list a:hover {
+      color: var(--accent);
+    }
+    .resource-list .desc {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      margin: 0.3rem 0 0;
+    }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      text-align: center;
+      border-top: 1px solid var(--rule);
+      padding-top: 1rem;
+    }
+    footer a {
+      color: var(--ink-soft);
+    }
+  </style>
+</head>
+<body class="portal">
+  <div class="portal-wrap">
+    <header class="portal-head">
+      <h1>THEOIM Werkvormen</h1>
+      <p class="tagline">Onderwijsmaterialen voor Bedrijfskunde jaar 1 — het DIKIWI-model in de praktijk</p>
+    </header>
+
+    <article class="hero-card">
+      <div class="stamp">WERKVORM&nbsp;I1</div>
+      <h2>De Broad Street Zaak</h2>
+      <p class="meta">Historische detective · Londen 1854 · 60-75 min + 15 min debrief · individueel</p>
+      <p>Speel junior-assistent van Dr. John Snow tijdens de cholera-uitbraak in Soho. Beslis onder tijdsdruk welke data je onderzoekt. Overtuig de Board of Guardians om de waterpomp af te sluiten — voordat de volgende dag weer levens eist.</p>
+      <p>Dekt alle zes DIKIWI-stadia in één narratieve sessie. Geen hulp van het systeem; data spreekt voor zichzelf. Het model wordt pas in de plenaire debrief benoemd, als retrospectieve verklaringslens.</p>
+      <div class="cta-row">
+        <a href="broad-street-zaak.html" class="cta primary">Start werkvorm</a>
+        <a href="docentenhandleiding-I1.md" class="cta">Docentenhandleiding</a>
+        <a href="docs/prd-broad-street-zaak.md" class="cta">PRD</a>
+      </div>
+    </article>
+
+    <div class="section-head">Bronmateriaal</div>
+    <ul class="resource-list">
+      <li>
+        <a href="ideeen.md">Ideeënbox DIKIWI-werkvormen</a>
+        <p class="desc">Snelkiezer en volledige beschrijvingen van alle werkvormen (A–I) voor THEOIM week 1.</p>
+      </li>
+      <li>
+        <a href="Van%20Platte%20Data%20naar%20Ontologie.html">Van Platte Data naar Ontologie</a>
+        <p class="desc">Interactieve uitleg van de DIKIWI-piramide met D3-visualisaties.</p>
+      </li>
+      <li>
+        <a href="https://github.com/hanbedrijfskunde/theo-im" target="_blank" rel="noopener">Broncode op GitHub</a>
+        <p class="desc">Volledige repo met data, scripts en documentatie.</p>
+      </li>
+    </ul>
+
+    <footer>
+      HAN Bedrijfskunde · THEOIM · ontwikkeld door <a href="https://github.com/witoldtenhove" target="_blank" rel="noopener">Witek ten Hove</a>
+    </footer>
+  </div>
+</body>
+</html>
