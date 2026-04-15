@@ -30,7 +30,8 @@ const state = {
   deaths: START_DEATHS,
   unlockedLayers: new Set(),
   currentStageIdx: 0,
-  chosenOptions: new Set(),
+  chosenOptions: [],       // volgorde van keuzes = volgorde van tabbladen
+  activeTabId: null,       // id van momenteel geopend tabblad
   endChoice: null,
 };
 
@@ -236,28 +237,33 @@ function renderMenu() {
       class: "menu-btn",
       onclick: () => handleChoice(opt),
     }, opt.label);
-    if (state.chosenOptions.has(opt.id)) btn.setAttribute("disabled", "");
+    if (state.chosenOptions.includes(opt.id)) btn.setAttribute("disabled", "");
     menu.appendChild(btn);
   }
 }
 
-function renderDossier() {
-  const list = $("dossier-list");
-  clear(list);
+function renderTabs() {
+  const tabs = $("tabs");
+  clear(tabs);
   const allOpts = state.data.menu.stages.flatMap(s => s.options);
   for (const id of state.chosenOptions) {
     const opt = allOpts.find(o => o.id === id);
     if (!opt) continue;
-    const label = opt.label.length > 40 ? opt.label.slice(0, 38) + "..." : opt.label;
-    const li = html("li", {
-      title: "Toon deze waarneming opnieuw",
+    const isActive = id === state.activeTabId;
+    const label = opt.label.length > 28 ? opt.label.slice(0, 26) + "…" : opt.label;
+    const btn = html("button", {
+      class: "tab" + (isActive ? " active" : ""),
+      title: opt.label,
+      role: "tab",
+      "aria-selected": isActive ? "true" : "false",
       onclick: () => {
+        state.activeTabId = id;
         const viz = vizHandlers()[opt.viz];
         if (viz) viz();
+        renderTabs();
       },
     }, label);
-    li.style.cursor = "pointer";
-    list.appendChild(li);
+    tabs.appendChild(btn);
   }
 }
 
@@ -270,7 +276,7 @@ function render() {
   updateDashboard();
   renderDeaths();
   renderMenu();
-  renderDossier();
+  renderTabs();
   setPlaceholderVisible(!state.unlockedLayers.has("map"));
 }
 
@@ -665,8 +671,9 @@ function showEnding(kind) {
 /* ---------- Choice handler ---------- */
 
 function handleChoice(option) {
-  if (state.chosenOptions.has(option.id)) return;
-  state.chosenOptions.add(option.id);
+  if (state.chosenOptions.includes(option.id)) return;
+  state.chosenOptions.push(option.id);
+  state.activeTabId = option.id;
 
   const handlers = vizHandlers();
 
