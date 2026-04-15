@@ -427,8 +427,6 @@ function vizHandlers() {
       state.unlockedLayers.add("map");
       state.unlockedLayers.add("deaths");
       state.deathsRevealed = d.deaths.length;
-      const bg = $("map-bg");
-      if (bg) bg.setAttribute("opacity", "0.35");
       showVizNode("Kaart van Londen — Soho",
         html("p", { text: `Alle ${d.deaths.length} sterfgevallen zijn op de kaart van Soho geplot.` })
       );
