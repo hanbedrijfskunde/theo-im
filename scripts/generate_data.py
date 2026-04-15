@@ -253,23 +253,30 @@ def generate_timeline() -> list[dict]:
     return timeline
 
 
+_DEATHS_REF: list[dict] = []
+
+
 def generate_red_herrings() -> dict[str, object]:
     herrings: dict[str, object] = {}
+    total = len(_DEATHS_REF)
 
     herrings["causes"] = [
-        {"cause": "Cholera morbus (verified)", "count": 578},
+        {"cause": "Cholera morbus (verified)", "count": total},
         {"cause": "Diarrhea", "count": 42},
         {"cause": "Debility", "count": 18},
         {"cause": "Other", "count": 12},
     ]
 
+    # Demografie wordt geaggregeerd uit de 578 echte sterfgevallen (zie deaths var
+    # doorgegeven aan generate_red_herrings). Dit garandeert dat alle totalen
+    # met elkaar aligneren: 578 doden → 578 demografische records → 578 causes.
     demographics = []
-    age_bins = [(0, 5), (6, 14), (15, 29), (30, 44), (45, 59), (60, 120)]
+    age_bins = [(0, 5), (6, 14), (15, 29), (30, 44), (45, 59), (60, 999)]
     for lo, hi in age_bins:
         for g in ("M", "F"):
-            count = random.randint(30, 90) if 15 <= lo <= 45 else random.randint(20, 70)
+            count = sum(1 for d in _DEATHS_REF if lo <= d["age"] <= hi and d["gender"] == g)
             demographics.append({
-                "ageRange": f"{lo}-{hi}" if hi < 120 else f"{lo}+",
+                "ageRange": f"{lo}-{hi}" if hi < 999 else f"{lo}+",
                 "gender": g,
                 "count": count,
             })
@@ -288,15 +295,19 @@ def generate_red_herrings() -> dict[str, object]:
         {"city": "Copenhagen", "country": "Denmark", "year": 1853, "deaths": 4700, "note": "Recent, havenwijk"},
     ]
 
-    herrings["classes"] = [
-        {"class": "Ambachtsman", "count": 142},
-        {"class": "Dagloner", "count": 118},
-        {"class": "Dienstbode", "count": 94},
-        {"class": "Winkelier", "count": 67},
-        {"class": "Geestelijke", "count": 8},
-        {"class": "Gegoede burger", "count": 41},
-        {"class": "Onbekend", "count": 108},
+    # Klasse-verdeling: aantallen geschaald zodat totaal = len(deaths).
+    base = [
+        ("Ambachtsman", 142), ("Dagloner", 118), ("Dienstbode", 94),
+        ("Winkelier", 67), ("Geestelijke", 8), ("Gegoede burger", 41),
+        ("Onbekend", 108),
     ]
+    base_sum = sum(c for _, c in base)
+    scaled = [(name, round(c * total / base_sum)) for name, c in base]
+    # Corrigeer rond-afrondingen zodat som exact = total
+    diff = total - sum(c for _, c in scaled)
+    if diff:
+        scaled[-1] = (scaled[-1][0], scaled[-1][1] + diff)
+    herrings["classes"] = [{"class": n, "count": c} for n, c in scaled]
 
     herrings["waterAnalysis"] = {
         "source": "Broad Street Pump, monster genomen 5 sep 1854",
@@ -393,8 +404,10 @@ def generate_menu_content() -> dict:
 
 
 def main() -> None:
+    global _DEATHS_REF
     print("Generating Snow data from real HistData (seed=1854)...")
     deaths = load_deaths()
+    _DEATHS_REF = deaths
     pumps = load_pumps()
     streets = load_streets()
     write_json(DATA / "snow-deaths.json", deaths)

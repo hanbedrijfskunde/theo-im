@@ -2,61 +2,61 @@
   {
     "ageRange": "0-5",
     "gender": "M",
-    "count": 46
+    "count": 24
   },
   {
     "ageRange": "0-5",
     "gender": "F",
-    "count": 36
+    "count": 22
   },
   {
     "ageRange": "6-14",
     "gender": "M",
-    "count": 26
+    "count": 22
   },
   {
     "ageRange": "6-14",
     "gender": "F",
-    "count": 42
+    "count": 35
   },
   {
     "ageRange": "15-29",
     "gender": "M",
-    "count": 52
+    "count": 70
   },
   {
     "ageRange": "15-29",
-    "gender": "F",
-    "count": 55
-  },
-  {
-    "ageRange": "30-44",
-    "gender": "M",
-    "count": 86
-  },
-  {
-    "ageRange": "30-44",
     "gender": "F",
     "count": 75
   },
   {
+    "ageRange": "30-44",
+    "gender": "M",
+    "count": 80
+  },
+  {
+    "ageRange": "30-44",
+    "gender": "F",
+    "count": 108
+  },
+  {
     "ageRange": "45-59",
     "gender": "M",
-    "count": 78
+    "count": 51
   },
   {
     "ageRange": "45-59",
     "gender": "F",
-    "count": 45
+    "count": 52
   },
   {
     "ageRange": "60+",
     "gender": "M",
-    "count": 26
+    "count": 16
   },
   {
     "ageRange": "60+",
     "gender": "F",
-    "count": 33
+    "count": 23
   }
 ]
