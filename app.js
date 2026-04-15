@@ -141,22 +141,63 @@ function renderPumps() {
   }
 }
 
+function poiMarker(category, x, y) {
+  // Elk POI-type krijgt een eigen vorm + verzadigde kleur, herkenbaar op afstand.
+  const specs = {
+    schools: { color: "#2d7a2d", shape: "triangle" },       // groen driehoek
+    workhouses: { color: "#c9a227", shape: "diamond" },     // geel diamant
+    markets: { color: "#b5651d", shape: "triangle-down" },  // bruin omgekeerde driehoek
+    slaughterhouses: { color: "#6a1b9a", shape: "cross" },  // paars kruis
+    breweries: { color: "#3a7a9a", shape: "hex" },          // blauwgroen zeshoek
+  };
+  const { color, shape } = specs[category] || { color: "#333", shape: "triangle" };
+  const r = 11;
+
+  if (shape === "triangle") {
+    return svg("polygon", {
+      points: `${x},${y - r} ${x + r * 0.9},${y + r * 0.6} ${x - r * 0.9},${y + r * 0.6}`,
+      fill: color, stroke: "#fff", "stroke-width": 1.5,
+    });
+  }
+  if (shape === "triangle-down") {
+    return svg("polygon", {
+      points: `${x},${y + r} ${x + r * 0.9},${y - r * 0.6} ${x - r * 0.9},${y - r * 0.6}`,
+      fill: color, stroke: "#fff", "stroke-width": 1.5,
+    });
+  }
+  if (shape === "diamond") {
+    return svg("polygon", {
+      points: `${x},${y - r} ${x + r * 0.9},${y} ${x},${y + r} ${x - r * 0.9},${y}`,
+      fill: color, stroke: "#3b2f1e", "stroke-width": 1.5,
+    });
+  }
+  if (shape === "cross") {
+    // Rood kruis: twee gekruiste rechthoeken
+    const group = svg("g", {});
+    const arm = 2.5;
+    group.appendChild(svg("rect", { x: x - r, y: y - arm, width: r * 2, height: arm * 2, fill: color, stroke: "#fff", "stroke-width": 1 }));
+    group.appendChild(svg("rect", { x: x - arm, y: y - r, width: arm * 2, height: r * 2, fill: color, stroke: "#fff", "stroke-width": 1 }));
+    return group;
+  }
+  if (shape === "hex") {
+    const pts = [];
+    for (let i = 0; i < 6; i++) {
+      const a = (Math.PI / 3) * i - Math.PI / 2;
+      pts.push(`${(x + r * Math.cos(a)).toFixed(1)},${(y + r * Math.sin(a)).toFixed(1)}`);
+    }
+    return svg("polygon", { points: pts.join(" "), fill: color, stroke: "#fff", "stroke-width": 1.5 });
+  }
+}
+
 function renderPOI(category) {
   const g = $("layer-poi");
-  const colors = {
-    schools: "#2d5f2d", workhouses: "#5a4020", markets: "#aa7a1f",
-    slaughterhouses: "#6b1f1f", breweries: "#3a7a9a",
-  };
-  const color = colors[category] || "#333";
   const items = state.data.poi[category] || [];
   for (const it of items) {
-    const marker = svg("polygon", {
-      points: `${it.x},${it.y - 9} ${it.x + 8},${it.y + 5} ${it.x - 8},${it.y + 5}`,
-      fill: color, stroke: "#fff", "stroke-width": 1, class: "poi-marker",
-      "data-poi-category": category,
-    });
+    const marker = poiMarker(category, it.x, it.y);
+    marker.setAttribute("data-poi-category", category);
+    marker.setAttribute("class", "poi-marker");
     g.appendChild(marker);
-    g.appendChild(svgText("text", { x: it.x + 10, y: it.y + 6, class: "pump-label" }, it.name));
+    g.appendChild(svgText("text", { x: it.x + 12, y: it.y + 5, class: "pump-label" }, it.name));
   }
 }
 
