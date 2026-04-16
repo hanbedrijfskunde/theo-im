@@ -1,7 +1,6 @@
 # PRD — De Broad Street Zaak
 
 **Werkvorm-code:** I1
-**Target-locatie:** `/Users/witoldtenhove/Projects/theoim/docs/prd-broad-street-zaak.md`
 **Status:** Draft v1
 **Auteur:** Witek ten Hove (met Claude)
 **Datum:** 2026-04-15
