@@ -651,7 +651,7 @@ function showEnding(kind) {
     card.appendChild(html("p", {}, html("em", { text: "Dr. John Snow publiceerde dit onderzoek in 1855. Hij had geen kiemtheorie tot zijn beschikking — Louis Pasteur bewees het bestaan van ziekteverwekkende micro-organismen pas in 1861-1884. Snow handelde op patroon, anomalie, en de moed om zonder mechanisme te concluderen." })));
     card.appendChild(html("p", { class: "transfer-question", text: "Welke pomphendel staat in jouw vakgebied nog te wachten op iemand die de kaart tekent?" }));
     card.appendChild(printBtn());
-    card.appendChild(reflectBtn(card));
+    card.appendChild(reflectBtn());
     card.appendChild(reloadBtn());
   } else if (kind === "moreEvidence") {
     card.appendChild(html("div", { class: "stamp", text: "ST JAMES'S PARISH — 18 SEPTEMBER 1854" }));
@@ -664,7 +664,7 @@ function showEnding(kind) {
     ]));
     card.appendChild(html("p", { text: "Historische werkelijkheid: Dr. Snow slaagde er op 7 september 1854 in de Board of Guardians wél te overtuigen. De pomphendel werd verwijderd en de uitbraak eindigde binnen dagen. Zonder die actie zou de uitbraak zich vermoedelijk hebben verspreid naar aangrenzende parochies." }));
     card.appendChild(html("p", { class: "transfer-question", text: "Welk analytisch bewijs is in jouw vakgebied genoeg om tot actie over te gaan, zonder volledig begrip van het mechanisme?" }));
-    card.appendChild(reflectBtn(card));
+    card.appendChild(reflectBtn());
     card.appendChild(reloadBtn());
   } else if (kind === "autoTimeout") {
     card.appendChild(html("div", { class: "stamp", text: "ST JAMES'S PARISH — 10 SEPTEMBER 1854" }));
@@ -677,7 +677,7 @@ function showEnding(kind) {
     ]));
     card.appendChild(html("p", { text: "Historische werkelijkheid: Dr. Snow haalde binnen 10 dagen voldoende bewijs bijeen en overtuigde de Board. De uitbraak eindigde binnen dagen na het verwijderen van de hendel op 7 september 1854." }));
     card.appendChild(html("p", { class: "transfer-question", text: "Welke analytische stap had je eerder moeten zetten?" }));
-    card.appendChild(reflectBtn(card));
+    card.appendChild(reflectBtn());
     card.appendChild(reloadBtn());
   }
 }
@@ -761,12 +761,11 @@ function dikiwiQuestionsNode() {
   );
 }
 
-function reflectBtn(card) {
+function reflectBtn() {
   return html("button", {
     class: "primary",
     onclick: (e) => {
-      e.target.remove();
-      card.appendChild(buildDikiwiReflection());
+      e.target.replaceWith(buildDikiwiReflection());
     },
   }, "Reflecteer op het onderzoek");
 }
