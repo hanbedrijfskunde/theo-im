@@ -198,16 +198,6 @@ Volledige menu-content (teksten, bijbehorende data, visualisatie-specs) in `cont
 
 ## 14. Referenties in bestaand project
 
-- `/Users/witoldtenhove/Projects/theoim/ideeen.md` — positionering in de Ideeënbox (nieuwe §2.I).
-- `/Users/witoldtenhove/Projects/theoim/Van Platte Data naar Ontologie.html` — techniek en stijl-referentie.
-- `/Users/witoldtenhove/Projects/theoim/dikiwi.jpeg` — visueel anker voor debrief.
-
----
-
-## Implementatie-plan (buiten PRD, voor uitvoering)
-
-Na goedkeuring van deze PRD zijn de eerste concrete stappen:
-
-1. Map `/Users/witoldtenhove/Projects/theoim/docs/` aanmaken.
-2. Deze PRD kopiëren naar `/Users/witoldtenhove/Projects/theoim/docs/prd-broad-street-zaak.md`.
-3. Eventuele kleine aanpassingen op basis van gebruiker-feedback direct in het gekopieerde PRD-bestand.
+- `ideeen.md` — positionering in de Ideeënbox (nieuwe §2.I).
+- `Van Platte Data naar Ontologie.html` — techniek en stijl-referentie.
+- `dikiwi.jpeg` — visueel anker voor debrief.
