@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Het Bullwhip-effect — DIKIWI Explainer</title>
+  <meta name="description" content="Interactieve explainer: hoe een TikTok-trend tot miljoenenverliezen in een fabriek leidt. Het bullwhip-effect uitgelegd via het DIKIWI-model.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body.explainer { min-height: 100vh; }
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+
+    /* === SIDEBAR / TOC === */
+    .toc {
+      background: var(--paper-dark);
+      border-right: 2px double var(--rule);
+      padding: 2rem 1.5rem;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      max-height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .toc-stamp {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.25rem 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .toc h1 {
+      margin: 0 0 0.3rem;
+      font-size: 1.6rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+    }
+    .toc .toc-tagline {
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 0.9rem;
+      margin: 0 0 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px double var(--rule);
+    }
+    .toc-nav {
+      list-style: none;
+      margin: 0 0 1.5rem;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .toc-nav button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: none;
+      border-left: 3px solid transparent;
+      padding: 0.6rem 0.8rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--ink);
+      cursor: pointer;
+      line-height: 1.3;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .toc-nav button:hover {
+      background: var(--paper);
+      border-left-color: var(--rule);
+    }
+    .toc-nav button[aria-pressed="true"] {
+      background: var(--paper);
+      border-left-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .toc-nav .toc-num {
+      display: inline-block;
+      width: 1.5rem;
+      color: var(--ink-soft);
+      font-variant-numeric: tabular-nums;
+    }
+    .toc-nav button[aria-pressed="true"] .toc-num {
+      color: var(--accent);
+    }
+    .toc-back {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.85rem;
+    }
+    .toc-back a {
+      color: var(--ink-soft);
+      text-decoration: none;
+    }
+    .toc-back a:hover { color: var(--accent); }
+
+    /* === MOBIELE TOC TOGGLE === */
+    .toc-toggle {
+      display: none;
+      position: fixed;
+      top: 0.8rem;
+      left: 0.8rem;
+      z-index: 100;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 0.5rem 0.8rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .toc-toggle-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(59,47,30,0.4);
+      z-index: 80;
+    }
+
+    /* === MAIN CONTENT === */
+    .content {
+      padding: 3rem 3rem 4rem;
+      max-width: 820px;
+    }
+    .content h2 {
+      margin: 0 0 1rem;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 2.2rem;
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+    }
+    .content h3 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.4rem;
+      margin: 2rem 0 0.8rem;
+      color: var(--ink);
+    }
+    .content .lede {
+      font-size: 1.15rem;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      font-style: italic;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px double var(--rule);
+    }
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+
+    /* === KADERS / QUOTE BLOCKS === */
+    .quote-block {
+      background: var(--paper-dark);
+      border-left: 4px solid var(--accent);
+      padding: 1.2rem 1.5rem;
+      margin: 1.8rem 0;
+      font-style: italic;
+      color: var(--ink);
+    }
+    .quote-block p { margin: 0; }
+    .quote-block strong { font-style: normal; }
+
+    /* === OORZAAK-GRID === */
+    .causes {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.8rem;
+    }
+    .causes li {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 0.9rem 1rem;
+    }
+    .causes li b {
+      display: block;
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin-bottom: 0.3rem;
+      font-size: 0.95rem;
+    }
+
+    /* === DIKIWI STAGES === */
+    .case-header {
+      background: var(--paper-dark);
+      border: 1px solid var(--rule);
+      padding: 0.8rem 1.2rem;
+      margin: 1.5rem 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .case-header .case-title {
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .case-header .case-meta {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .stages {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1.5rem;
+      border: 1px solid var(--rule);
+      border-top: none;
+    }
+    .stage {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--rule);
+      align-items: start;
+    }
+    .stage:last-child { border-bottom: none; }
+    .stage:nth-child(odd) { background: rgba(255,255,255,0.4); }
+    .stage-label {
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 0.9rem;
+      line-height: 1.3;
+    }
+    .stage-num {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--ink-soft);
+      letter-spacing: 0.2em;
+      margin-bottom: 0.15rem;
+    }
+    .stage-body p { margin: 0 0 0.4rem; }
+    .stage-body .stage-meta {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      font-style: italic;
+      margin: 0;
+    }
+    .stage.new .stage-label::after {
+      content: "nieuw";
+      display: inline-block;
+      margin-left: 0.4rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      background: var(--accent);
+      color: var(--paper);
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
+      font-variant: normal;
+      vertical-align: middle;
+    }
+
+    .warning-block {
+      background: var(--paper-dark);
+      border: 1px solid var(--accent);
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 0.8rem;
+      align-items: start;
+    }
+    .warning-block .warning-icon {
+      font-size: 1.4rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .warning-block p { margin: 0; font-size: 0.95rem; }
+
+    /* === REKEN-TABS === */
+    .reken-block {
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      margin: 1.5rem 0;
+    }
+    .reken-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--rule);
+    }
+    .reken-tabs button {
+      flex: 1;
+      background: var(--paper-dark);
+      border: none;
+      border-right: 1px solid var(--rule);
+      padding: 0.9rem 1rem;
+      font-family: inherit;
+      font-size: 1rem;
+      font-variant: small-caps;
+      letter-spacing: 0.05em;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+    .reken-tabs button:last-child { border-right: none; }
+    .reken-tabs button[aria-pressed="true"] {
+      background: var(--paper);
+      color: var(--accent);
+      font-weight: 600;
+      box-shadow: inset 0 -3px 0 var(--accent);
+    }
+    .reken-content { padding: 1.5rem; }
+    .reken-context {
+      font-style: italic;
+      color: var(--ink-soft);
+      margin: 0 0 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .reken-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .reken-section h4 {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin: 0 0 0.6rem;
+      font-weight: 600;
+      font-family: inherit;
+    }
+    .reken-section h4 + .reken-row { margin-top: 0; }
+    .reken-section h4.spaced { margin-top: 1.2rem; }
+    .reken-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0.7rem;
+      background: var(--paper-dark);
+      border-bottom: 1px solid var(--rule);
+      font-size: 0.95rem;
+    }
+    .reken-row:last-child { border-bottom: none; }
+    .reken-row .num {
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+    .reken-row.incoming { color: var(--ink-soft); }
+    .reken-row.incoming .num { color: var(--accent); }
+    .reken-row.total {
+      background: var(--paper);
+      border-left: 3px solid var(--rule);
+      font-weight: 600;
+    }
+    .reken-row.total .num { font-size: 1.2rem; }
+    .reken-row.sale {
+      background: var(--paper);
+      color: var(--accent);
+    }
+    .reken-row.target { background: var(--paper-dark); }
+    .order-card {
+      margin-top: 1rem;
+      background: var(--paper-dark);
+      border: 2px solid var(--accent);
+      padding: 1rem 1.2rem;
+    }
+    .order-card .order-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .order-card .order-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      margin: 0.3rem 0;
+    }
+    .order-card .order-formula {
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+      margin: 0;
+      font-style: italic;
+    }
+
+    /* === SIMULATIE === */
+    .sim-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 1.2rem;
+    }
+    .sim-controls label {
+      display: block;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .sim-controls input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+    .sim-controls .slider-val {
+      font-variant-numeric: tabular-nums;
+      color: var(--accent);
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    .sim-controls .toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-transform: none;
+      letter-spacing: normal;
+      color: var(--ink);
+      font-weight: 400;
+      margin-bottom: 0;
+      flex-wrap: wrap;
+    }
+    .sim-controls .toggle > span:last-child {
+      flex: 1 1 140px;
+      min-width: 0;
+    }
+    .toggle input { display: none; }
+    .toggle-track {
+      width: 44px;
+      height: 22px;
+      background: var(--rule);
+      border-radius: 11px;
+      position: relative;
+      transition: background 0.18s;
+      flex-shrink: 0;
+    }
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--paper);
+      transition: transform 0.18s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--accent); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(22px); }
+    .sim-chart-wrap {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 1rem;
+    }
+    .sim-chart {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .sim-legend {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+    }
+    .sim-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .sim-legend i {
+      width: 24px;
+      height: 3px;
+      display: inline-block;
+    }
+    .sim-caption {
+      font-size: 0.85rem;
+      color: var(--ink-soft);
+      font-style: italic;
+      text-align: center;
+      margin-top: 0.8rem;
+    }
+
+    /* === STRATEGIEEN === */
+    .strategy {
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .strategy h3 {
+      margin-top: 0;
+      color: var(--accent);
+      font-variant: small-caps;
+      letter-spacing: 0.04em;
+    }
+    .strategy p { margin: 0; }
+
+    /* === BRONNEN === */
+    .sources {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+    }
+    .sources li {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.95rem;
+    }
+    .sources cite {
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    /* === NAV BUTTONS === */
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 2px double var(--rule);
+    }
+    .nav-buttons button {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 0.7rem 1.3rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .nav-buttons button:hover {
+      background: var(--paper-dark);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .nav-buttons button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .nav-buttons .next {
+      background: var(--accent);
+      color: var(--paper);
+      border-color: var(--accent);
+    }
+    .nav-buttons .next:hover {
+      background: var(--accent-soft);
+      color: var(--paper);
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 90;
+        transform: translateX(-100%);
+        transition: transform 0.25s;
+        box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+      }
+      .toc.open { transform: translateX(0); }
+      .toc-toggle { display: block; }
+      .toc-toggle-backdrop.open { display: block; }
+      .content {
+        padding: 4rem 1.5rem 3rem;
+      }
+      .content h2 { font-size: 1.7rem; }
+      .reken-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+      .sim-controls { grid-template-columns: 1fr; }
+      .stage { grid-template-columns: 1fr; gap: 0.3rem; padding: 0.9rem; }
+    }
+  </style>
+</head>
+<body class="explainer">
+  <button class="toc-toggle" id="toc-toggle" aria-expanded="false" aria-controls="toc">Menu</button>
+  <div class="toc-toggle-backdrop" id="toc-backdrop"></div>
+
+  <div class="layout">
+    <aside class="toc" id="toc">
+      <div class="toc-stamp">Explainer · C3</div>
+      <h1>Het Bullwhip-effect</h1>
+      <p class="toc-tagline">DIKIWI in supply chains — van TikTok-trend tot fabriek</p>
+      <ul class="toc-nav" id="toc-nav">
+        <li><button data-chapter="intro" aria-pressed="true"><span class="toc-num">1.</span>Introductie &amp; theorie</button></li>
+        <li><button data-chapter="dikiwi" aria-pressed="false"><span class="toc-num">2.</span>DIKIWI &amp; de TikTok-trend</button></li>
+        <li><button data-chapter="rekenen" aria-pressed="false"><span class="toc-num">3.</span>De wiskunde stap-voor-stap</button></li>
+        <li><button data-chapter="simulatie" aria-pressed="false"><span class="toc-num">4.</span>Interactieve simulatie</button></li>
+        <li><button data-chapter="strategie" aria-pressed="false"><span class="toc-num">5.</span>Oplossingsstrategieën</button></li>
+        <li><button data-chapter="bronnen" aria-pressed="false"><span class="toc-num">6.</span>Bronnen &amp; verdieping</button></li>
+      </ul>
+      <div class="toc-back">
+        <a href="index.html">← Terug naar werkvormen</a>
+      </div>
+    </aside>
+
+    <main class="content">
+
+      <!-- HOOFDSTUK 1: INTRODUCTIE -->
+      <section class="chapter active" id="intro" data-chapter="intro">
+        <h2>Het Bullwhip-effect in supply chains</h2>
+        <p class="lede">Hoe kan een grappige video op je telefoon leiden tot miljoenenverliezen in een fabriek aan de andere kant van de wereld? In deze module leer je over het <strong>Bullwhip-effect</strong>: het fenomeen waarbij kleine rimpelingen in de consumentenvraag leiden tot enorme uitslagen verderop in de keten.</p>
+
+        <div class="quote-block">
+          <p><strong>De kern:</strong> Informatie-distortie — hoe verder je van de consument af staat, hoe minder je begrijpt van de werkelijke vraag.</p>
+        </div>
+
+        <h3>De vier oorzaken (Lee, Padmanabhan &amp; Whang, 1997)</h3>
+        <ul class="causes">
+          <li><b>1. Forecast updating</b>Bedrijven trekken verkeerde conclusies uit orders van hun directe buurman in de keten.</li>
+          <li><b>2. Order batching</b>Inefficiëntie ontstaat door het opsparen van bestellingen tot een minimum-batch.</li>
+          <li><b>3. Prijsfluctuaties</b>Promoties en trends zorgen voor tijdelijke hamster-pieken die niet op echte vraag stoelen.</li>
+          <li><b>4. Rationing &amp; gaming</b>Bij dreigende schaarste plaatsen klanten extra grote orders ("voor de zekerheid").</li>
+        </ul>
+
+        <h3>Waarom dit ertoe doet</h3>
+        <p>Het bullwhip-effect is geen academische curiositeit. Het verklaart waarom fabrieken in onbalans zijn, waarom voorraden ofwel uit- of overlopen, en waarom hele ketens vastlopen na een onverwacht consumentensignaal. In de volgende hoofdstukken zie je waar het misgaat — en waar de DIKIWI-piramide instort.</p>
+      </section>
+
+      <!-- HOOFDSTUK 2: DIKIWI & TIKTOK -->
+      <section class="chapter" id="dikiwi" data-chapter="dikiwi">
+        <h2>DIKIWI &amp; de TikTok-trend</h2>
+        <p class="lede">Laten we het <strong>DIKIWI-model</strong> toepassen op een modern scenario: een specifieke "viral" snack die plotseling overal is uitverkocht. We lopen alle zes stadia door — van het ruwe ordergetal tot het structurele leereffect.</p>
+
+        <div class="case-header">
+          <span class="case-title">Casus: De TikTok-snack</span>
+          <span class="case-meta">DIKIWI · zes stadia</span>
+        </div>
+        <ul class="stages">
+          <li class="stage">
+            <div class="stage-label"><span class="stage-num">Stadium 1</span>Data</div>
+            <div class="stage-body">
+              <p>De groothandel ziet: <em>"Retailer X bestelt 2.000 zakken Blue Chips i.p.v. 50."</em></p>
+              <p class="stage-meta">Ruw ordergetal — zonder interpretatie of duiding.</p>
+            </div>
+          </li>
+          <li class="stage">
+            <div class="stage-label"><span class="stage-num">Stadium 2</span>Informatie</div>
+            <div class="stage-body">
+              <p>Vraag bij deze retailer is <strong>+4.000%</strong> gestegen — een afwijking van de baseline.</p>
+              <p class="stage-meta">De data krijgt betekenis door vergelijking met een referentie.</p>
+            </div>
+          </li>
+          <li class="stage">
+            <div class="stage-label"><span class="stage-num">Stadium 3</span>Kennis</div>
+            <div class="stage-body">
+              <p>Een influencer met 5M volgers plaatste gisteren een video. Vergelijkbare hypes duurden in het verleden gemiddeld twee weken.</p>
+              <p class="stage-meta">Context, patronen en vakliteratuur worden gekoppeld aan het signaal.</p>
+            </div>
+          </li>
+          <li class="stage new">
+            <div class="stage-label"><span class="stage-num">Stadium 4</span>Inzicht</div>
+            <div class="stage-body">
+              <p>Onze keten reageert in <strong>weken</strong>; algoritmische trends razen in <strong>uren</strong>. Onze planning-cyclus is structureel niet ingericht op dit type signaal.</p>
+              <p class="stage-meta">De Kennis → Inzicht-sprong: een patroon herkennen dat verder reikt dan deze ene casus.</p>
+            </div>
+          </li>
+          <li class="stage">
+            <div class="stage-label"><span class="stage-num">Stadium 5</span>Wijsheid</div>
+            <div class="stage-body">
+              <p>We leveren de huidige voorraad uit, maar openen <strong>geen</strong> nieuwe productielijn. De hype is over twee weken voorbij.</p>
+              <p class="stage-meta">Een afgewogen besluit dat rekening houdt met onzekerheid en lange-termijn-kosten.</p>
+            </div>
+          </li>
+          <li class="stage new">
+            <div class="stage-label"><span class="stage-num">Stadium 6</span>Impact</div>
+            <div class="stage-body">
+              <p>Een faillissement-waardige berg dode voorraad is vermeden. We bouwen bovendien een <strong>social-monitoring dashboard</strong> zodat de volgende hype op dag 1 wordt herkend, niet pas bij de eerste bulk-order.</p>
+              <p class="stage-meta">Het besluit leidt tot een meetbare uitkomst én een structurele leerwinst voor de organisatie.</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="warning-block">
+          <span class="warning-icon" aria-hidden="true">!</span>
+          <p>Zonder de Kennis over TikTok ziet de fabrikant alleen de enorme orders. Hij denkt dat hij de nieuwe Coca-Cola in handen heeft en investeert miljoenen in extra machines. Zodra de trend stopt, blijft hij achter met een onverkoopbare berg voorraad.</p>
+        </div>
+
+        <p>In een traditionele keten is de fabrikant blind voor de smartphone van de consument. Hij ziet alleen de order van zijn buurman — en reageert daar paniekerig op. De volgende hoofdstukken laten in cijfers zien wat dat betekent.</p>
+      </section>
+
+      <!-- HOOFDSTUK 3: REKENEN -->
+      <section class="chapter" id="rekenen" data-chapter="rekenen">
+        <h2>De versterking in cijfers</h2>
+        <p class="lede">We lopen de voorraadlogica stap-voor-stap door. Let goed op hoe de restvoorraad en de inkomende order van vorige week samen de start van de nieuwe week vormen — en hoe een kleine vraagschommeling resulteert in een grote bestelling.</p>
+
+        <div class="reken-block">
+          <div class="reken-tabs" id="reken-tabs">
+            <button data-step="0" aria-pressed="true">Week 1: Normale week</button>
+            <button data-step="1" aria-pressed="false">Week 2: De TikTok-piek!</button>
+          </div>
+          <div class="reken-content">
+            <p class="reken-context" id="reken-context"></p>
+            <div class="reken-grid">
+              <div class="reken-section">
+                <h4>Maandagochtend (start)</h4>
+                <div class="reken-row"><span>Restvoorraad (vorige week)</span><span class="num" id="r-rest"></span></div>
+                <div class="reken-row incoming"><span>+ Inkomende bestelling</span><span class="num" id="r-inkomend"></span></div>
+                <div class="reken-row total"><span>Totaal beginvoorraad</span><span class="num" id="r-totaal"></span></div>
+                <h4 class="spaced">Gedurende de week</h4>
+                <div class="reken-row sale"><span>Verkoop</span><span class="num" id="r-verkoop"></span></div>
+              </div>
+              <div class="reken-section">
+                <h4>Einde week (order)</h4>
+                <div class="reken-row"><span>Huidige rest</span><span class="num" id="r-nieuwerest"></span></div>
+                <div class="reken-row target"><span>Nieuw doelniveau</span><span class="num" id="r-doel"></span></div>
+                <div class="order-card">
+                  <div class="order-label">Nieuwe order aan fabriek</div>
+                  <div class="order-value" id="r-order"></div>
+                  <p class="order-formula" id="r-formule"></p>
+                </div>
+              </div>
+            </div>
+            <div class="warning-block" id="r-warning" hidden style="margin-top:1.5rem;">
+              <span class="warning-icon" aria-hidden="true">↗</span>
+              <p><strong>Het bullwhip-mechanisme:</strong> de consumentenvraag steeg slechts met <strong>50%</strong> (van 10 naar 15). Jouw bestelling aan de fabriek steeg echter met <strong>150%</strong> (van 10 naar 25). Dit is de zweepslag.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>Conclusie: een kleine schommeling in consumentenvraag (+50%) leidt tot een grote schommeling in de order naar de fabrikant (+150%). En dit is nog maar één schakel — bij elke verdere stap stroomopwaarts versterkt het signaal opnieuw.</p>
+      </section>
+
+      <!-- HOOFDSTUK 4: SIMULATIE -->
+      <section class="chapter" id="simulatie" data-chapter="simulatie">
+        <h2>Hype-simulatie</h2>
+        <p class="lede">Stel zelf de impact van de influencer in en kijk wat er gebeurt. Zet vervolgens de informatiedeling aan: dan ziet de fabriek dezelfde POS-data als de retailer, en het bullwhip-effect smelt grotendeels weg.</p>
+
+        <div class="sim-controls">
+          <div>
+            <label for="sim-fluct">Impact van de influencer<span class="slider-val" id="sim-fluct-val">3</span></label>
+            <input type="range" id="sim-fluct" min="1" max="10" value="3">
+          </div>
+          <div>
+            <label for="sim-dikiwi">Informatiedeling (POS-data)</label>
+            <label class="toggle">
+              <input type="checkbox" id="sim-dikiwi">
+              <span class="toggle-track"></span>
+              <span id="sim-dikiwi-label">Uit — fabriek ziet alleen orders</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="sim-chart-wrap">
+          <div class="sim-legend">
+            <span><i style="background: var(--ink);"></i>Consument</span>
+            <span><i style="background: var(--ink-soft);"></i>Winkelier (gestreept)</span>
+            <span><i style="background: var(--accent);"></i>Fabriek</span>
+          </div>
+          <svg class="sim-chart" id="sim-chart" viewBox="0 0 800 350" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lijngrafiek met vraag van consument, winkelier en fabriek over 20 weken"></svg>
+        </div>
+        <p class="sim-caption">Zodra de rode lijn (Fabriek) wild gaat slaan terwijl de donkere lijn (Consument) bijna vlak is, zie je een serieus bullwhip-probleem.</p>
+      </section>
+
+      <!-- HOOFDSTUK 5: STRATEGIE -->
+      <section class="chapter" id="strategie" data-chapter="strategie">
+        <h2>Hoe temmen we de zweep?</h2>
+        <p class="lede">De oplossingen zijn allemaal varianten van hetzelfde principe: zorg dat informatie sneller stroomopwaarts reist dan het orderwerk zelf. De DIKIWI-piramide moet niet bij elke schakel opnieuw vanaf nul opgebouwd hoeven worden.</p>
+
+        <div class="strategy">
+          <h3>Transparantie via POS-data</h3>
+          <p>De fabrikant kijkt niet meer naar de orders van de groothandel, maar krijgt live-toegang tot de <strong>Point Of Sale (POS)</strong> data van de kassa in de winkel. Hij ziet de hype ontstaan op de dag dat de video viral gaat — niet pas drie weken later via een bulk-order.</p>
+        </div>
+        <div class="strategy">
+          <h3>Strategische allianties (VMI)</h3>
+          <p>Met <strong>Vendor Managed Inventory</strong> bepaalt de leverancier zelf de voorraadhoogte bij de klant. Hij trapt op de rem wanneer hij weet dat een trend tijdelijk is, zelfs als de retailer om meer vraagt. Vertrouwen is hier de schaarse grondstof.</p>
+        </div>
+        <div class="strategy">
+          <h3>Kortere bestelcycli &amp; kleinere batches</h3>
+          <p>Order batching is een van de vier hoofdoorzaken. Door bestellingen vaker en kleiner te plaatsen — en door minimale order-grootten te verlagen — daalt de amplitude van de zweep automatisch.</p>
+        </div>
+        <div class="strategy">
+          <h3>Stabiele prijsstrategieën</h3>
+          <p>Korte, agressieve promoties zijn vaak de aanjager van bullwhip. Strategieën als <strong>Every Day Low Pricing (EDLP)</strong> verwijderen de prikkel voor klanten om te hamsteren en vlakken de vraag uit.</p>
+        </div>
+      </section>
+
+      <!-- HOOFDSTUK 6: BRONNEN -->
+      <section class="chapter" id="bronnen" data-chapter="bronnen">
+        <h2>Bronnen &amp; verdieping</h2>
+        <p class="lede">Wil je dieper graven? Begin bij Lee et al. (1997) — dat is het paper dat het bullwhip-effect formeel definieerde — en lees daarna Ackoff voor de DIKW-context.</p>
+
+        <ul class="sources">
+          <li>Lee, H. L., Padmanabhan, V., &amp; Whang, S. (1997). Information distortion in a supply chain: The bullwhip effect. <cite>Management Science, 43</cite>(4), 546–558.</li>
+          <li>Ackoff, R. L. (1989). From data to wisdom. <cite>Journal of Applied Systems Analysis, 16</cite>, 3–9.</li>
+          <li>Christopher, M. (2016). <cite>Logistics &amp; Supply Chain Management</cite> (5e druk). Pearson Higher Education.</li>
+          <li>Sterman, J. D. (1989). Modeling managerial behavior: Misperceptions of feedback in a dynamic decision making experiment. <cite>Management Science, 35</cite>(3), 321–339. <em>(De originele Beer Game-studie.)</em></li>
+        </ul>
+
+        <h3>Volgende stap</h3>
+        <p>In blok 2 speel je zelf de <strong>Bullwhipgame</strong> (werkvorm C2). Daar ervaar je hoofdstuk 4 van deze explainer aan den lijve. Houd dan in je hoofd: welk DIKIWI-stadium ontbreekt op het moment dat jouw paniek-order wordt geplaatst?</p>
+      </section>
+
+      <nav class="nav-buttons" aria-label="Hoofdstuk-navigatie">
+        <button class="prev" id="nav-prev">← Vorige</button>
+        <button class="next" id="nav-next">Volgende →</button>
+      </nav>
+
+    </main>
+  </div>
+
+  <script type="module">
+    const chapters = ['intro', 'dikiwi', 'rekenen', 'simulatie', 'strategie', 'bronnen'];
+
+    // === HOOFDSTUK-NAVIGATIE ===
+    const tocButtons = document.querySelectorAll('#toc-nav button');
+    const sections = document.querySelectorAll('section.chapter');
+    const navPrev = document.getElementById('nav-prev');
+    const navNext = document.getElementById('nav-next');
+    const tocEl = document.getElementById('toc');
+    const tocBackdrop = document.getElementById('toc-backdrop');
+    const tocToggleBtn = document.getElementById('toc-toggle');
+
+    function getCurrentChapter() {
+      const active = document.querySelector('section.chapter.active');
+      return active ? active.dataset.chapter : 'intro';
+    }
+
+    function showChapter(id, updateHash = true) {
+      if (!chapters.includes(id)) id = 'intro';
+      sections.forEach(s => s.classList.toggle('active', s.dataset.chapter === id));
+      tocButtons.forEach(b => b.setAttribute('aria-pressed', b.dataset.chapter === id ? 'true' : 'false'));
+      const idx = chapters.indexOf(id);
+      navPrev.disabled = idx === 0;
+      navNext.disabled = idx === chapters.length - 1;
+      if (updateHash && location.hash !== '#' + id) {
+        history.replaceState(null, '', '#' + id);
+      }
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      tocEl.classList.remove('open');
+      tocBackdrop.classList.remove('open');
+      tocToggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    tocButtons.forEach(btn => btn.addEventListener('click', () => showChapter(btn.dataset.chapter)));
+    navPrev.addEventListener('click', () => {
+      const idx = chapters.indexOf(getCurrentChapter());
+      if (idx > 0) showChapter(chapters[idx - 1]);
+    });
+    navNext.addEventListener('click', () => {
+      const idx = chapters.indexOf(getCurrentChapter());
+      if (idx < chapters.length - 1) showChapter(chapters[idx + 1]);
+    });
+    window.addEventListener('hashchange', () => {
+      showChapter(location.hash.replace('#', '') || 'intro', false);
+    });
+
+    tocToggleBtn.addEventListener('click', () => {
+      const open = tocEl.classList.toggle('open');
+      tocBackdrop.classList.toggle('open', open);
+      tocToggleBtn.setAttribute('aria-expanded', String(open));
+    });
+    tocBackdrop.addEventListener('click', () => {
+      tocEl.classList.remove('open');
+      tocBackdrop.classList.remove('open');
+      tocToggleBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    showChapter(location.hash.replace('#', '') || 'intro', false);
+
+
+    // === REKENMODEL ===
+    const rekenSteps = [
+      {
+        context: '"In een normale week is alles in balans. Je begint met 10 (rest) + 10 (inkomend) = 20. Je verkoopt 10 en bestelt weer 10 om op 20 te blijven."',
+        rest: 10, inkomend: 10, totaal: 20, verkoop: 10, nieuweRest: 10, doel: 20, order: 10
+      },
+      {
+        context: '"De verkoop stijgt naar 15. Je begint met 20. Na verkoop heb je nog maar 5 over. Omdat je nu 30 in de schappen wilt hebben (2× de nieuwe verkoop), moet je 25 stuks bestellen."',
+        rest: 10, inkomend: 10, totaal: 20, verkoop: 15, nieuweRest: 5, doel: 30, order: 25
+      }
+    ];
+
+    const rekenCells = {
+      context: document.getElementById('reken-context'),
+      rest: document.getElementById('r-rest'),
+      inkomend: document.getElementById('r-inkomend'),
+      totaal: document.getElementById('r-totaal'),
+      verkoop: document.getElementById('r-verkoop'),
+      nieuweRest: document.getElementById('r-nieuwerest'),
+      doel: document.getElementById('r-doel'),
+      order: document.getElementById('r-order'),
+      formule: document.getElementById('r-formule'),
+      warning: document.getElementById('r-warning')
+    };
+    const rekenTabs = document.querySelectorAll('#reken-tabs button');
+
+    function renderReken(idx) {
+      const s = rekenSteps[idx];
+      rekenCells.context.textContent = s.context;
+      rekenCells.rest.textContent = String(s.rest);
+      rekenCells.inkomend.textContent = '+' + s.inkomend;
+      rekenCells.totaal.textContent = String(s.totaal);
+      rekenCells.verkoop.textContent = '−' + s.verkoop;
+      rekenCells.nieuweRest.textContent = String(s.nieuweRest);
+      rekenCells.doel.textContent = String(s.doel);
+      rekenCells.order.textContent = String(s.order);
+      rekenCells.formule.textContent = `Berekening: doel (${s.doel}) − rest (${s.nieuweRest}) = ${s.order}`;
+      rekenCells.warning.hidden = idx !== 1;
+    }
+
+    rekenTabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.step, 10);
+        rekenTabs.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+        renderReken(idx);
+      });
+    });
+    renderReken(0);
+
+
+    // === SIMULATIE ===
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const fluctSlider = document.getElementById('sim-fluct');
+    const fluctVal = document.getElementById('sim-fluct-val');
+    const dikiwiToggle = document.getElementById('sim-dikiwi');
+    const dikiwiLabel = document.getElementById('sim-dikiwi-label');
+    const chartSvg = document.getElementById('sim-chart');
+
+    function compute(fluctuation, useDikiwi) {
+      const data = [];
+      let prevKlant = 10;
+      let prevRetail = 10;
+      for (let i = 1; i <= 20; i++) {
+        const klantVraag = (i >= 5 && i <= 8) ? 10 + (fluctuation * 2) : 10;
+        const orderRetailer = useDikiwi
+          ? klantVraag + (klantVraag - prevKlant)
+          : klantVraag + ((klantVraag - prevKlant) * 3);
+        const orderFabrikant = useDikiwi
+          ? klantVraag + (klantVraag - prevKlant) * 1.2
+          : orderRetailer + ((orderRetailer - prevRetail) * 2.5);
+
+        data.push({
+          klant: Math.max(0, Math.round(klantVraag)),
+          retailer: Math.max(0, Math.round(orderRetailer)),
+          fabrikant: Math.max(0, Math.round(orderFabrikant))
+        });
+        prevKlant = klantVraag;
+        prevRetail = orderRetailer;
+      }
+      return data;
+    }
+
+    function svgEl(name, attrs) {
+      const el = document.createElementNS(SVG_NS, name);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      return el;
+    }
+
+    function clearSvg(svg) {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+    }
+
+    function renderChart(data) {
+      const W = 800, H = 350;
+      const pad = { top: 20, right: 20, bottom: 40, left: 50 };
+      const innerW = W - pad.left - pad.right;
+      const innerH = H - pad.top - pad.bottom;
+
+      const allValues = data.flatMap(d => [d.klant, d.retailer, d.fabrikant]);
+      const maxY = Math.max(40, Math.ceil(Math.max(...allValues) / 10) * 10);
+      const xAt = i => pad.left + (i / (data.length - 1)) * innerW;
+      const yAt = v => pad.top + innerH - (v / maxY) * innerH;
+
+      clearSvg(chartSvg);
+
+      // Y-gridlines + labels
+      const yTicks = [0, maxY / 4, maxY / 2, (maxY * 3) / 4, maxY].map(Math.round);
+      yTicks.forEach(t => {
+        chartSvg.appendChild(svgEl('line', {
+          x1: pad.left, x2: W - pad.right, y1: yAt(t), y2: yAt(t),
+          stroke: 'var(--rule)', 'stroke-opacity': '0.25'
+        }));
+        const label = svgEl('text', {
+          x: pad.left - 8, y: yAt(t) + 4, 'text-anchor': 'end',
+          'font-size': '11', fill: 'var(--ink-soft)',
+          'font-family': 'Crimson Text, Georgia, serif'
+        });
+        label.textContent = String(t);
+        chartSvg.appendChild(label);
+      });
+
+      // Axes
+      chartSvg.appendChild(svgEl('line', {
+        x1: pad.left, x2: W - pad.right, y1: H - pad.bottom, y2: H - pad.bottom,
+        stroke: 'var(--rule)'
+      }));
+      chartSvg.appendChild(svgEl('line', {
+        x1: pad.left, x2: pad.left, y1: pad.top, y2: H - pad.bottom,
+        stroke: 'var(--rule)'
+      }));
+
+      // X-labels
+      [1, 5, 10, 15, 20].forEach(t => {
+        const label = svgEl('text', {
+          x: xAt(t - 1), y: H - pad.bottom + 18, 'text-anchor': 'middle',
+          'font-size': '11', fill: 'var(--ink-soft)',
+          'font-family': 'Crimson Text, Georgia, serif'
+        });
+        label.textContent = 'w' + t;
+        chartSvg.appendChild(label);
+      });
+      const xAxisLabel = svgEl('text', {
+        x: pad.left, y: H - 6, 'font-size': '10', fill: 'var(--ink-soft)',
+        'font-family': 'Crimson Text, Georgia, serif'
+      });
+      xAxisLabel.textContent = 'week →';
+      chartSvg.appendChild(xAxisLabel);
+
+      // Polylines
+      const seriesConfig = [
+        { key: 'klant', color: 'var(--ink)', dash: '0', width: 3.5 },
+        { key: 'retailer', color: 'var(--ink-soft)', dash: '6 4', width: 2.5 },
+        { key: 'fabrikant', color: 'var(--accent)', dash: '0', width: 3 }
+      ];
+      seriesConfig.forEach(s => {
+        const points = data.map((d, i) => `${xAt(i)},${yAt(d[s.key])}`).join(' ');
+        chartSvg.appendChild(svgEl('polyline', {
+          points,
+          fill: 'none',
+          stroke: s.color,
+          'stroke-width': String(s.width),
+          'stroke-dasharray': s.dash,
+          'stroke-linecap': 'round',
+          'stroke-linejoin': 'round'
+        }));
+      });
+    }
+
+    function updateSim() {
+      const f = parseInt(fluctSlider.value, 10);
+      const useDikiwi = dikiwiToggle.checked;
+      fluctVal.textContent = String(f);
+      dikiwiLabel.textContent = useDikiwi
+        ? 'Aan — fabriek ziet POS-data van de kassa'
+        : 'Uit — fabriek ziet alleen orders';
+      renderChart(compute(f, useDikiwi));
+    }
+
+    fluctSlider.addEventListener('input', updateSim);
+    dikiwiToggle.addEventListener('change', updateSim);
+    updateSim();
+  </script>
+</body>
+</html>
