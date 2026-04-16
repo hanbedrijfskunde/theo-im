@@ -73,7 +73,15 @@
         <p>U bent mijn <strong>junior-assistent</strong>. Elke beslissing die u neemt kost een dag aan onderzoek. Elke dag vallen er nieuwe doden.</p>
         <p>Ik zal u niet vertellen waar u moet zoeken, want ik weet het zelf niet zeker. Kies wat u onderzoekt. Oordeel zelf of een aanwijzing u verder brengt.</p>
         <p class="signature">— John Snow, M.D.</p>
-        <button id="start-btn" class="primary">Start onderzoek</button>
+        <div id="start-vault">
+          <button id="start-btn" class="primary">Start onderzoek</button>
+          <form id="unlock-form" class="unlock-form hidden" autocomplete="off">
+            <label for="unlock-input">Codewoord van dr. Snow</label>
+            <input id="unlock-input" type="password" autocomplete="off" spellcheck="false">
+            <button type="submit" class="primary">Open dossier</button>
+            <div id="unlock-error" class="unlock-error hidden">Onjuist codewoord. Vraag in het werkcollege.</div>
+          </form>
+        </div>
       </div>
     </div>
 

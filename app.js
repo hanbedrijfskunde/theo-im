@@ -742,8 +742,47 @@ async function init() {
   render();
   setMenuOpen(true);
   $("menu-toggle").addEventListener("click", () => setMenuOpen(!state.menuOpen));
+  initUnlockGate();
+}
+
+/* ---------- Unlock gate ---------- */
+
+const UNLOCK_HASH = "c6d81b269cb5969ed4365d2ab71aa7a9d17acd6d74c2d739f4159923a0785d50";
+const UNLOCK_KEY = "bsz_unlocked_v1";
+
+async function sha256Hex(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function closeIntroOverlay() {
+  $("intro-overlay").classList.add("hidden");
+}
+
+function initUnlockGate() {
   $("start-btn").addEventListener("click", () => {
-    $("intro-overlay").classList.add("hidden");
+    if (localStorage.getItem(UNLOCK_KEY) === "1") { closeIntroOverlay(); return; }
+    $("start-btn").classList.add("hidden");
+    $("unlock-form").classList.remove("hidden");
+    $("unlock-input").focus();
+  });
+
+  $("unlock-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const pw = $("unlock-input").value.trim();
+    if (!pw) return;
+    const ok = (await sha256Hex(pw)) === UNLOCK_HASH;
+    if (ok) {
+      localStorage.setItem(UNLOCK_KEY, "1");
+      closeIntroOverlay();
+      return;
+    }
+    $("unlock-error").classList.remove("hidden");
+    const form = $("unlock-form");
+    form.classList.remove("shake");
+    void form.offsetWidth;
+    form.classList.add("shake");
+    $("unlock-input").select();
   });
 }
 

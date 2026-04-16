@@ -527,6 +527,59 @@ button.secondary {
   margin: 1rem 0;
 }
 
+/* Unlock gate */
+#start-vault {
+  margin-top: 0.5rem;
+}
+
+.unlock-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 360px;
+}
+
+.unlock-form.hidden { display: none; }
+.unlock-error.hidden { display: none; }
+#start-btn.hidden { display: none; }
+
+.unlock-form label {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-variant: small-caps;
+  letter-spacing: 0.12em;
+}
+
+.unlock-form input {
+  padding: 0.55rem 0.7rem;
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.unlock-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.unlock-error {
+  color: var(--accent);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.shake {
+  animation: shake 0.35s;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 /* Print */
 @media print {
   .overlay, #intro-overlay { display: none !important; }
