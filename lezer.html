@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lezer — THEOIM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f4ecd8;
+      --paper-dark: #e8dcc0;
+      --ink: #3b2f1e;
+      --ink-soft: #6b5a3e;
+      --accent: #8b2a1f;
+      --rule: #8a7752;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Crimson Text", Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+      font-size: 18px;
+    }
+
+    .reader-wrap {
+      max-width: 72ch;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    .reader-head {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px double var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .reader-head a.back {
+      font-family: "Crimson Text", Georgia, serif;
+      color: var(--ink-soft);
+      text-decoration: none;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    .reader-head a.back:hover { color: var(--accent); }
+
+    .reader-head .stamp {
+      display: inline-block;
+      padding: 0.3rem 0.7rem;
+      background: var(--paper-dark);
+      border: 1px solid var(--rule);
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      color: var(--ink-soft);
+      font-variant: small-caps;
+    }
+
+    #doc-content h1 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 2.2rem;
+      margin: 0 0 1rem;
+      line-height: 1.2;
+      font-variant: small-caps;
+      letter-spacing: 0.02em;
+    }
+
+    #doc-content h2 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.55rem;
+      margin: 2.2rem 0 0.6rem;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 0.3rem;
+    }
+
+    #doc-content h3 {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: 1.2rem;
+      margin: 1.6rem 0 0.4rem;
+      color: var(--ink-soft);
+    }
+
+    #doc-content h4, #doc-content h5, #doc-content h6 {
+      font-family: "Crimson Text", Georgia, serif;
+      font-variant: small-caps;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin: 1.2rem 0 0.3rem;
+    }
+
+    #doc-content p {
+      margin: 0.7rem 0;
+    }
+
+    #doc-content strong { color: var(--ink); font-weight: 600; }
+    #doc-content em { color: var(--ink-soft); }
+
+    #doc-content a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px dotted var(--accent);
+    }
+
+    #doc-content a:hover { border-bottom-style: solid; }
+
+    #doc-content hr {
+      border: none;
+      border-top: 2px double var(--rule);
+      margin: 2rem 0;
+    }
+
+    #doc-content blockquote {
+      margin: 1rem 0;
+      padding: 0.6rem 1.2rem;
+      border-left: 3px solid var(--accent);
+      background: var(--paper-dark);
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    #doc-content blockquote p:first-child { margin-top: 0; }
+    #doc-content blockquote p:last-child { margin-bottom: 0; }
+
+    #doc-content ul, #doc-content ol {
+      padding-left: 1.4rem;
+      margin: 0.6rem 0;
+    }
+
+    #doc-content li {
+      margin: 0.25rem 0;
+    }
+
+    #doc-content li > p {
+      margin: 0.3rem 0;
+    }
+
+    #doc-content code {
+      font-family: "JetBrains Mono", Consolas, monospace;
+      background: var(--paper-dark);
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+      font-size: 0.88em;
+      color: var(--ink);
+    }
+
+    #doc-content pre {
+      background: var(--paper-dark);
+      border: 1px solid var(--rule);
+      padding: 0.8rem 1rem;
+      overflow-x: auto;
+      font-size: 0.88em;
+      line-height: 1.5;
+    }
+
+    #doc-content pre code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    #doc-content table {
+      border-collapse: collapse;
+      margin: 1rem 0;
+      width: 100%;
+      font-size: 0.95em;
+    }
+
+    #doc-content th, #doc-content td {
+      border: 1px solid var(--rule);
+      padding: 0.4rem 0.7rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    #doc-content th {
+      background: var(--paper-dark);
+      font-variant: small-caps;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    #doc-content img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .loader, .error {
+      text-align: center;
+      color: var(--ink-soft);
+      font-style: italic;
+      padding: 3rem 0;
+    }
+
+    .error { color: var(--accent); }
+
+    @media print {
+      .reader-head .back, .reader-head .stamp { display: none; }
+      .reader-head { border: none; margin: 0 0 1rem; padding: 0; }
+      body { background: white; color: black; font-size: 11pt; }
+      .reader-wrap { max-width: none; padding: 0; }
+      #doc-content h2, #doc-content h3 { page-break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="reader-wrap">
+    <header class="reader-head">
+      <a class="back" href="index.html">← terug naar werkvormen</a>
+      <span class="stamp" id="doc-stamp">THEOIM</span>
+    </header>
+    <main id="doc-content">
+      <div class="loader">Document laden…</div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { marked } from 'https://cdn.jsdelivr.net/npm/marked@13/+esm';
+    import DOMPurify from 'https://cdn.jsdelivr.net/npm/dompurify@3/+esm';
+
+    marked.setOptions({ gfm: true, breaks: true });
+
+    const DOCS = {
+      handleiding: { file: 'docentenhandleiding-I1.md', stamp: 'Docentenhandleiding' },
+      prd: { file: 'docs/prd-broad-street-zaak.md', stamp: 'PRD' },
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get('doc');
+    const doc = DOCS[key];
+    const content = document.getElementById('doc-content');
+    const stamp = document.getElementById('doc-stamp');
+
+    function renderMessage(type, htmlString) {
+      const wrap = document.createElement('div');
+      wrap.className = type;
+      wrap.innerHTML = DOMPurify.sanitize(htmlString);
+      content.replaceChildren(wrap);
+    }
+
+    if (!doc) {
+      renderMessage('error', 'Onbekend document. <a href="index.html">Ga terug naar werkvormen</a>.');
+    } else {
+      stamp.textContent = doc.stamp;
+      document.title = `${doc.stamp} — THEOIM`;
+      try {
+        const response = await fetch(doc.file);
+        if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+        const md = await response.text();
+        const rawHtml = marked.parse(md);
+        content.innerHTML = DOMPurify.sanitize(rawHtml);
+      } catch (err) {
+        renderMessage('error', `Kan document niet laden: ${err.message}`);
+      }
+    }
+  </script>
+</body>
+</html>
