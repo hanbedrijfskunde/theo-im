@@ -11,13 +11,16 @@ Deze repo bevat werkvormen, interactieve webapps en docentenhandleidingen die st
 
 - [`index.html`](index.html) — landingspagina met overzicht van werkvormen.
 - [`broad-street-zaak.html`](broad-street-zaak.html) — interactieve werkvorm I1.
+- [`bullwhip-explainer.html`](bullwhip-explainer.html) — interactieve explainer C3 (bullwhip-effect via DIKIWI).
 - [`ideeen.md`](ideeen.md) — Ideeënbox met alle werkvormen, gegroepeerd in categorieën A-I.
 - [`docs/`](docs/) — product-specs, takenlijst en pilot-notes per werkvorm.
 - [`docentenhandleiding-I1.md`](docentenhandleiding-I1.md) — docentenhandleiding Broad Street Zaak.
 
-## Werkvorm in productie
+## Werkvormen in productie
 
 **De Broad Street Zaak (I1)** — Victoriaanse detective-werkvorm rond John Snow's cholera-onderzoek in Soho 1854. Zie [`docs/prd-broad-street-zaak.md`](docs/prd-broad-street-zaak.md) voor het volledige PRD.
+
+**Het Bullwhip-effect (C3)** — interactieve explainer met zes hoofdstukken: theorie, DIKIWI-analyse van een TikTok-trend, berekeningen stap-voor-stap, hype-simulatie met SVG-grafiek en oplossingsstrategieën. Voorbereiding op de Bullwhipgame-debrief (C2) in blok 2.
 
 ## Lokale ontwikkeling
 
