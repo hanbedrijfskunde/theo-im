@@ -7,10 +7,13 @@
   <meta name="description" content="Interactieve explainer: hoe een TikTok-trend tot miljoenenverliezen in een fabriek leidt. Het bullwhip-effect uitgelegd via het DIKIWI-model.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles-modern.css">
   <style>
-    body.explainer { min-height: 100vh; }
+    body.explainer {
+      background: var(--surface);
+      min-height: 100vh;
+    }
     .layout {
       display: grid;
       grid-template-columns: 280px 1fr;
@@ -19,9 +22,9 @@
 
     /* === SIDEBAR / TOC === */
     .toc {
-      background: var(--paper-dark);
-      border-right: 2px double var(--rule);
-      padding: 2rem 1.5rem;
+      background: #ffffff;
+      border-right: 1px solid var(--border-color);
+      padding: 2rem 1.25rem;
       position: sticky;
       top: 0;
       align-self: start;
@@ -32,28 +35,29 @@
     }
     .toc-stamp {
       display: inline-block;
-      font-size: 0.65rem;
-      letter-spacing: 0.25em;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.25rem 0.6rem;
+      color: var(--primary);
+      background: var(--primary-50);
+      padding: 0.2rem 0.625rem;
+      border-radius: var(--radius-full);
       margin-bottom: 1rem;
     }
     .toc h1 {
       margin: 0 0 0.3rem;
-      font-size: 1.6rem;
-      font-variant: small-caps;
-      letter-spacing: 0.04em;
-      line-height: 1.15;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.25;
     }
     .toc .toc-tagline {
-      font-style: italic;
-      color: var(--ink-soft);
-      font-size: 0.9rem;
-      margin: 0 0 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+      margin: 0 0 1.25rem;
       padding-bottom: 1rem;
-      border-bottom: 2px double var(--rule);
+      border-bottom: 1px solid var(--border-color);
     }
     .toc-nav {
       list-style: none;
@@ -61,7 +65,7 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.2rem;
+      gap: 0.15rem;
     }
     .toc-nav button {
       display: block;
@@ -69,65 +73,68 @@
       text-align: left;
       background: transparent;
       border: none;
-      border-left: 3px solid transparent;
-      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-md);
+      padding: 0.6rem 0.75rem;
       font-family: inherit;
-      font-size: 0.95rem;
-      color: var(--ink);
+      font-size: 0.875rem;
+      color: var(--text-primary);
       cursor: pointer;
-      line-height: 1.3;
-      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      line-height: 1.35;
+      transition: background 0.12s, color 0.12s;
     }
     .toc-nav button:hover {
-      background: var(--paper);
-      border-left-color: var(--rule);
+      background: var(--primary-50);
+      color: var(--primary);
     }
     .toc-nav button[aria-pressed="true"] {
-      background: var(--paper);
-      border-left-color: var(--accent);
-      color: var(--accent);
+      background: var(--primary-50);
+      color: var(--primary);
       font-weight: 600;
     }
     .toc-nav .toc-num {
       display: inline-block;
       width: 1.5rem;
-      color: var(--ink-soft);
+      color: var(--text-tertiary);
       font-variant-numeric: tabular-nums;
+      font-weight: 500;
     }
     .toc-nav button[aria-pressed="true"] .toc-num {
-      color: var(--accent);
+      color: var(--primary);
     }
     .toc-back {
       margin-top: auto;
       padding-top: 1rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.85rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.8125rem;
     }
     .toc-back a {
-      color: var(--ink-soft);
-      text-decoration: none;
+      color: var(--text-secondary);
     }
-    .toc-back a:hover { color: var(--accent); }
+    .toc-back a:hover { color: var(--primary); text-decoration: none; }
 
     /* === MOBIELE TOC TOGGLE === */
     .toc-toggle {
       display: none;
       position: fixed;
-      top: 0.8rem;
-      left: 0.8rem;
+      top: 0.75rem;
+      left: 0.75rem;
       z-index: 100;
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 0.5rem 0.8rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.9rem;
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-dark);
       cursor: pointer;
+      box-shadow: var(--shadow-sm);
     }
     .toc-toggle-backdrop {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(59,47,30,0.4);
+      background: rgb(15 23 42 / 0.4);
       z-index: 80;
     }
 
@@ -138,70 +145,69 @@
     }
     .content h2 {
       margin: 0 0 1rem;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 2.2rem;
-      font-variant: small-caps;
-      letter-spacing: 0.04em;
-      line-height: 1.15;
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--text-dark);
     }
     .content h3 {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.4rem;
-      margin: 2rem 0 0.8rem;
-      color: var(--ink);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 2rem 0 0.75rem;
     }
     .content .lede {
-      font-size: 1.15rem;
-      line-height: 1.55;
-      color: var(--ink-soft);
-      font-style: italic;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
       margin-bottom: 2rem;
       padding-bottom: 1.5rem;
-      border-bottom: 2px double var(--rule);
+      border-bottom: 1px solid var(--border-color);
     }
     .chapter { display: none; }
     .chapter.active { display: block; }
 
-    /* === KADERS / QUOTE BLOCKS === */
+    /* === INFOBOX / QUOTE BLOCKS === */
     .quote-block {
-      background: var(--paper-dark);
-      border-left: 4px solid var(--accent);
-      padding: 1.2rem 1.5rem;
-      margin: 1.8rem 0;
-      font-style: italic;
-      color: var(--ink);
+      background: var(--primary-50);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin: 1.5rem 0;
+      color: var(--text-primary);
     }
     .quote-block p { margin: 0; }
-    .quote-block strong { font-style: normal; }
+    .quote-block strong { color: var(--primary); }
 
     /* === OORZAAK-GRID === */
     .causes {
       list-style: none;
       padding: 0;
-      margin: 1.5rem 0;
+      margin: 1.25rem 0;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 0.8rem;
+      gap: 0.75rem;
     }
     .causes li {
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 0.9rem 1rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.1rem;
+      font-size: 0.875rem;
     }
     .causes li b {
       display: block;
-      font-variant: small-caps;
-      letter-spacing: 0.06em;
-      color: var(--accent);
-      margin-bottom: 0.3rem;
-      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      font-size: 0.9375rem;
     }
 
     /* === DIKIWI STAGES === */
     .case-header {
-      background: var(--paper-dark);
-      border: 1px solid var(--rule);
-      padding: 0.8rem 1.2rem;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 0.8rem 1.25rem;
       margin: 1.5rem 0 0;
       display: flex;
       justify-content: space-between;
@@ -210,124 +216,130 @@
       gap: 0.5rem;
     }
     .case-header .case-title {
-      font-variant: small-caps;
-      letter-spacing: 0.05em;
-      color: var(--accent);
       font-weight: 600;
+      color: #ffffff;
     }
     .case-header .case-meta {
       font-size: 0.75rem;
-      letter-spacing: 0.15em;
+      color: var(--primary-100);
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--ink-soft);
     }
     .stages {
       list-style: none;
       padding: 0;
       margin: 0 0 1.5rem;
-      border: 1px solid var(--rule);
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-top: none;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      overflow: hidden;
     }
     .stage {
       display: grid;
-      grid-template-columns: 110px 1fr;
+      grid-template-columns: 130px 1fr;
       gap: 1rem;
-      padding: 1rem 1.2rem;
-      border-bottom: 1px solid var(--rule);
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
       align-items: start;
     }
     .stage:last-child { border-bottom: none; }
-    .stage:nth-child(odd) { background: rgba(255,255,255,0.4); }
     .stage-label {
-      font-variant: small-caps;
-      letter-spacing: 0.08em;
       font-weight: 600;
-      color: var(--accent);
-      font-size: 0.9rem;
+      color: var(--primary);
+      font-size: 0.9375rem;
       line-height: 1.3;
     }
     .stage-num {
       display: block;
       font-size: 0.7rem;
-      color: var(--ink-soft);
-      letter-spacing: 0.2em;
-      margin-bottom: 0.15rem;
+      color: var(--text-tertiary);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
     }
-    .stage-body p { margin: 0 0 0.4rem; }
+    .stage-body p { margin: 0 0 0.35rem; font-size: 0.9375rem; }
     .stage-body .stage-meta {
-      font-size: 0.8rem;
-      color: var(--ink-soft);
-      font-style: italic;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
       margin: 0;
     }
     .stage.new .stage-label::after {
       content: "nieuw";
       display: inline-block;
       margin-left: 0.4rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      background: var(--accent);
-      color: var(--paper);
-      padding: 0.1rem 0.4rem;
-      border-radius: 2px;
-      font-variant: normal;
+      font-size: 0.625rem;
+      letter-spacing: 0.04em;
+      background: var(--success-light);
+      color: var(--success);
+      padding: 0.1rem 0.45rem;
+      border-radius: var(--radius-full);
+      font-weight: 500;
+      text-transform: uppercase;
       vertical-align: middle;
     }
 
+    /* === WARNING BLOCK === */
     .warning-block {
-      background: var(--paper-dark);
-      border: 1px solid var(--accent);
-      padding: 1rem 1.2rem;
+      background: var(--warning-light);
+      border-left: 3px solid var(--warning);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.1rem;
       margin: 1.5rem 0;
       display: grid;
-      grid-template-columns: 2rem 1fr;
-      gap: 0.8rem;
+      grid-template-columns: 1.5rem 1fr;
+      gap: 0.75rem;
       align-items: start;
     }
     .warning-block .warning-icon {
-      font-size: 1.4rem;
-      color: var(--accent);
-      line-height: 1;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--warning);
+      line-height: 1.3;
+      text-align: center;
     }
-    .warning-block p { margin: 0; font-size: 0.95rem; }
+    .warning-block p { margin: 0; font-size: 0.9375rem; }
 
     /* === REKEN-TABS === */
     .reken-block {
-      border: 1px solid var(--rule);
-      background: var(--paper);
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
       margin: 1.5rem 0;
+      overflow: hidden;
     }
     .reken-tabs {
       display: flex;
-      border-bottom: 1px solid var(--rule);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-color);
     }
     .reken-tabs button {
       flex: 1;
-      background: var(--paper-dark);
+      background: transparent;
       border: none;
-      border-right: 1px solid var(--rule);
       padding: 0.9rem 1rem;
       font-family: inherit;
-      font-size: 1rem;
-      font-variant: small-caps;
-      letter-spacing: 0.05em;
-      color: var(--ink-soft);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--text-secondary);
       cursor: pointer;
+      transition: color 0.15s, background 0.15s, box-shadow 0.15s;
     }
-    .reken-tabs button:last-child { border-right: none; }
+    .reken-tabs button:hover { color: var(--primary); }
     .reken-tabs button[aria-pressed="true"] {
-      background: var(--paper);
-      color: var(--accent);
+      background: #ffffff;
+      color: var(--primary);
       font-weight: 600;
-      box-shadow: inset 0 -3px 0 var(--accent);
+      box-shadow: inset 0 -2px 0 var(--primary);
     }
     .reken-content { padding: 1.5rem; }
     .reken-context {
-      font-style: italic;
-      color: var(--ink-soft);
-      margin: 0 0 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9375rem;
+      margin: 0 0 1.25rem;
       padding-bottom: 1rem;
-      border-bottom: 1px solid var(--rule);
+      border-bottom: 1px solid var(--border-color);
     }
     .reken-grid {
       display: grid;
@@ -336,68 +348,72 @@
     }
     .reken-section h4 {
       font-size: 0.75rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      margin: 0 0 0.6rem;
       font-weight: 600;
-      font-family: inherit;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin: 0 0 0.6rem;
     }
-    .reken-section h4 + .reken-row { margin-top: 0; }
-    .reken-section h4.spaced { margin-top: 1.2rem; }
+    .reken-section h4.spaced { margin-top: 1.25rem; }
     .reken-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5rem 0.7rem;
-      background: var(--paper-dark);
-      border-bottom: 1px solid var(--rule);
-      font-size: 0.95rem;
+      padding: 0.55rem 0.75rem;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      margin-bottom: 0.35rem;
+      font-size: 0.9375rem;
     }
-    .reken-row:last-child { border-bottom: none; }
     .reken-row .num {
       font-variant-numeric: tabular-nums;
       font-weight: 600;
+      color: var(--text-dark);
     }
-    .reken-row.incoming { color: var(--ink-soft); }
-    .reken-row.incoming .num { color: var(--accent); }
+    .reken-row.incoming { color: var(--primary); }
+    .reken-row.incoming .num { color: var(--primary); }
     .reken-row.total {
-      background: var(--paper);
-      border-left: 3px solid var(--rule);
+      background: var(--primary-50);
+      border-left: 3px solid var(--primary);
       font-weight: 600;
     }
-    .reken-row.total .num { font-size: 1.2rem; }
+    .reken-row.total .num { font-size: 1.125rem; color: var(--primary); }
     .reken-row.sale {
-      background: var(--paper);
-      color: var(--accent);
+      background: var(--danger-light);
+      color: var(--danger);
     }
-    .reken-row.target { background: var(--paper-dark); }
+    .reken-row.sale .num { color: var(--danger); }
+    .reken-row.target {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    .reken-row.target .num { color: var(--warning); }
     .order-card {
       margin-top: 1rem;
-      background: var(--paper-dark);
-      border: 2px solid var(--accent);
-      padding: 1rem 1.2rem;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.25rem;
     }
     .order-card .order-label {
       font-size: 0.75rem;
-      letter-spacing: 0.15em;
+      font-weight: 500;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 600;
+      color: var(--primary-100);
     }
     .order-card .order-value {
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: 700;
-      color: var(--accent);
+      color: #ffffff;
       font-variant-numeric: tabular-nums;
       line-height: 1;
       margin: 0.3rem 0;
     }
     .order-card .order-formula {
-      font-size: 0.8rem;
-      color: var(--ink-soft);
+      font-size: 0.8125rem;
+      color: var(--primary-100);
       margin: 0;
-      font-style: italic;
     }
 
     /* === SIMULATIE === */
@@ -406,39 +422,40 @@
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
       margin: 1.5rem 0;
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 1.2rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
     }
-    .sim-controls label {
+    .sim-controls > div > label {
       display: block;
-      font-size: 0.8rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
       font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.6rem;
     }
     .sim-controls input[type="range"] {
       width: 100%;
-      accent-color: var(--accent);
+      accent-color: var(--primary);
     }
     .sim-controls .slider-val {
       font-variant-numeric: tabular-nums;
-      color: var(--accent);
-      font-weight: 600;
+      color: var(--primary);
+      font-weight: 700;
       margin-left: 0.5rem;
     }
     .sim-controls .toggle {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.65rem;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--text-primary);
       text-transform: none;
       letter-spacing: normal;
-      color: var(--ink);
-      font-weight: 400;
       margin-bottom: 0;
       flex-wrap: wrap;
     }
@@ -449,9 +466,9 @@
     .toggle input { display: none; }
     .toggle-track {
       width: 44px;
-      height: 22px;
-      background: var(--rule);
-      border-radius: 11px;
+      height: 24px;
+      background: var(--border-subtle);
+      border-radius: 12px;
       position: relative;
       transition: background 0.18s;
       flex-shrink: 0;
@@ -461,18 +478,20 @@
       position: absolute;
       top: 2px;
       left: 2px;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
-      background: var(--paper);
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
       transition: transform 0.18s;
     }
-    .toggle input:checked + .toggle-track { background: var(--accent); }
-    .toggle input:checked + .toggle-track::after { transform: translateX(22px); }
+    .toggle input:checked + .toggle-track { background: var(--primary); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(20px); }
     .sim-chart-wrap {
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 1rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
     }
     .sim-chart {
       width: 100%;
@@ -481,60 +500,66 @@
     }
     .sim-legend {
       display: flex;
-      gap: 1.5rem;
+      gap: 1.25rem;
       flex-wrap: wrap;
-      margin-bottom: 0.8rem;
-      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
     }
     .sim-legend span {
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.45rem;
     }
     .sim-legend i {
       width: 24px;
       height: 3px;
       display: inline-block;
+      border-radius: 2px;
     }
     .sim-caption {
-      font-size: 0.85rem;
-      color: var(--ink-soft);
-      font-style: italic;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
       text-align: center;
-      margin-top: 0.8rem;
+      margin-top: 0.75rem;
     }
 
-    /* === STRATEGIEEN === */
+    /* === STRATEGIE === */
     .strategy {
-      border: 1px solid var(--rule);
-      background: var(--paper);
-      padding: 1.2rem 1.5rem;
-      margin-bottom: 1rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 0.9rem;
+      transition: border-color 0.15s;
     }
+    .strategy:hover { border-color: var(--primary-200); }
     .strategy h3 {
-      margin-top: 0;
-      color: var(--accent);
-      font-variant: small-caps;
-      letter-spacing: 0.04em;
+      margin: 0 0 0.4rem;
+      color: var(--primary);
+      font-size: 1.0625rem;
+      font-weight: 600;
     }
-    .strategy p { margin: 0; }
+    .strategy p { margin: 0; font-size: 0.9375rem; }
 
     /* === BRONNEN === */
     .sources {
       list-style: none;
       padding: 0;
-      margin: 1.5rem 0;
+      margin: 1.25rem 0;
     }
     .sources li {
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 0.9rem 1.1rem;
-      margin-bottom: 0.6rem;
-      font-size: 0.95rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.8rem 1.1rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9375rem;
+      line-height: 1.55;
     }
     .sources cite {
       font-style: italic;
-      color: var(--ink-soft);
+      color: var(--text-secondary);
     }
 
     /* === NAV BUTTONS === */
@@ -544,37 +569,7 @@
       align-items: center;
       margin-top: 3rem;
       padding-top: 1.5rem;
-      border-top: 2px double var(--rule);
-    }
-    .nav-buttons button {
-      background: var(--paper);
-      border: 1px solid var(--rule);
-      padding: 0.7rem 1.3rem;
-      font-family: inherit;
-      font-size: 0.95rem;
-      font-variant: small-caps;
-      letter-spacing: 0.08em;
-      color: var(--ink);
-      cursor: pointer;
-      transition: background 0.12s, border-color 0.12s, color 0.12s;
-    }
-    .nav-buttons button:hover {
-      background: var(--paper-dark);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .nav-buttons button:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    .nav-buttons .next {
-      background: var(--accent);
-      color: var(--paper);
-      border-color: var(--accent);
-    }
-    .nav-buttons .next:hover {
-      background: var(--accent-soft);
-      color: var(--paper);
+      border-top: 1px solid var(--border-color);
     }
 
     /* === RESPONSIVE === */
@@ -589,18 +584,18 @@
         z-index: 90;
         transform: translateX(-100%);
         transition: transform 0.25s;
-        box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+        box-shadow: 4px 0 20px rgb(0 0 0 / 0.12);
       }
       .toc.open { transform: translateX(0); }
       .toc-toggle { display: block; }
       .toc-toggle-backdrop.open { display: block; }
       .content {
-        padding: 4rem 1.5rem 3rem;
+        padding: 4rem 1.25rem 2.5rem;
       }
-      .content h2 { font-size: 1.7rem; }
-      .reken-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+      .content h2 { font-size: 1.5rem; }
+      .reken-grid { grid-template-columns: 1fr; gap: 1rem; }
       .sim-controls { grid-template-columns: 1fr; }
-      .stage { grid-template-columns: 1fr; gap: 0.3rem; padding: 0.9rem; }
+      .stage { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.9rem 1rem; }
     }
   </style>
 </head>
@@ -719,7 +714,7 @@
         <div class="reken-block">
           <div class="reken-tabs" id="reken-tabs">
             <button data-step="0" aria-pressed="true">Week 1: Normale week</button>
-            <button data-step="1" aria-pressed="false">Week 2: De TikTok-piek!</button>
+            <button data-step="1" aria-pressed="false">Week 2: De TikTok-piek</button>
           </div>
           <div class="reken-content">
             <p class="reken-context" id="reken-context"></p>
@@ -775,13 +770,13 @@
 
         <div class="sim-chart-wrap">
           <div class="sim-legend">
-            <span><i style="background: var(--ink);"></i>Consument</span>
-            <span><i style="background: var(--ink-soft);"></i>Winkelier (gestreept)</span>
-            <span><i style="background: var(--accent);"></i>Fabriek</span>
+            <span><i style="background: #1e293b;"></i>Consument</span>
+            <span><i style="background: #64748b;"></i>Winkelier (gestreept)</span>
+            <span><i style="background: #1e3a5f;"></i>Fabriek</span>
           </div>
           <svg class="sim-chart" id="sim-chart" viewBox="0 0 800 350" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lijngrafiek met vraag van consument, winkelier en fabriek over 20 weken"></svg>
         </div>
-        <p class="sim-caption">Zodra de rode lijn (Fabriek) wild gaat slaan terwijl de donkere lijn (Consument) bijna vlak is, zie je een serieus bullwhip-probleem.</p>
+        <p class="sim-caption">Zodra de blauwe lijn (Fabriek) wild gaat slaan terwijl de donkere lijn (Consument) bijna vlak is, zie je een serieus bullwhip-probleem.</p>
       </section>
 
       <!-- HOOFDSTUK 5: STRATEGIE -->
@@ -824,8 +819,8 @@
       </section>
 
       <nav class="nav-buttons" aria-label="Hoofdstuk-navigatie">
-        <button class="prev" id="nav-prev">← Vorige</button>
-        <button class="next" id="nav-next">Volgende →</button>
+        <button class="btn btn-secondary" id="nav-prev">← Vorige</button>
+        <button class="btn btn-primary" id="nav-next">Volgende →</button>
       </nav>
 
     </main>
@@ -834,7 +829,6 @@
   <script type="module">
     const chapters = ['intro', 'dikiwi', 'rekenen', 'simulatie', 'strategie', 'bronnen'];
 
-    // === HOOFDSTUK-NAVIGATIE ===
     const tocButtons = document.querySelectorAll('#toc-nav button');
     const sections = document.querySelectorAll('section.chapter');
     const navPrev = document.getElementById('nav-prev');
@@ -996,54 +990,54 @@
 
       clearSvg(chartSvg);
 
-      // Y-gridlines + labels
+      const GRID = '#e2e8f0';
+      const AXIS = '#94a3b8';
+      const LABEL = '#64748b';
+
       const yTicks = [0, maxY / 4, maxY / 2, (maxY * 3) / 4, maxY].map(Math.round);
       yTicks.forEach(t => {
         chartSvg.appendChild(svgEl('line', {
           x1: pad.left, x2: W - pad.right, y1: yAt(t), y2: yAt(t),
-          stroke: 'var(--rule)', 'stroke-opacity': '0.25'
+          stroke: GRID
         }));
         const label = svgEl('text', {
           x: pad.left - 8, y: yAt(t) + 4, 'text-anchor': 'end',
-          'font-size': '11', fill: 'var(--ink-soft)',
-          'font-family': 'Crimson Text, Georgia, serif'
+          'font-size': '11', fill: LABEL,
+          'font-family': 'Inter, ui-sans-serif, system-ui, sans-serif'
         });
         label.textContent = String(t);
         chartSvg.appendChild(label);
       });
 
-      // Axes
       chartSvg.appendChild(svgEl('line', {
         x1: pad.left, x2: W - pad.right, y1: H - pad.bottom, y2: H - pad.bottom,
-        stroke: 'var(--rule)'
+        stroke: AXIS
       }));
       chartSvg.appendChild(svgEl('line', {
         x1: pad.left, x2: pad.left, y1: pad.top, y2: H - pad.bottom,
-        stroke: 'var(--rule)'
+        stroke: AXIS
       }));
 
-      // X-labels
       [1, 5, 10, 15, 20].forEach(t => {
         const label = svgEl('text', {
           x: xAt(t - 1), y: H - pad.bottom + 18, 'text-anchor': 'middle',
-          'font-size': '11', fill: 'var(--ink-soft)',
-          'font-family': 'Crimson Text, Georgia, serif'
+          'font-size': '11', fill: LABEL,
+          'font-family': 'Inter, ui-sans-serif, system-ui, sans-serif'
         });
         label.textContent = 'w' + t;
         chartSvg.appendChild(label);
       });
       const xAxisLabel = svgEl('text', {
-        x: pad.left, y: H - 6, 'font-size': '10', fill: 'var(--ink-soft)',
-        'font-family': 'Crimson Text, Georgia, serif'
+        x: pad.left, y: H - 6, 'font-size': '10', fill: LABEL,
+        'font-family': 'Inter, ui-sans-serif, system-ui, sans-serif'
       });
       xAxisLabel.textContent = 'week →';
       chartSvg.appendChild(xAxisLabel);
 
-      // Polylines
       const seriesConfig = [
-        { key: 'klant', color: 'var(--ink)', dash: '0', width: 3.5 },
-        { key: 'retailer', color: 'var(--ink-soft)', dash: '6 4', width: 2.5 },
-        { key: 'fabrikant', color: 'var(--accent)', dash: '0', width: 3 }
+        { key: 'klant', color: '#1e293b', dash: '0', width: 3 },
+        { key: 'retailer', color: '#64748b', dash: '6 4', width: 2.5 },
+        { key: 'fabrikant', color: '#1e3a5f', dash: '0', width: 3 }
       ];
       seriesConfig.forEach(s => {
         const points = data.map((d, i) => `${xAt(i)},${yAt(d[s.key])}`).join(' ');
