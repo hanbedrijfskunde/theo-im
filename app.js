@@ -649,8 +649,9 @@ function showEnding(kind) {
       html("figure", {}, snowMap, html("figcaption", { text: "Dr. John Snow's originele kaart, gepubliceerd in On the Mode of Communication of Cholera (2e editie, 1855). Elk zwart blokje is één sterfgeval; de pomp op Broad Street staat centraal." })),
     ));
     card.appendChild(html("p", {}, html("em", { text: "Dr. John Snow publiceerde dit onderzoek in 1855. Hij had geen kiemtheorie tot zijn beschikking — Louis Pasteur bewees het bestaan van ziekteverwekkende micro-organismen pas in 1861-1884. Snow handelde op patroon, anomalie, en de moed om zonder mechanisme te concluderen." })));
-    card.appendChild(html("p", { class: "transfer-question", text: "Welke pomphendel staat in uw vakgebied nog te wachten op iemand die de kaart tekent?" }));
+    card.appendChild(html("p", { class: "transfer-question", text: "Welke pomphendel staat in jouw vakgebied nog te wachten op iemand die de kaart tekent?" }));
     card.appendChild(printBtn());
+    card.appendChild(reflectBtn(card));
     card.appendChild(reloadBtn());
   } else if (kind === "moreEvidence") {
     card.appendChild(html("div", { class: "stamp", text: "ST JAMES'S PARISH — 18 SEPTEMBER 1854" }));
@@ -662,7 +663,8 @@ function showEnding(kind) {
       ["Dagen tot uitbraak eindigde", "~30"],
     ]));
     card.appendChild(html("p", { text: "Historische werkelijkheid: Dr. Snow slaagde er op 7 september 1854 in de Board of Guardians wél te overtuigen. De pomphendel werd verwijderd en de uitbraak eindigde binnen dagen. Zonder die actie zou de uitbraak zich vermoedelijk hebben verspreid naar aangrenzende parochies." }));
-    card.appendChild(html("p", { class: "transfer-question", text: "Welk analytisch bewijs is in uw vakgebied genoeg om tot actie over te gaan, zonder volledig begrip van het mechanisme?" }));
+    card.appendChild(html("p", { class: "transfer-question", text: "Welk analytisch bewijs is in jouw vakgebied genoeg om tot actie over te gaan, zonder volledig begrip van het mechanisme?" }));
+    card.appendChild(reflectBtn(card));
     card.appendChild(reloadBtn());
   } else if (kind === "autoTimeout") {
     card.appendChild(html("div", { class: "stamp", text: "ST JAMES'S PARISH — 10 SEPTEMBER 1854" }));
@@ -674,9 +676,140 @@ function showEnding(kind) {
       ["Uw analyse reikte tot", `Dag ${state.day}`],
     ]));
     card.appendChild(html("p", { text: "Historische werkelijkheid: Dr. Snow haalde binnen 10 dagen voldoende bewijs bijeen en overtuigde de Board. De uitbraak eindigde binnen dagen na het verwijderen van de hendel op 7 september 1854." }));
-    card.appendChild(html("p", { class: "transfer-question", text: "Welke analytische stap had u eerder moeten zetten?" }));
+    card.appendChild(html("p", { class: "transfer-question", text: "Welke analytische stap had je eerder moeten zetten?" }));
+    card.appendChild(reflectBtn(card));
     card.appendChild(reloadBtn());
   }
+}
+
+/* ---------- DIKIWI reflection ---------- */
+
+const DIKIWI_LAYERS = [
+  { id: "data",       label: "data",       definition: "Losse, onbewerkte feiten — nog zonder context of betekenis." },
+  { id: "informatie", label: "informatie", definition: "Data voorzien van structuur: gecategoriseerd, gegroepeerd, in tabelvorm." },
+  { id: "kennis",     label: "kennis",     definition: "Informatie in samenhang: verbanden en patronen worden zichtbaar." },
+  { id: "inzicht",    label: "inzicht",    definition: "Herkenning van een betekenisvol patroon of een anomalie die om verklaring vraagt." },
+  { id: "wijsheid",   label: "wijsheid",   definition: "Oordeel en beslissing onder onzekerheid, ondanks ontbrekend mechanisme." },
+  { id: "impact",     label: "impact",     definition: "Concrete verandering in de wereld als gevolg van het handelen." },
+];
+
+const DIKIWI_SNIPPETS = [
+  { id: "s1",  text: "Namen, adressen en sterftedata van 84 slachtoffers opgevraagd",                canon: "data" },
+  { id: "s2",  text: "Slachtoffers gegroepeerd naar leeftijd en geslacht",                           canon: "informatie" },
+  { id: "s3",  text: "Sterftecijfers eerdere cholera-uitbraken (1832, 1849) ter vergelijking",       canon: "informatie" },
+  { id: "s4",  text: "84 sterfgevallen geplot op de kaart van Soho",                                 canon: "kennis" },
+  { id: "s5",  text: "Waterpompen toegevoegd aan de sterfte-kaart",                                  canon: "kennis" },
+  { id: "s6",  text: "Cluster rond de pomp van Broad Street wordt zichtbaar",                        canon: "inzicht" },
+  { id: "s7",  text: "Brouwerij en werkhuis midden in het cluster, maar nauwelijks zieken",          canon: "inzicht" },
+  { id: "s8",  text: "Mevrouw Eley in Hampstead overlijdt na water uit Broad Street",                canon: "inzicht" },
+  { id: "s9",  text: "Advies aan de Board: verwijder de hendel, ondanks ontbrekend mechanisme",      canon: "wijsheid" },
+  { id: "s10", text: "Hendel verwijderd door de smid; sterfgevallen in Soho dalen tot nul",          canon: "impact" },
+];
+
+function layerLabel(id) {
+  return DIKIWI_LAYERS.find(l => l.id === id)?.label ?? "—";
+}
+
+function dikiwiLayersNode() {
+  const wrap = html("div", { class: "dikiwi-layers" });
+  for (const layer of DIKIWI_LAYERS) {
+    wrap.appendChild(html("div", { class: "dikiwi-layer" },
+      html("span", { class: "dikiwi-name", text: layer.label }),
+      html("span", { class: "dikiwi-def", text: layer.definition }),
+    ));
+  }
+  return wrap;
+}
+
+function dikiwiSnippetsNode(onChange) {
+  const list = html("ol", { class: "dikiwi-snippets" });
+  for (const snip of DIKIWI_SNIPPETS) {
+    const select = html("select", {
+      "data-snippet-id": snip.id,
+      onchange: onChange,
+    });
+    select.appendChild(html("option", { value: "", text: "— kies laag —" }));
+    for (const layer of DIKIWI_LAYERS) {
+      select.appendChild(html("option", { value: layer.id, text: layer.label }));
+    }
+    list.appendChild(html("li", {},
+      html("span", { class: "snippet-text", text: snip.text }),
+      select,
+    ));
+  }
+  return list;
+}
+
+function dikiwiComparisonNode(choices) {
+  const list = html("ol", { class: "dikiwi-comparison-list" });
+  for (const snip of DIKIWI_SNIPPETS) {
+    list.appendChild(html("li", {},
+      html("span", { class: "snippet-text", text: snip.text }),
+      html("span", { class: "yours", text: `jouw plaatsing: ${layerLabel(choices[snip.id])}` }),
+      html("span", { class: "snow", text: `Snow: ${layerLabel(snip.canon)}` }),
+    ));
+  }
+  return list;
+}
+
+function dikiwiQuestionsNode() {
+  return html("div", { class: "dikiwi-questions" },
+    html("label", { text: "Welk item was voor jou het moeilijkst te plaatsen? Waarom viel het tussen twee lagen?" }),
+    html("textarea", { rows: "3", placeholder: "Jouw reflectie…" }),
+    html("label", { text: "Noem uit je eigen vakgebied (bedrijfskunde) een voorbeeld waar data nog niet tot informatie of kennis is gemaakt. Wat ontbreekt er nog?" }),
+    html("textarea", { rows: "3", placeholder: "Jouw voorbeeld…" }),
+  );
+}
+
+function reflectBtn(card) {
+  return html("button", {
+    class: "primary",
+    onclick: (e) => {
+      e.target.remove();
+      card.appendChild(buildDikiwiReflection());
+    },
+  }, "Reflecteer op het onderzoek");
+}
+
+function buildDikiwiReflection() {
+  const panel = html("div", { class: "dikiwi-reflection" });
+  panel.appendChild(html("h2", { text: "Reflecteer op het onderzoek" }));
+  panel.appendChild(html("p", { text: "Kijk terug op de stappen die je hebt gezet. Voor elk moment in het onderzoek: bij welke laag van Dr. Snow's denkproces hoort het? Gebruik de definities hieronder als anker." }));
+  panel.appendChild(dikiwiLayersNode());
+  panel.appendChild(html("p", { class: "dikiwi-instruction", text: "Plaats elk onderstaand item op de laag waar je het thuisvindt:" }));
+
+  const choices = {};
+  const compareBtn = html("button", {
+    class: "primary",
+    disabled: "",
+    onclick: () => showDikiwiComparison(panel, choices, compareBtn),
+  }, "Vergelijk met Snow's reconstructie");
+
+  const onChange = (e) => {
+    choices[e.target.dataset.snippetId] = e.target.value;
+    const allFilled = DIKIWI_SNIPPETS.every(s => choices[s.id]);
+    compareBtn.disabled = !allFilled;
+  };
+
+  panel.appendChild(dikiwiSnippetsNode(onChange));
+  panel.appendChild(compareBtn);
+  setTimeout(() => panel.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  return panel;
+}
+
+function showDikiwiComparison(panel, choices, compareBtn) {
+  compareBtn.remove();
+  const comparison = html("div", { class: "dikiwi-comparison" });
+  comparison.appendChild(html("h3", { text: "Jouw plaatsing naast Snow's reconstructie" }));
+  comparison.appendChild(html("p", { class: "compare-intro", text: "Er is geen enkele 'juiste' plaatsing — veel items passen op meerdere lagen. Waar je afwijkt van Snow's versie, is juist interessant. Gebruik de vragen hieronder om dat te verwoorden." }));
+  comparison.appendChild(dikiwiComparisonNode(choices));
+  comparison.appendChild(dikiwiQuestionsNode());
+  comparison.appendChild(html("button", {
+    class: "secondary",
+    onclick: () => window.print(),
+  }, "Bewaar als print"));
+  panel.appendChild(comparison);
+  setTimeout(() => comparison.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
 }
 
 /* ---------- Choice handler ---------- */

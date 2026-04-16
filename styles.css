@@ -580,9 +580,176 @@ button.secondary {
   75% { transform: translateX(6px); }
 }
 
+/* DIKIWI reflection */
+.dikiwi-reflection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 2px double var(--rule);
+  text-align: left;
+}
+
+.dikiwi-reflection h2 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  font-size: 1.6rem;
+  margin: 0 0 0.4rem;
+}
+
+.dikiwi-reflection h3 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  margin: 1rem 0 0.4rem;
+}
+
+.dikiwi-layers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.dikiwi-layer {
+  border: 1px solid var(--rule);
+  padding: 0.6rem 0.8rem;
+  background: var(--paper-dark);
+}
+
+.dikiwi-name {
+  display: block;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  font-weight: 600;
+  font-style: italic;
+  margin-bottom: 0.2rem;
+}
+
+.dikiwi-def {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.dikiwi-instruction {
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: 1rem 0 0.5rem;
+}
+
+.dikiwi-snippets {
+  padding-left: 1.2rem;
+  margin: 0 0 1rem;
+}
+
+.dikiwi-snippets li {
+  margin: 0.5rem 0;
+  display: flex;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dikiwi-snippets .snippet-text {
+  flex: 1;
+}
+
+.dikiwi-snippets select {
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  min-width: 140px;
+}
+
+.dikiwi-comparison {
+  margin-top: 1.2rem;
+}
+
+.compare-intro {
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.dikiwi-comparison-list {
+  list-style: decimal;
+  padding-left: 1.2rem;
+}
+
+.dikiwi-comparison-list li {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.6rem;
+  margin: 0.3rem 0;
+  padding: 0.4rem 0;
+  border-bottom: 1px dotted var(--rule);
+  align-items: baseline;
+}
+
+.dikiwi-comparison-list .yours {
+  font-style: italic;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.dikiwi-comparison-list .snow {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.dikiwi-questions {
+  margin-top: 1.2rem;
+}
+
+.dikiwi-questions label {
+  display: block;
+  margin-top: 0.8rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dikiwi-questions textarea {
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  resize: vertical;
+}
+
+.dikiwi-questions textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 /* Print */
 @media print {
-  .overlay, #intro-overlay { display: none !important; }
-  #dashboard, #side-panel { border: none; }
+  #intro-overlay,
+  #dashboard,
+  #side-panel,
+  #map-panel { display: none !important; }
+  #ending-overlay {
+    position: static;
+    background: white;
+    padding: 0;
+    display: block;
+  }
+  #ending-overlay .overlay-card {
+    box-shadow: none;
+    border: none;
+    max-width: none;
+    padding: 0;
+  }
+  .dikiwi-snippets select,
+  .dikiwi-questions textarea {
+    border: 1px solid #ccc;
+  }
   body { background: white; }
+  button { display: none !important; }
 }
