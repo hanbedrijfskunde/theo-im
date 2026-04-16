@@ -6,27 +6,12 @@
   <title>Lezer — THEOIM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles-modern.css">
   <style>
-    :root {
-      --paper: #f4ecd8;
-      --paper-dark: #e8dcc0;
-      --ink: #3b2f1e;
-      --ink-soft: #6b5a3e;
-      --accent: #8b2a1f;
-      --rule: #8a7752;
-    }
-
-    * { box-sizing: border-box; }
-
     body {
-      font-family: "Crimson Text", Georgia, serif;
-      background: var(--paper);
-      color: var(--ink);
-      margin: 0;
-      padding: 0;
-      line-height: 1.7;
-      font-size: 18px;
+      background: var(--surface);
+      line-height: 1.65;
     }
 
     .reader-wrap {
@@ -38,177 +23,222 @@
     .reader-head {
       margin-bottom: 2rem;
       padding-bottom: 1rem;
-      border-bottom: 2px double var(--rule);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       gap: 1rem;
       flex-wrap: wrap;
     }
 
     .reader-head a.back {
-      font-family: "Crimson Text", Georgia, serif;
-      color: var(--ink-soft);
+      color: var(--text-secondary);
       text-decoration: none;
-      font-style: italic;
-      font-size: 0.95rem;
+      font-size: 0.875rem;
+      font-weight: 500;
     }
-
-    .reader-head a.back:hover { color: var(--accent); }
+    .reader-head a.back:hover {
+      color: var(--primary);
+      text-decoration: none;
+    }
 
     .reader-head .stamp {
       display: inline-block;
-      padding: 0.3rem 0.7rem;
-      background: var(--paper-dark);
-      border: 1px solid var(--rule);
-      font-size: 0.75rem;
-      letter-spacing: 0.18em;
-      color: var(--ink-soft);
-      font-variant: small-caps;
+      padding: 0.2rem 0.625rem;
+      background: var(--primary-50);
+      color: var(--primary);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
     }
 
+    #doc-content {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem 2.75rem;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    #doc-content > :first-child { margin-top: 0; }
+    #doc-content > :last-child { margin-bottom: 0; }
+
     #doc-content h1 {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 2.2rem;
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: var(--text-dark);
       margin: 0 0 1rem;
       line-height: 1.2;
-      font-variant: small-caps;
-      letter-spacing: 0.02em;
+      letter-spacing: -0.01em;
     }
 
     #doc-content h2 {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.55rem;
-      margin: 2.2rem 0 0.6rem;
-      border-bottom: 1px solid var(--rule);
-      padding-bottom: 0.3rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 2rem 0 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border-color);
+      line-height: 1.25;
     }
 
     #doc-content h3 {
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: 1.2rem;
-      margin: 1.6rem 0 0.4rem;
-      color: var(--ink-soft);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 1.75rem 0 0.5rem;
     }
 
-    #doc-content h4, #doc-content h5, #doc-content h6 {
-      font-family: "Crimson Text", Georgia, serif;
-      font-variant: small-caps;
-      letter-spacing: 0.08em;
+    #doc-content h4 {
+      font-size: 1rem;
       font-weight: 600;
-      margin: 1.2rem 0 0.3rem;
+      color: var(--primary);
+      margin: 1.25rem 0 0.35rem;
+      letter-spacing: 0.01em;
+    }
+
+    #doc-content h5, #doc-content h6 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 1rem 0 0.3rem;
     }
 
     #doc-content p {
-      margin: 0.7rem 0;
+      margin: 0.75rem 0;
     }
 
-    #doc-content strong { color: var(--ink); font-weight: 600; }
-    #doc-content em { color: var(--ink-soft); }
+    #doc-content strong { color: var(--text-dark); font-weight: 600; }
+    #doc-content em { font-style: italic; }
 
     #doc-content a {
-      color: var(--accent);
-      text-decoration: none;
-      border-bottom: 1px dotted var(--accent);
+      color: var(--primary);
+      text-decoration: underline;
+      text-decoration-color: var(--primary-200);
+      text-underline-offset: 2px;
+      transition: text-decoration-color 0.15s, color 0.15s;
     }
-
-    #doc-content a:hover { border-bottom-style: solid; }
+    #doc-content a:hover {
+      color: var(--primary-light);
+      text-decoration-color: var(--primary);
+    }
 
     #doc-content hr {
       border: none;
-      border-top: 2px double var(--rule);
+      border-top: 1px solid var(--border-color);
       margin: 2rem 0;
     }
 
     #doc-content blockquote {
-      margin: 1rem 0;
-      padding: 0.6rem 1.2rem;
-      border-left: 3px solid var(--accent);
-      background: var(--paper-dark);
-      font-style: italic;
-      color: var(--ink-soft);
+      margin: 1.25rem 0;
+      padding: 0.8rem 1.2rem;
+      border-left: 3px solid var(--primary);
+      background: var(--primary-50);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-primary);
     }
-
     #doc-content blockquote p:first-child { margin-top: 0; }
     #doc-content blockquote p:last-child { margin-bottom: 0; }
 
     #doc-content ul, #doc-content ol {
-      padding-left: 1.4rem;
-      margin: 0.6rem 0;
+      padding-left: 1.5rem;
+      margin: 0.75rem 0;
     }
 
-    #doc-content li {
-      margin: 0.25rem 0;
-    }
-
-    #doc-content li > p {
-      margin: 0.3rem 0;
-    }
+    #doc-content li { margin: 0.3rem 0; }
+    #doc-content li > p { margin: 0.3rem 0; }
 
     #doc-content code {
-      font-family: "JetBrains Mono", Consolas, monospace;
-      background: var(--paper-dark);
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-      font-size: 0.88em;
-      color: var(--ink);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+      background: var(--bg-light);
+      padding: 0.1rem 0.4rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.875em;
+      color: var(--primary);
+      font-weight: 500;
     }
 
     #doc-content pre {
-      background: var(--paper-dark);
-      border: 1px solid var(--rule);
-      padding: 0.8rem 1rem;
+      background: var(--bg-light);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.1rem;
       overflow-x: auto;
-      font-size: 0.88em;
-      line-height: 1.5;
+      font-size: 0.875em;
+      line-height: 1.55;
+      margin: 1rem 0;
     }
 
     #doc-content pre code {
       background: none;
       padding: 0;
       font-size: inherit;
+      color: var(--text-primary);
+      font-weight: 400;
     }
 
     #doc-content table {
       border-collapse: collapse;
-      margin: 1rem 0;
+      margin: 1.25rem 0;
       width: 100%;
-      font-size: 0.95em;
+      font-size: 0.9375rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
     }
 
     #doc-content th, #doc-content td {
-      border: 1px solid var(--rule);
-      padding: 0.4rem 0.7rem;
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.6rem 0.9rem;
       text-align: left;
       vertical-align: top;
     }
+    #doc-content tr:last-child td { border-bottom: none; }
 
     #doc-content th {
-      background: var(--paper-dark);
-      font-variant: small-caps;
-      letter-spacing: 0.06em;
+      background: var(--surface);
       font-weight: 600;
+      color: var(--text-dark);
+      font-size: 0.8125rem;
+      letter-spacing: 0.02em;
     }
 
     #doc-content img {
       max-width: 100%;
       height: auto;
+      border-radius: var(--radius-md);
     }
 
     .loader, .error {
       text-align: center;
-      color: var(--ink-soft);
-      font-style: italic;
+      color: var(--text-secondary);
       padding: 3rem 0;
+      font-size: 0.9375rem;
     }
+    .error { color: var(--danger); }
 
-    .error { color: var(--accent); }
+    @media (max-width: 600px) {
+      .reader-wrap { padding: 1.5rem 1rem 2.5rem; }
+      #doc-content { padding: 1.5rem 1.25rem; }
+      #doc-content h1 { font-size: 1.5rem; }
+      #doc-content h2 { font-size: 1.25rem; }
+    }
 
     @media print {
       .reader-head .back, .reader-head .stamp { display: none; }
       .reader-head { border: none; margin: 0 0 1rem; padding: 0; }
       body { background: white; color: black; font-size: 11pt; }
       .reader-wrap { max-width: none; padding: 0; }
+      #doc-content {
+        background: white;
+        border: none;
+        padding: 0;
+      }
       #doc-content h2, #doc-content h3 { page-break-after: avoid; }
     }
   </style>
@@ -216,7 +246,7 @@
 <body>
   <div class="reader-wrap">
     <header class="reader-head">
-      <a class="back" href="index.html">← terug naar werkvormen</a>
+      <a class="back" href="index.html">← Terug naar werkvormen</a>
       <span class="stamp" id="doc-stamp">THEOIM</span>
     </header>
     <main id="doc-content">
@@ -241,10 +271,14 @@
     const content = document.getElementById('doc-content');
     const stamp = document.getElementById('doc-stamp');
 
+    function sanitizedFragment(htmlString) {
+      return DOMPurify.sanitize(htmlString, { RETURN_DOM_FRAGMENT: true });
+    }
+
     function renderMessage(type, htmlString) {
       const wrap = document.createElement('div');
       wrap.className = type;
-      wrap.innerHTML = DOMPurify.sanitize(htmlString);
+      wrap.appendChild(sanitizedFragment(htmlString));
       content.replaceChildren(wrap);
     }
 
@@ -258,7 +292,7 @@
         if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
         const md = await response.text();
         const rawHtml = marked.parse(md);
-        content.innerHTML = DOMPurify.sanitize(rawHtml);
+        content.replaceChildren(sanitizedFragment(rawHtml));
       } catch (err) {
         renderMessage('error', `Kan document niet laden: ${err.message}`);
       }
