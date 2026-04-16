@@ -772,11 +772,11 @@
           <div class="sim-legend">
             <span><i style="background: #1e293b;"></i>Consument</span>
             <span><i style="background: #64748b;"></i>Winkelier (gestreept)</span>
-            <span><i style="background: #1e3a5f;"></i>Fabriek</span>
+            <span><i style="background: #dc2626;"></i>Fabriek</span>
           </div>
           <svg class="sim-chart" id="sim-chart" viewBox="0 0 800 350" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Lijngrafiek met vraag van consument, winkelier en fabriek over 20 weken"></svg>
         </div>
-        <p class="sim-caption">Zodra de blauwe lijn (Fabriek) wild gaat slaan terwijl de donkere lijn (Consument) bijna vlak is, zie je een serieus bullwhip-probleem.</p>
+        <p class="sim-caption">Zodra de rode lijn (Fabriek) wild gaat slaan terwijl de donkere lijn (Consument) bijna vlak is, zie je een serieus bullwhip-probleem.</p>
       </section>
 
       <!-- HOOFDSTUK 5: STRATEGIE -->
@@ -1037,7 +1037,7 @@
       const seriesConfig = [
         { key: 'klant', color: '#1e293b', dash: '0', width: 3 },
         { key: 'retailer', color: '#64748b', dash: '6 4', width: 2.5 },
-        { key: 'fabrikant', color: '#1e3a5f', dash: '0', width: 3 }
+        { key: 'fabrikant', color: '#dc2626', dash: '0', width: 3 }
       ];
       seriesConfig.forEach(s => {
         const points = data.map((d, i) => `${xAt(i)},${yAt(d[s.key])}`).join(' ');

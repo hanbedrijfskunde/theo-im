@@ -11,11 +11,6 @@
 
 ## 1. Voorbereiding
 
-**Technisch:**
-- Studenten hebben een laptop met recente Chrome/Firefox/Safari.
-- Webapp draait lokaal via `python3 -m http.server` in de project-map, of gehost op een statische webserver. Geen accounts, geen installatie.
-- Test vóór de les: open `broad-street-zaak.html` in de browser, doorloop één keer.
-
 **Materiaal voor de docent:**
 - Deze handleiding (debrief-draaiboek)
 - Snow's originele kaart (1855) — staat al in de webapp als eindscherm
