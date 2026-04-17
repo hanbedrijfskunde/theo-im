@@ -728,6 +728,120 @@ button.secondary {
   border-color: var(--accent);
 }
 
+/* Responsive: tablet + phone (≤900px) — stack map + side panel */
+@media (max-width: 900px) {
+  html, body { font-size: 16px; }
+
+  #dashboard {
+    grid-template-columns: auto auto 1fr;
+    gap: 1.25rem;
+    padding: 0.8rem 1.1rem;
+  }
+
+  .dash-brand {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: left;
+    align-items: flex-start;
+    border-top: 1px dashed var(--rule);
+    padding-top: 0.6rem;
+  }
+
+  .dash-value { font-size: 1.6rem; }
+  .dash-title { font-size: 1.2rem; }
+
+  #workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  #map-panel {
+    border-right: none;
+    border-bottom: 2px solid var(--rule);
+    padding: 0.75rem;
+    aspect-ratio: 4 / 3;
+    min-height: 0;
+  }
+
+  #map-svg { height: 100%; }
+
+  #side-panel {
+    padding: 0.9rem 1rem 1.25rem;
+    grid-template-rows: auto auto auto;
+    min-height: 0;
+  }
+
+  .viz-panel { max-height: 60vh; }
+
+  .overlay-card {
+    padding: 1.4rem 1.5rem;
+    max-height: calc(100dvh - 2rem);
+  }
+}
+
+/* Phone (≤560px) — tighter dashboard + overlays */
+@media (max-width: 560px) {
+  html, body { font-size: 15px; }
+
+  #dashboard {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem 0.8rem;
+    padding: 0.7rem 0.9rem;
+  }
+
+  .dash-cell { min-width: 0; }
+  .dash-value { font-size: 1.4rem; }
+  .dash-label { font-size: 0.68rem; letter-spacing: 0.1em; }
+
+  .dash-title { font-size: 1rem; letter-spacing: 0.05em; }
+  .dash-subtitle { font-size: 0.75rem; }
+
+  #map-panel { aspect-ratio: 5 / 4; padding: 0.5rem; }
+
+  #side-panel { padding: 0.7rem 0.8rem 1rem; }
+
+  .telegram-body { font-size: 0.95rem; }
+  .menu-btn { padding: 0.6rem 0.75rem; font-size: 0.9rem; }
+  .menu-btn:hover { transform: none; }
+
+  .tab { max-width: 140px; font-size: 0.72rem; padding: 0.3rem 0.5rem 0.25rem; }
+
+  .overlay-card {
+    padding: 1.1rem 1.1rem;
+    border-width: 1px;
+  }
+
+  .overlay-card h1 { font-size: 1.4rem; letter-spacing: 0.04em; }
+  .overlay-card p { font-size: 0.95rem; }
+
+  .stamp { font-size: 0.62rem; padding: 0.15rem 0.45rem; }
+
+  .ending-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .ending-stats { grid-template-columns: 1fr; gap: 0.5rem; padding: 0.8rem; }
+  .ending-stat-value { font-size: 1.3rem; }
+
+  .dikiwi-comparison-list li {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .dikiwi-snippets li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+  }
+
+  .dikiwi-snippets select { width: 100%; min-width: 0; }
+
+  button.primary, button.secondary {
+    width: 100%;
+    margin-left: 0;
+    box-sizing: border-box;
+  }
+}
+
 /* Print */
 @media print {
   #intro-overlay,
